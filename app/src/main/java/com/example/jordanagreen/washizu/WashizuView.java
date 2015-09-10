@@ -24,6 +24,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     private Bitmap[] tileImages;
 
     private Hand hand;
+    private Hand upHand;
 
 
     public WashizuView(Context context, AttributeSet attrs){
@@ -33,7 +34,8 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         setWillNotDraw(false);
         tileImages = loadTileImages();
 //        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.chun);
-        hand = new Hand();
+        hand = new Hand(Constants.SEAT_DOWN, Constants.HAKU);
+        upHand = new Hand(Constants.SEAT_UP, Constants.MAN_1);
     }
 
     private Bitmap[] loadTileImages(){
@@ -117,6 +119,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         Log.d(TAG, "onDraw");
         canvas.drawColor(Color.WHITE);
         hand.draw(canvas, tileImages);
+        upHand.draw(canvas, tileImages);
         postInvalidate();
     }
 

@@ -12,12 +12,22 @@ public class Constants {
     enum Direction {DOWN, RIGHT, UP, LEFT};
     enum Suit {MAN, PIN, SOU, HONOR};
 
+
+//    helps for rotating tiles
+    public static final int SEAT_DOWN = 0;
+    public static final int SEAT_LEFT = 90;
+    public static final int SEAT_UP = 180;
+    public static final int SEAT_RIGHT = 270;
+
     public static final int HAND_SIZE = 13;
 
     public static final int TILE_WIDTH_PX = 44;
     public static final int TILE_HEIGHT_PX = 53;
     public static final int TILE_WIDTH = convertToDp(TILE_WIDTH_PX);
     public static final int TILE_HEIGHT = convertToDp(TILE_HEIGHT_PX);
+
+    public static final int HAND_TOP_ROW_TILES = 6;
+    public static final int HAND_BOTTOM_ROW_TILES = 7;
 
     public static final int MAN_1 = 0;
     public static final int MAN_2 = 1;
@@ -53,6 +63,9 @@ public class Constants {
     public static final int PEI = 31;
     public static final int XIA = 32;
     public static final int TON = 33;
+
+    public static final int TILE_MIN_ID = MAN_1;
+    public static final int TILE_MAX_ID = TON;
 
 
     public static int convertToDp(int input) {
