@@ -56,10 +56,14 @@ public class Hand {
         switch (seatDirection){
             case Constants.SEAT_DOWN:
             case Constants.SEAT_UP:
+
+                int HOR_CENTER_PADDING = (canvas.getWidth() -
+                        (Constants.TILE_WIDTH * Constants.HAND_BOTTOM_ROW_TILES)) /2;
+
                 // draw the top row
                 for (int i = 0; i < Constants.HAND_TOP_ROW_TILES; i++){
                     if (tiles.get(i) != null){
-                          int x = Constants.TILE_WIDTH * i + (Constants.TILE_WIDTH/2);
+                          int x = Constants.TILE_WIDTH * i + (Constants.TILE_WIDTH/2) + HOR_CENTER_PADDING;
                           int y = canvas.getHeight() - (Constants.TILE_HEIGHT * 2);
                         if (seatDirection == Constants.SEAT_UP){
                             x = canvas.getWidth() - Constants.TILE_WIDTH - x;
@@ -71,7 +75,7 @@ public class Hand {
                 // draw the bottom row
                 for (int i = Constants.HAND_TOP_ROW_TILES; i < Constants.HAND_SIZE; i++){
                     if (tiles.get(i) != null){
-                        int x = Constants.TILE_WIDTH*(i - Constants.HAND_TOP_ROW_TILES);
+                        int x = Constants.TILE_WIDTH*(i - Constants.HAND_TOP_ROW_TILES) + HOR_CENTER_PADDING;
                         int y = canvas.getHeight() - Constants.TILE_HEIGHT;
                         if (seatDirection == Constants.SEAT_UP){
                             x = canvas.getWidth() - Constants.TILE_WIDTH - x;
