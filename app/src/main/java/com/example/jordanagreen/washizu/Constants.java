@@ -9,7 +9,6 @@ public class Constants {
 
 
     enum Wind {EAST, SOUTH, WEST, NORTH};
-    enum Direction {DOWN, RIGHT, UP, LEFT};
     enum Suit {MAN, PIN, SOU, HONOR};
 
 
@@ -19,12 +18,24 @@ public class Constants {
     public static final int SEAT_UP = 180;
     public static final int SEAT_RIGHT = 270;
 
-    public static final int HAND_SIZE = 13;
+    public static final int WIND_EAST = 0;
+    public static final int WIND_SOUTH = 1;
+    public static final int WIND_WEST = 2;
+    public static final int WIND_NORTH = 3;
 
-    public static final int TILE_WIDTH_PX = 44;
-    public static final int TILE_HEIGHT_PX = 53;
+    public static final int HAND_SIZE = 13;
+    public static final int STARTING_SCORE = 2500;
+
+//    public static final int TILE_WIDTH_PX = 44;
+//    public static final int TILE_HEIGHT_PX = 53;
+
+    public static final int TILE_WIDTH_PX = 34;
+    public static final int TILE_HEIGHT_PX = 41;
     public static final int TILE_WIDTH = convertToDp(TILE_WIDTH_PX);
     public static final int TILE_HEIGHT = convertToDp(TILE_HEIGHT_PX);
+
+    // TODO: just get images that are the right size already and remove scaling
+
 
     public static final int HAND_TOP_ROW_TILES = 6;
     public static final int HAND_BOTTOM_ROW_TILES = 7;

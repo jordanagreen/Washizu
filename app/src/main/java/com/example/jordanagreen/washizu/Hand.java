@@ -2,6 +2,7 @@ package com.example.jordanagreen.washizu;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,18 @@ public class Hand {
         }
     }
 
+    public boolean onTouch(MotionEvent event){
+        int x = (int) event.getX();
+        int y = (int) event.getY();
+        for (Tile tile: tiles){
+            if ((x > tile.x && x < tile.x + Constants.TILE_WIDTH) &&
+                 y > tile.y && y < tile.y + Constants.TILE_HEIGHT){
+                return tile.onTouch(event);
+            }
+        }
+        return false;
+    }
+
     public void draw(Canvas canvas, Bitmap[] tileImages){
 
         // draw the ones on the narrow sides of the phone in two rows
@@ -63,25 +76,32 @@ public class Hand {
                 // draw the top row
                 for (int i = 0; i < Constants.HAND_TOP_ROW_TILES; i++){
                     if (tiles.get(i) != null){
-                          int x = Constants.TILE_WIDTH * i + (Constants.TILE_WIDTH/2) + HOR_CENTER_PADDING;
+                          int x = Constants.TILE_WIDTH * i + (Constants.TILE_WIDTH/2)
+                                  + HOR_CENTER_PADDING;
                           int y = canvas.getHeight() - (Constants.TILE_HEIGHT * 2);
                         if (seatDirection == Constants.SEAT_UP){
                             x = canvas.getWidth() - Constants.TILE_WIDTH - x;
                             y = Constants.TILE_HEIGHT;
                         }
-                        tiles.get(i).draw(canvas, tileImages, x, y, seatDirection);
+                        Tile tile = tiles.get(i);
+                        tile.setLocation(x, y);
+                        tile.draw(canvas, tileImages, x, y, seatDirection);
+
                     }
                 }
                 // draw the bottom row
                 for (int i = Constants.HAND_TOP_ROW_TILES; i < Constants.HAND_SIZE; i++){
                     if (tiles.get(i) != null){
-                        int x = Constants.TILE_WIDTH*(i - Constants.HAND_TOP_ROW_TILES) + HOR_CENTER_PADDING;
+                        int x = Constants.TILE_WIDTH*(i - Constants.HAND_TOP_ROW_TILES)
+                                + HOR_CENTER_PADDING;
                         int y = canvas.getHeight() - Constants.TILE_HEIGHT;
                         if (seatDirection == Constants.SEAT_UP){
                             x = canvas.getWidth() - Constants.TILE_WIDTH - x;
                             y = 0;
                         }
-                        tiles.get(i).draw(canvas, tileImages, x, y, seatDirection);
+                        Tile tile = tiles.get(i);
+                        tile.setLocation(x, y);
+                        tile.draw(canvas, tileImages, x, y, seatDirection);
                     }
                 }
                 break;
@@ -92,11 +112,5 @@ public class Hand {
                 break;
         }
 
-
-//        for (int i = 0; i < tiles.length/2; i++){
-//            if (tiles[i] != null){
-//                tiles[i].draw(canvas, tileImages, Constants.TILE_WIDTH * i, 0);
-//            }
-//        }
     }
 }

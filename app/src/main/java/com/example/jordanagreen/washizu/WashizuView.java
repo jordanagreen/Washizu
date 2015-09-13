@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jordan on 9/9/2015.
  */
@@ -22,10 +24,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 //    private Paint paint;
 
     private Bitmap[] tileImages;
-
-    private Hand hand;
-    private Hand upHand;
-
+    private ArrayList<Player> players;
 
     public WashizuView(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -34,8 +33,27 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         setWillNotDraw(false);
         tileImages = loadTileImages();
 //        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.chun);
-        hand = new Hand(Constants.SEAT_DOWN, Constants.HAKU);
-        upHand = new Hand(Constants.SEAT_UP, Constants.MAN_1);
+
+        players = new ArrayList<>();
+
+        //TODO: make a test file for this
+        Hand hand = new Hand(Constants.SEAT_DOWN, Constants.HAKU);
+        Hand upHand = new Hand(Constants.SEAT_UP, Constants.MAN_1);
+        Player downPlayer = new Player(Constants.SEAT_DOWN);
+        Player upPlayer = new Player(Constants.SEAT_UP);
+        downPlayer.hand = hand;
+        upPlayer.hand = upHand;
+        addPlayer(downPlayer);
+        addPlayer(upPlayer);
+    }
+
+    public void addPlayer(Player player){
+        if (players.size() >= 4){
+            throw new IllegalArgumentException("Can't have more than four players.");
+        }
+        else {
+            players.add(player);
+        }
     }
 
     private Bitmap[] loadTileImages(){
@@ -109,6 +127,12 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent event){
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             Log.d(TAG, "Touch down at " + event.getX() + ", " + event.getY());
+            // TODO: check boundaries to see if it's actually touching the hand (or anything else)
+            // and if so return to consume the event
+            for (Player player: players){
+                player.hand.onTouch(event);
+            }
+
         }
         return super.onTouchEvent(event);
     }
@@ -116,10 +140,12 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d(TAG, "onDraw");
+//        Log.d(TAG, "onDraw");
         canvas.drawColor(Color.WHITE);
-        hand.draw(canvas, tileImages);
-        upHand.draw(canvas, tileImages);
+        for (Player player: players){
+            //TODO: figure out a way to remove the images from the call
+            player.draw(canvas, tileImages);
+        }
         postInvalidate();
     }
 
