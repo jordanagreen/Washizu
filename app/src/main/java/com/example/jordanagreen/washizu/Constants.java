@@ -34,8 +34,6 @@ public class Constants {
     public static final int TILE_WIDTH = convertToDp(TILE_WIDTH_PX);
     public static final int TILE_HEIGHT = convertToDp(TILE_HEIGHT_PX);
 
-    // TODO: just get images that are the right size already and remove scaling
-
 
     public static final int HAND_TOP_ROW_TILES = 6;
     public static final int HAND_BOTTOM_ROW_TILES = 7;
@@ -77,6 +75,15 @@ public class Constants {
 
     public static final int TILE_MIN_ID = MAN_1;
     public static final int TILE_MAX_ID = TON;
+
+    public static final int ROUND_EAST_1 = 0;
+    public static final int ROUND_EAST_2 = 1;
+    public static final int ROUND_EAST_3 = 2;
+    public static final int ROUND_EAST_4 = 3;
+    public static final int ROUND_SOUTH_1 = 4;
+    public static final int ROUND_SOUTH_2 = 5;
+    public static final int ROUND_SOUTH_3 = 6;
+    public static final int ROUND_SOUTH_4 = 7;
 
 
     public static int convertToDp(int input) {

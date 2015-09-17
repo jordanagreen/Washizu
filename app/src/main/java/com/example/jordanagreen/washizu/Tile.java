@@ -15,7 +15,6 @@ public class Tile implements Comparable<Tile>{
     public static final String TAG = "tile";
 
     private int id;
-//    private Bitmap bmp;
 
     public boolean isOpaque;
     public boolean isRed;
@@ -24,6 +23,7 @@ public class Tile implements Comparable<Tile>{
     public int x;
     public int y;
 
+    //TODO: remove this
     public Tile(int id){
         if (id >= Constants.TILE_MIN_ID && id <= Constants.TILE_MAX_ID){
             this.id = id;
@@ -33,7 +33,16 @@ public class Tile implements Comparable<Tile>{
         }
     }
 
-    // TODO: just get images that are the right size already and remove the scale
+    public Tile(int id, boolean isOpaque){
+        if (id >= Constants.TILE_MIN_ID && id <= Constants.TILE_MAX_ID){
+            this.id = id;
+            this.isOpaque = isOpaque;
+        }
+        else {
+            throw new IllegalArgumentException("Invalid tile id: " + id);
+        }
+    }
+
     public void draw(Canvas canvas, Bitmap[] tileImages, int x, int y, int seatDirection){
         Matrix matrix = new Matrix();
         matrix.postRotate(seatDirection);
@@ -60,6 +69,6 @@ public class Tile implements Comparable<Tile>{
 
     @Override
     public int compareTo(Tile another) {
-        return another.id - this.id;
+        return this.id - another.id;
     }
 }

@@ -6,12 +6,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import java.util.ArrayList;
 
 /**
  * Created by Jordan on 9/9/2015.
@@ -21,10 +18,9 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
     public static final String TAG = "WashizuView";
 
-//    private Paint paint;
-
     private Bitmap[] tileImages;
-    private ArrayList<Player> players;
+
+    private Game game;
 
     public WashizuView(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -32,28 +28,9 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
         setWillNotDraw(false);
         tileImages = loadTileImages();
-//        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.chun);
 
-        players = new ArrayList<>();
-
-        //TODO: make a test file for this
-        Hand hand = new Hand(Constants.SEAT_DOWN, Constants.HAKU);
-        Hand upHand = new Hand(Constants.SEAT_UP, Constants.MAN_1);
-        Player downPlayer = new Player(Constants.SEAT_DOWN);
-        Player upPlayer = new Player(Constants.SEAT_UP);
-        downPlayer.hand = hand;
-        upPlayer.hand = upHand;
-        addPlayer(downPlayer);
-        addPlayer(upPlayer);
-    }
-
-    public void addPlayer(Player player){
-        if (players.size() >= 4){
-            throw new IllegalArgumentException("Can't have more than four players.");
-        }
-        else {
-            players.add(player);
-        }
+        game = new Game();
+        game.startRound(Constants.ROUND_EAST_1);
     }
 
     private Bitmap[] loadTileImages(){
@@ -125,27 +102,16 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        if (event.getAction() == MotionEvent.ACTION_DOWN){
-            Log.d(TAG, "Touch down at " + event.getX() + ", " + event.getY());
-            // TODO: check boundaries to see if it's actually touching the hand (or anything else)
-            // and if so return to consume the event
-            for (Player player: players){
-                player.hand.onTouch(event);
-            }
-
-        }
+        game.onTouch(event);
         return super.onTouchEvent(event);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        Log.d(TAG, "onDraw");
         canvas.drawColor(Color.WHITE);
-        for (Player player: players){
-            //TODO: figure out a way to remove the images from the call
-            player.draw(canvas, tileImages);
-        }
+        //TODO: figure out a way to remove the images from the call
+        game.onDraw(canvas, tileImages);
         postInvalidate();
     }
 
