@@ -53,6 +53,7 @@ public class Tile implements Comparable<Tile>{
         canvas.drawBitmap(result, x, y, null);
     }
 
+    //is this necessary?
     public void setLocation(int x, int y){
         this.x = x;
         this.y = y;

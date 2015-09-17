@@ -57,15 +57,13 @@ public class Hand {
         switch (seatDirection){
             case SEAT_DOWN:
             case SEAT_UP:
-
-                int HOR_CENTER_PADDING = (canvas.getWidth() -
+                int horCenterPadding = (canvas.getWidth() -
                         (TILE_WIDTH * HAND_BOTTOM_ROW_TILES)) /2;
-
                 // draw the top row
                 for (int i = 0; i < HAND_TOP_ROW_TILES; i++){
                     if (tiles.get(i) != null){
                           int x = TILE_WIDTH * i + (TILE_WIDTH/2)
-                                  + HOR_CENTER_PADDING;
+                                  + horCenterPadding;
                           int y = canvas.getHeight() - (TILE_HEIGHT * 2);
                         if (seatDirection == SEAT_UP){
                             x = canvas.getWidth() - TILE_WIDTH - x;
@@ -80,7 +78,7 @@ public class Hand {
                 for (int i = HAND_TOP_ROW_TILES; i < HAND_SIZE; i++){
                     if (tiles.get(i) != null){
                         int x = TILE_WIDTH*(i - HAND_TOP_ROW_TILES)
-                                + HOR_CENTER_PADDING;
+                                + horCenterPadding;
                         int y = canvas.getHeight() - TILE_HEIGHT;
                         if (seatDirection == SEAT_UP){
                             x = canvas.getWidth() - TILE_WIDTH - x;
@@ -94,6 +92,21 @@ public class Hand {
                 break;
             case SEAT_LEFT:
             case SEAT_RIGHT:
+                int verCenterPadding = (canvas.getHeight() -
+                        (TILE_WIDTH * HAND_SIZE)) /2;
+                for (int i = 0; i < HAND_SIZE; i++){
+                    if (tiles.get(i) != null){
+                        int x = 0;
+                        int y = (TILE_WIDTH * i) + verCenterPadding;
+                        if (seatDirection == SEAT_RIGHT){
+                            x = canvas.getWidth() - TILE_HEIGHT;
+                            y = canvas.getHeight() - TILE_WIDTH - y;
+                        }
+                        Tile tile = tiles.get(i);
+                        tile.setLocation(x, y);
+                        tile.draw(canvas, tileImages, x, y, seatDirection);
+                    }
+                }
                 break;
             default:
                 break;
