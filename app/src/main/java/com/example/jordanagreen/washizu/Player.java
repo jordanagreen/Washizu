@@ -1,6 +1,5 @@
 package com.example.jordanagreen.washizu;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
@@ -30,9 +29,9 @@ public class Player {
         return hand.onTouch(event);
     }
 
-    public void draw(Canvas canvas, Bitmap[] tileImages){
+    public void draw(Canvas canvas){
         if (hand != null){
-            hand.draw(canvas, tileImages, direction);
+            hand.draw(canvas, direction);
         }
     }
 

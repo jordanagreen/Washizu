@@ -20,23 +20,56 @@ public class HandTest {
 
     @Test
     public void testAddTile(){
-        Hand hand = new Hand(Constants.SEAT_DOWN);
-        assertEquals(hand.tiles.size(), 0);
-        hand.addTile(new Tile(Constants.CHUN));
-        assertEquals(hand.tiles.size(), 1);
+        Hand hand = new Hand();
+        assertEquals(hand.getTiles().size(), 0);
+        hand.addTile(new Tile(Constants.CHUN, false));
+        assertEquals(hand.getTiles().size(), 1);
     }
 
     @Test
     public void testAddTile_FullHand(){
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("Hand is full");
-        Hand hand = new Hand(Constants.SEAT_DOWN);
-        assertEquals(hand.tiles.size(), 0);
+        Hand hand = new Hand();
+        assertEquals(hand.getTiles().size(), 0);
         for (int i = 0; i < Constants.HAND_SIZE; i++){
-            hand.addTile(new Tile(Constants.CHUN));
+            hand.addTile(new Tile(Constants.CHUN, false));
         }
-        assertEquals(hand.tiles.size(), Constants.HAND_SIZE);
-        hand.addTile(new Tile(Constants.CHUN));
+        assertEquals(hand.getTiles().size(), Constants.HAND_SIZE);
+        hand.addTile(new Tile(Constants.CHUN, false));
     }
 
+    @Test
+    public void testMakePon(){
+        Hand hand = new Hand();
+        assertEquals(hand.getMelds().size(), 0);
+        Tile a = new Tile(Constants.CHUN, false);
+        Tile b = new Tile(Constants.CHUN, false);
+        Tile c = new Tile(Constants.CHUN, false);
+        hand.makePon(a, b, c, Constants.SEAT_DOWN);
+        assertEquals(hand.getMelds().size(), 1);
+    }
+
+    @Test
+    public void testMakeChii(){
+        Hand hand = new Hand();
+        assertEquals(hand.getMelds().size(), 0);
+        Tile a = new Tile(Constants.MAN_1, false);
+        Tile b = new Tile(Constants.MAN_2, false);
+        Tile c = new Tile(Constants.MAN_3, false);
+        hand.makeChii(a, b, c, Constants.SEAT_DOWN);
+        assertEquals(hand.getMelds().size(), 1);
+    }
+
+    @Test
+    public void testMakeKan(){
+        Hand hand = new Hand();
+        assertEquals(hand.getMelds().size(), 0);
+        Tile a = new Tile(Constants.CHUN, false);
+        Tile b = new Tile(Constants.CHUN, false);
+        Tile c = new Tile(Constants.CHUN, false);
+        Tile d = new Tile(Constants.CHUN, false);
+        hand.makeKan(a, b, c, d, Constants.SEAT_DOWN, false);
+        assertEquals(hand.getMelds().size(), 1);
+    }
 }

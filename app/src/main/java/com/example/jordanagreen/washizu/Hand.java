@@ -1,14 +1,23 @@
 package com.example.jordanagreen.washizu;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
-import static com.example.jordanagreen.washizu.Constants.*;
+import static com.example.jordanagreen.washizu.Constants.HAND_BOTTOM_ROW_TILES;
+import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
+import static com.example.jordanagreen.washizu.Constants.HAND_TOP_ROW_TILES;
+import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
+import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
+import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
+import static com.example.jordanagreen.washizu.Constants.SEAT_UP;
+import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
+import static com.example.jordanagreen.washizu.Constants.TILE_WIDTH;
 
 /**
  * Created by Jordan on 9/9/2015.
@@ -17,10 +26,12 @@ public class Hand {
 
     public static final String TAG = "Hand";
 
-    public ArrayList<Tile> tiles;
+    private ArrayList<Tile> tiles;
+    private ArrayList<Meld> melds;
 
     public Hand(){
         tiles = new ArrayList<>(HAND_SIZE);
+        melds = new ArrayList<>();
     }
 
     public void addTile(Tile tile){
@@ -34,8 +45,71 @@ public class Hand {
         }
     }
 
+    public ArrayList<Tile> getTiles() {
+        return tiles;
+    }
+
+    public ArrayList<Meld> getMelds(){
+        return melds;
+    }
+
     public void sortHand(){
         Collections.sort(tiles);
+    }
+
+    public void makeChii(Tile a, Tile b, Tile c, int direction){
+        if (a.getSuit() != b.getSuit() || b.getSuit() != c.getSuit()){
+            throw new IllegalArgumentException("Making chii with tiles of different suits");
+        }
+        List<Tile> tiles = Arrays.asList(a, b, c);
+        Collections.sort(tiles);
+        if (tiles.get(0).getId() == tiles.get(1).getId() - 1 &&
+                tiles.get(1).getId() == tiles.get(2).getId() - 1){
+            Log.d(TAG, "Chii with " + tiles.get(0) + " " + tiles.get(1) + " " + tiles.get(2));
+            Meld meld = new Meld(tiles.get(0), tiles.get(1), tiles.get(2),
+                    direction, Meld.MeldType.CHII);
+            addMeld(meld);
+        }
+        else {
+            throw new IllegalArgumentException("Illegal tiles for chii");
+        }
+    }
+
+    public void makePon(Tile a, Tile b, Tile c, int direction){
+        if (a.compareTo(b) != 0 || b.compareTo(c) != 0){
+            throw new IllegalArgumentException("Illegal tiles for pon");
+        }
+        Log.d(TAG, "Pon with " + a + " " + b + " " + c);
+        Meld meld = new Meld(a, b, c, direction, Meld.MeldType.PON);
+        addMeld(meld);
+
+    }
+
+    public void makeKan(Tile a, Tile b, Tile c, Tile d, int direction, boolean isClosed){
+        if (a.compareTo(b) != 0 || b.compareTo(c) != 0 || c.compareTo(d) != 0){
+            throw new IllegalArgumentException("Illegal tiles for kan");
+        }
+        if (isClosed){
+            Log.d(TAG, "Closed kan with " + a + " " + b + " " + c + " " + d);
+            Meld meld = new Meld(a, b, c, d, direction, Meld.MeldType.CLOSED_KAN);
+            addMeld(meld);
+        }
+        else {
+            Log.d(TAG, "Kan with " + a + " " + b + " " + c + " " + d);
+            Meld meld = new Meld(a, b, c, d, direction, Meld.MeldType.KAN);
+            addMeld(meld);
+        }
+    }
+
+    private void addMeld(Meld meld){
+        //TODO: remove the tiles from the hand
+        if (melds.size() < 4){
+            melds.add(meld);
+            Log.d(TAG, "Meld added");
+        }
+        else {
+            throw new IllegalStateException("Already have four melds");
+        }
     }
 
     public boolean onTouch(MotionEvent event){
@@ -50,10 +124,14 @@ public class Hand {
         return false;
     }
 
-    public void draw(Canvas canvas, Bitmap[] tileImages, int seatDirection){
+    public void draw(Canvas canvas, int seatDirection){
+        drawHand(canvas, seatDirection);
+        drawMelds(canvas, seatDirection);
+    }
+
+    private void drawHand(Canvas canvas, int seatDirection){
         // draw the ones on the narrow sides of the phone in two rows
         // TODO: don't do this on tablets? - don't do the top row if not enough closed tiles
-//      TODO: center the hands
         switch (seatDirection){
             case SEAT_DOWN:
             case SEAT_UP:
@@ -71,7 +149,7 @@ public class Hand {
                         }
                         Tile tile = tiles.get(i);
                         tile.setLocation(x, y);
-                        tile.draw(canvas, tileImages, x, y, seatDirection);
+                        tile.draw(canvas, x, y, seatDirection);
                     }
                 }
                 // draw the bottom row
@@ -86,7 +164,7 @@ public class Hand {
                         }
                         Tile tile = tiles.get(i);
                         tile.setLocation(x, y);
-                        tile.draw(canvas, tileImages, x, y, seatDirection);
+                        tile.draw(canvas, x, y, seatDirection);
                     }
                 }
                 break;
@@ -104,7 +182,7 @@ public class Hand {
                         }
                         Tile tile = tiles.get(i);
                         tile.setLocation(x, y);
-                        tile.draw(canvas, tileImages, x, y, seatDirection);
+                        tile.draw(canvas, x, y, seatDirection);
                     }
                 }
                 break;
@@ -114,5 +192,8 @@ public class Hand {
 
     }
 
+    private void drawMelds(Canvas canvas, int seatDirection){
+
+    }
 
 }

@@ -19,6 +19,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     public static final String TAG = "WashizuView";
 
     private Bitmap[] tileImages;
+    private Bitmap[] smallTileImages;
 
     private Game game;
 
@@ -27,7 +28,8 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         setFocusable(true);
         setWillNotDraw(false);
-        tileImages = loadTileImages();
+        Tile.setTileImages(loadTileImages());
+        Tile.setSmallTileImages(loadSmallTileImages());
 
         game = new Game();
         game.startRound(Constants.ROUND_EAST_1);
@@ -72,6 +74,45 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         return bmps;
     }
 
+    private Bitmap[] loadSmallTileImages(){
+        Bitmap[] smallBmps = new Bitmap[34];
+        smallBmps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.man_1_small);
+        smallBmps[1] = BitmapFactory.decodeResource(getResources(), R.drawable.man_2_small);
+        smallBmps[2] = BitmapFactory.decodeResource(getResources(), R.drawable.man_3_small);
+        smallBmps[3] = BitmapFactory.decodeResource(getResources(), R.drawable.man_4_small);
+        smallBmps[4] = BitmapFactory.decodeResource(getResources(), R.drawable.man_5_small);
+        smallBmps[5] = BitmapFactory.decodeResource(getResources(), R.drawable.man_6_small);
+        smallBmps[6] = BitmapFactory.decodeResource(getResources(), R.drawable.man_7_small);
+        smallBmps[7] = BitmapFactory.decodeResource(getResources(), R.drawable.man_8_small);
+        smallBmps[8] = BitmapFactory.decodeResource(getResources(), R.drawable.man_9_small);
+        smallBmps[9] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_1_small);
+        smallBmps[10] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_2_small);
+        smallBmps[11] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_3_small);
+        smallBmps[12] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_4_small);
+        smallBmps[13] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_5_small);
+        smallBmps[14] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_6_small);
+        smallBmps[15] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_7_small);
+        smallBmps[16] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_8_small);
+        smallBmps[17] = BitmapFactory.decodeResource(getResources(), R.drawable.pin_9_small);
+        smallBmps[18] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_1_small);
+        smallBmps[19] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_2_small);
+        smallBmps[20] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_3_small);
+        smallBmps[21] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_4_small);
+        smallBmps[22] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_5_small);
+        smallBmps[23] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_6_small);
+        smallBmps[24] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_7_small);
+        smallBmps[25] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_8_small);
+        smallBmps[26] = BitmapFactory.decodeResource(getResources(), R.drawable.sou_9_small);
+        smallBmps[27] = BitmapFactory.decodeResource(getResources(), R.drawable.chun_small);
+        smallBmps[28] = BitmapFactory.decodeResource(getResources(), R.drawable.haku_small);
+        smallBmps[29] = BitmapFactory.decodeResource(getResources(), R.drawable.hatsu_small);
+        smallBmps[30] = BitmapFactory.decodeResource(getResources(), R.drawable.nan_small);
+        smallBmps[31] = BitmapFactory.decodeResource(getResources(), R.drawable.pei_small);
+        smallBmps[32] = BitmapFactory.decodeResource(getResources(), R.drawable.xia_small);
+        smallBmps[33] = BitmapFactory.decodeResource(getResources(), R.drawable.ton_small);
+        return smallBmps;
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 //        thread.setRunning(true);
@@ -111,7 +152,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         super.onDraw(canvas);
         canvas.drawColor(Color.WHITE);
         //TODO: figure out a way to remove the images from the call
-        game.onDraw(canvas, tileImages);
+        game.onDraw(canvas);
         postInvalidate();
     }
 

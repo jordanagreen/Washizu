@@ -29,14 +29,22 @@ public class Constants {
 //    public static final int TILE_WIDTH_PX = 44;
 //    public static final int TILE_HEIGHT_PX = 53;
 
-    public static final int TILE_WIDTH_PX = 34;
-    public static final int TILE_HEIGHT_PX = 41;
+//    public static final int TILE_WIDTH_PX = 34;
+//    public static final int TILE_HEIGHT_PX = 41;
+
+    public static final int TILE_WIDTH_PX = 33;
+    public static final int TILE_HEIGHT_PX = 40;
     public static final int TILE_WIDTH = convertToDp(TILE_WIDTH_PX);
     public static final int TILE_HEIGHT = convertToDp(TILE_HEIGHT_PX);
 
 
     public static final int HAND_TOP_ROW_TILES = 6;
     public static final int HAND_BOTTOM_ROW_TILES = 7;
+
+    public static final int SUIT_MAN = 0;
+    public static final int SUIT_PIN = 1;
+    public static final int SUIT_SOU = 2;
+    public static final int SUIT_HONOR = 3;
 
     public static final int MAN_1 = 0;
     public static final int MAN_2 = 1;

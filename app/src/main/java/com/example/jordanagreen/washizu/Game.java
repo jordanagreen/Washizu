@@ -1,6 +1,5 @@
 package com.example.jordanagreen.washizu;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -97,10 +96,10 @@ public class Game {
         return true;
     }
 
-    protected void onDraw(Canvas canvas, Bitmap[] tileImages){
+    protected void onDraw(Canvas canvas){
         for (Player player: players){
             if (player != null) {
-                player.draw(canvas, tileImages);
+                player.draw(canvas);
             }
         }
     }

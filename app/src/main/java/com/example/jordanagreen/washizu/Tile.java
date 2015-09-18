@@ -16,22 +16,15 @@ public class Tile implements Comparable<Tile>{
 
     private int id;
 
+    private static Bitmap[] tileImages;
+    private static Bitmap[] smallTileImages;
+
     public boolean isOpaque;
     public boolean isRed;
 
 //  x and y of tile in the hand
     public int x;
     public int y;
-
-    //TODO: remove this
-    public Tile(int id){
-        if (id >= Constants.TILE_MIN_ID && id <= Constants.TILE_MAX_ID){
-            this.id = id;
-        }
-        else {
-            throw new IllegalArgumentException("Invalid tile id: " + id);
-        }
-    }
 
     public Tile(int id, boolean isOpaque){
         if (id >= Constants.TILE_MIN_ID && id <= Constants.TILE_MAX_ID){
@@ -43,7 +36,19 @@ public class Tile implements Comparable<Tile>{
         }
     }
 
-    public void draw(Canvas canvas, Bitmap[] tileImages, int x, int y, int seatDirection){
+    public static void setTileImages(Bitmap[] images){
+        tileImages = images;
+    }
+
+    public static void setSmallTileImages(Bitmap[] images){
+        smallTileImages = images;
+    }
+
+    public int getSuit(){
+        return (int) Math.floor((double)id / 9d);
+    }
+
+    public void draw(Canvas canvas, int x, int y, int seatDirection){
         Matrix matrix = new Matrix();
         matrix.postRotate(seatDirection);
 
@@ -57,6 +62,10 @@ public class Tile implements Comparable<Tile>{
     public void setLocation(int x, int y){
         this.x = x;
         this.y = y;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public boolean onTouch(MotionEvent event){
