@@ -51,6 +51,16 @@ public class HandTest {
     }
 
     @Test
+    public void testMakePon_WrongTiles(){
+        thrown.expect(IllegalArgumentException.class);
+        Tile a = new Tile(Constants.CHUN, false);
+        Tile b = new Tile(Constants.CHUN, false);
+        Tile c = new Tile(Constants.HAKU, false);
+        Hand hand = new Hand();
+        hand.makePon(a, b, c, Constants.SEAT_DOWN);
+    }
+
+    @Test
     public void testMakeChii(){
         Hand hand = new Hand();
         assertEquals(hand.getMelds().size(), 0);
@@ -71,5 +81,16 @@ public class HandTest {
         Tile d = new Tile(Constants.CHUN, false);
         hand.makeKan(a, b, c, d, Constants.SEAT_DOWN, false);
         assertEquals(hand.getMelds().size(), 1);
+    }
+
+    @Test
+    public void testMakeKan_WrongTiles(){
+        thrown.expect(IllegalArgumentException.class);
+        Tile a = new Tile(Constants.CHUN, false);
+        Tile b = new Tile(Constants.CHUN, false);
+        Tile c = new Tile(Constants.HAKU, false);
+        Tile d = new Tile(Constants.HATSU, false);
+        Hand hand = new Hand();
+        hand.makeKan(a, b, c, d, Constants.SEAT_DOWN, false);
     }
 }

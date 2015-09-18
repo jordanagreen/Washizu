@@ -34,12 +34,21 @@ public class Constants {
 
     public static final int TILE_WIDTH_PX = 33;
     public static final int TILE_HEIGHT_PX = 40;
+    public static final int TILE_SMALL_WIDTH_PX = 25;
+    public static final int TILE_SMALL_HEIGHT_PX = 30;
+
     public static final int TILE_WIDTH = convertToDp(TILE_WIDTH_PX);
     public static final int TILE_HEIGHT = convertToDp(TILE_HEIGHT_PX);
+    public static final int TILE_SMALL_WIDTH = convertToDp(TILE_SMALL_WIDTH_PX);
+    public static final int TILE_SMALL_HEIGHT = convertToDp(TILE_SMALL_HEIGHT_PX);
 
 
     public static final int HAND_TOP_ROW_TILES = 6;
     public static final int HAND_BOTTOM_ROW_TILES = 7;
+
+    public static final int DISCARD_ROW_TILES = 6;
+    public static final int DISCARD_NUM_ROWS = 4;
+    public static final int DISCARD_MAX_TILES = DISCARD_ROW_TILES * DISCARD_NUM_ROWS;
 
     public static final int SUIT_MAN = 0;
     public static final int SUIT_PIN = 1;

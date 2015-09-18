@@ -2,7 +2,6 @@ package com.example.jordanagreen.washizu;
 
 import android.graphics.Canvas;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +42,13 @@ public class Hand {
         else {
             throw new IllegalStateException("Hand is full, cannot add a tile.");
         }
+    }
+
+    public void removeTile(Tile tile){
+        if (!tiles.contains(tile)){
+            throw new IllegalArgumentException("Trying to discard tile you don't have");
+        }
+        tiles.remove(tile);
     }
 
     public ArrayList<Tile> getTiles() {
@@ -112,17 +118,6 @@ public class Hand {
         }
     }
 
-    public boolean onTouch(MotionEvent event){
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-        for (Tile tile: tiles){
-            if ((x > tile.x && x < tile.x + TILE_WIDTH) &&
-                 y > tile.y && y < tile.y + TILE_HEIGHT){
-                return tile.onTouch(event);
-            }
-        }
-        return false;
-    }
 
     public void draw(Canvas canvas, int seatDirection){
         drawHand(canvas, seatDirection);
@@ -131,7 +126,7 @@ public class Hand {
 
     private void drawHand(Canvas canvas, int seatDirection){
         // draw the ones on the narrow sides of the phone in two rows
-        // TODO: don't do this on tablets? - don't do the top row if not enough closed tiles
+        // TODO: don't do the top row if not enough closed tiles
         switch (seatDirection){
             case SEAT_DOWN:
             case SEAT_UP:
