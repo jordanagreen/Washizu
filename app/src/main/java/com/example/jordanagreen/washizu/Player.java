@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import java.util.ListIterator;
+
 import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
 import static com.example.jordanagreen.washizu.Constants.TILE_WIDTH;
 
@@ -38,24 +40,31 @@ public class Player {
     public boolean onTouch(MotionEvent event){
         int x = (int) event.getX();
         int y = (int) event.getY();
-        for (Tile tile: hand.getTiles()){
+        //need an iterator so we can remove tiles while iterating over the list
+        ListIterator<Tile> it = hand.getTiles().listIterator();
+        while (it.hasNext()){
+            Tile tile = it.next();
             if ((x > tile.x && x < tile.x + TILE_WIDTH) &&
                     y > tile.y && y < tile.y + TILE_HEIGHT){
                 tile.onTouch(event);
-                discardTile(tile);
+                discardTile(tile, it);
             }
         }
         return false;
     }
 
-    public void discardTile(Tile tile){
-//        hand.removeTile(tile);
-        discards.addTile(tile, false);
+    public void discardTile(Tile tile, ListIterator<Tile> it){
+        hand.removeTile(tile, it);
+        //TODO: get rid of the try, a normal game won't have it happen
+        try {
+            discards.addTile(tile, false);
+        }
+        catch (IllegalStateException e){}
         Log.d(TAG, "Discarded " + tile);
     }
 
-    public void discardTileAndCallRiichi(Tile tile){
-        hand.removeTile(tile);
+    public void discardTileAndCallRiichi(Tile tile, ListIterator<Tile> it){
+        hand.removeTile(tile, it);
         discards.addTile(tile, true);
         inRiichi = true;
         Log.d(TAG, "Discarded " + tile + " for Riichi");

@@ -70,6 +70,7 @@ public class DiscardPool {
 //                    Log.d(TAG, "Drawing discarded tile " + tiles.get(i) + "at " + x + ", " + y);
                 }
                 break;
+            //TODO: draw right and left discard pools
             case SEAT_RIGHT:
             case SEAT_LEFT:
                 break;

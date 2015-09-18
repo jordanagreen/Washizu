@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 
 import static com.example.jordanagreen.washizu.Constants.HAND_BOTTOM_ROW_TILES;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
@@ -44,11 +45,12 @@ public class Hand {
         }
     }
 
-    public void removeTile(Tile tile){
+    public void removeTile(Tile tile, ListIterator<Tile> it){
+        //need an iterator so we can remove tiles while iterating over the list
         if (!tiles.contains(tile)){
             throw new IllegalArgumentException("Trying to discard tile you don't have");
         }
-        tiles.remove(tile);
+        it.remove();
     }
 
     public ArrayList<Tile> getTiles() {
@@ -118,7 +120,6 @@ public class Hand {
         }
     }
 
-
     public void draw(Canvas canvas, int seatDirection){
         drawHand(canvas, seatDirection);
         drawMelds(canvas, seatDirection);
@@ -130,44 +131,65 @@ public class Hand {
         switch (seatDirection){
             case SEAT_DOWN:
             case SEAT_UP:
-                int horCenterPadding = (canvas.getWidth() -
-                        (TILE_WIDTH * HAND_BOTTOM_ROW_TILES)) /2;
-                // draw the top row
-                for (int i = 0; i < HAND_TOP_ROW_TILES; i++){
-                    if (tiles.get(i) != null){
-                          int x = TILE_WIDTH * i + (TILE_WIDTH/2)
-                                  + horCenterPadding;
-                          int y = canvas.getHeight() - (TILE_HEIGHT * 2);
-                        if (seatDirection == SEAT_UP){
-                            x = canvas.getWidth() - TILE_WIDTH - x;
-                            y = TILE_HEIGHT;
+                int horCenterPadding = (canvas.getWidth() - (TILE_WIDTH * HAND_BOTTOM_ROW_TILES))/2;
+                if (tiles.size() > HAND_BOTTOM_ROW_TILES) {
+                    // draw the top row
+
+                    int topRowTiles = Math.max(HAND_TOP_ROW_TILES - (HAND_SIZE - tiles.size()), 0);
+
+
+                    for (int i = 0; i < topRowTiles; i++) {
+                        if (tiles.get(i) != null) {
+                            int x = TILE_WIDTH * i + (TILE_WIDTH / 2)
+                                    + horCenterPadding;
+                            int y = canvas.getHeight() - (TILE_HEIGHT * 2);
+                            if (seatDirection == SEAT_UP) {
+                                x = canvas.getWidth() - TILE_WIDTH - x;
+                                y = TILE_HEIGHT;
+                            }
+                            Tile tile = tiles.get(i);
+                            tile.setLocation(x, y);
+                            tile.draw(canvas, x, y, seatDirection);
                         }
-                        Tile tile = tiles.get(i);
-                        tile.setLocation(x, y);
-                        tile.draw(canvas, x, y, seatDirection);
+                    }
+                    // draw the bottom row
+                    for (int i = topRowTiles; i < tiles.size(); i++) {
+                        if (tiles.get(i) != null) {
+                            int x = TILE_WIDTH * (i - topRowTiles)
+                                    + horCenterPadding;
+                            int y = canvas.getHeight() - TILE_HEIGHT;
+                            if (seatDirection == SEAT_UP) {
+                                x = canvas.getWidth() - TILE_WIDTH - x;
+                                y = 0;
+                            }
+                            Tile tile = tiles.get(i);
+                            tile.setLocation(x, y);
+                            tile.draw(canvas, x, y, seatDirection);
+                        }
                     }
                 }
-                // draw the bottom row
-                for (int i = HAND_TOP_ROW_TILES; i < HAND_SIZE; i++){
-                    if (tiles.get(i) != null){
-                        int x = TILE_WIDTH*(i - HAND_TOP_ROW_TILES)
-                                + horCenterPadding;
-                        int y = canvas.getHeight() - TILE_HEIGHT;
-                        if (seatDirection == SEAT_UP){
-                            x = canvas.getWidth() - TILE_WIDTH - x;
-                            y = 0;
+                else {
+                    // only draw the bottom row
+                    for (int i = 0; i < tiles.size(); i++) {
+                        if (tiles.get(i) != null) {
+                            int x = TILE_WIDTH * i
+                                    + horCenterPadding;
+                            int y = canvas.getHeight() - TILE_HEIGHT;
+                            if (seatDirection == SEAT_UP) {
+                                x = canvas.getWidth() - TILE_WIDTH - x;
+                                y = 0;
+                            }
+                            Tile tile = tiles.get(i);
+                            tile.setLocation(x, y);
+                            tile.draw(canvas, x, y, seatDirection);
                         }
-                        Tile tile = tiles.get(i);
-                        tile.setLocation(x, y);
-                        tile.draw(canvas, x, y, seatDirection);
                     }
                 }
                 break;
             case SEAT_LEFT:
             case SEAT_RIGHT:
-                int verCenterPadding = (canvas.getHeight() -
-                        (TILE_WIDTH * HAND_SIZE)) /2;
-                for (int i = 0; i < HAND_SIZE; i++){
+                int verCenterPadding = (canvas.getHeight() - (TILE_WIDTH * HAND_SIZE)) /2;
+                for (int i = 0; i < tiles.size(); i++){
                     if (tiles.get(i) != null){
                         int x = 0;
                         int y = (TILE_WIDTH * i) + verCenterPadding;

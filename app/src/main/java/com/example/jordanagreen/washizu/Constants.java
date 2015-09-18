@@ -7,11 +7,6 @@ import android.content.res.Resources;
  */
 public class Constants {
 
-
-    enum Wind {EAST, SOUTH, WEST, NORTH};
-    enum Suit {MAN, PIN, SOU, HONOR};
-
-
 //    helps for rotating tiles
     public static final int SEAT_DOWN = 0;
     public static final int SEAT_LEFT = 90;
@@ -102,12 +97,10 @@ public class Constants {
     public static final int ROUND_SOUTH_3 = 6;
     public static final int ROUND_SOUTH_4 = 7;
 
-
     public static int convertToDp(int input) {
         // Get the screen's density scale
         final float scale = Resources.getSystem().getDisplayMetrics().density;
         // Convert the dps to pixels, based on density scale
         return (int) (input * scale + 0.5f);
     }
-
 }
