@@ -97,6 +97,8 @@ public class Constants {
     public static final int ROUND_SOUTH_3 = 6;
     public static final int ROUND_SOUTH_4 = 7;
 
+    public static final int NUM_ROUNDS = ROUND_SOUTH_4;
+
     public static int convertToDp(int input) {
         // Get the screen's density scale
         final float scale = Resources.getSystem().getDisplayMetrics().density;

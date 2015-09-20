@@ -4,28 +4,29 @@ import android.graphics.Canvas;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import java.util.ListIterator;
-
 import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
 import static com.example.jordanagreen.washizu.Constants.TILE_WIDTH;
 
 /**
  * Created by Jordan on 9/13/2015.
  */
-public class Player {
+public abstract class Player {
 
     public static final String TAG = "Player";
 
     //TODO: split into human and AI
 
-    private Hand hand;
-    private DiscardPool discards;
-    public int score;
-    public int wind;
-    public int direction;
-    private boolean inRiichi;
+    protected Hand hand;
+    protected DiscardPool discards;
+    protected boolean inRiichi;
+    protected Game game;
+    int score;
+    int wind;
+    private int direction;
+    private Tile tileToDiscard;
 
-    public Player(int direction){
+    public Player(Game game, int direction){
+        this.game = game;
         this.direction = direction;
         this.hand = new Hand();
         this.score = Constants.STARTING_SCORE;
@@ -33,28 +34,38 @@ public class Player {
         this.inRiichi = false;
     }
 
-    public void setHand(Hand hand) {
-        this.hand = hand;
-    }
+    public abstract int takeTurn(int playerIndex);
 
+    //TODO: move this to HumanPlayer, it's just here now to test drawing all four hands
     public boolean onTouch(MotionEvent event){
+
         int x = (int) event.getX();
         int y = (int) event.getY();
-        //need an iterator so we can remove tiles while iterating over the list
-        ListIterator<Tile> it = hand.getTiles().listIterator();
-        while (it.hasNext()){
-            Tile tile = it.next();
+        //can't remove tiles while iterating without using an iterator, so just mark it for discard
+        //doesn't matter because this is just for testing anyway
+        tileToDiscard = null;
+        //TODO: check if it's the drawn tile too
+        for (int i = 0; i < hand.getTiles().size(); i++){
+            Tile tile = hand.getTile(i);
             if ((x > tile.x && x < tile.x + TILE_WIDTH) &&
                     y > tile.y && y < tile.y + TILE_HEIGHT){
                 tile.onTouch(event);
-                discardTile(tile, it);
+                tileToDiscard = tile;
+            }
+            if (tileToDiscard != null){
+                discardTile(tileToDiscard);
+                tileToDiscard = null;
             }
         }
         return false;
     }
 
-    public void discardTile(Tile tile, ListIterator<Tile> it){
-        hand.removeTile(tile, it);
+    public void setHand(Hand hand) { this.hand = hand; }
+
+    public void setWind(int wind) { this.wind = wind; }
+
+    public void discardTile(Tile tile){
+        hand.discardTile(tile);
         //TODO: get rid of the try, a normal game won't have it happen
         try {
             discards.addTile(tile, false);
@@ -63,8 +74,8 @@ public class Player {
         Log.d(TAG, "Discarded " + tile);
     }
 
-    public void discardTileAndCallRiichi(Tile tile, ListIterator<Tile> it){
-        hand.removeTile(tile, it);
+    public void discardTileAndCallRiichi(Tile tile){
+        hand.discardTile(tile);
         discards.addTile(tile, true);
         inRiichi = true;
         Log.d(TAG, "Discarded " + tile + " for Riichi");

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 
 import static com.example.jordanagreen.washizu.Constants.HAND_BOTTOM_ROW_TILES;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
@@ -28,10 +27,12 @@ public class Hand {
 
     private ArrayList<Tile> tiles;
     private ArrayList<Meld> melds;
+    private Tile drawnTile;
 
     public Hand(){
         tiles = new ArrayList<>(HAND_SIZE);
         melds = new ArrayList<>();
+        drawnTile = null;
     }
 
     public void addTile(Tile tile){
@@ -45,12 +46,18 @@ public class Hand {
         }
     }
 
-    public void removeTile(Tile tile, ListIterator<Tile> it){
-        //need an iterator so we can remove tiles while iterating over the list
-        if (!tiles.contains(tile)){
+    public Tile getTile(int i){
+        return tiles.get(i);
+    }
+
+    public void discardTile(Tile tile){
+        if (tiles.contains(tile)){
+            tiles.remove(tile);
+//            addTile(drawnTile);
+        }
+        else if (tile != drawnTile) {
             throw new IllegalArgumentException("Trying to discard tile you don't have");
         }
-        it.remove();
     }
 
     public ArrayList<Tile> getTiles() {
@@ -60,6 +67,8 @@ public class Hand {
     public ArrayList<Meld> getMelds(){
         return melds;
     }
+
+    public void setDrawnTile(Tile tile){ drawnTile = tile; }
 
     public void sortHand(){
         Collections.sort(tiles);
@@ -127,7 +136,7 @@ public class Hand {
 
     private void drawHand(Canvas canvas, int seatDirection){
         // draw the ones on the narrow sides of the phone in two rows
-        // TODO: don't do the top row if not enough closed tiles
+        // TODO: do the drawn tile if it's not null
         switch (seatDirection){
             case SEAT_DOWN:
             case SEAT_UP:

@@ -15,6 +15,7 @@ import android.view.SurfaceView;
  */
 public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
+    //TODO: move game logic into a new thread
 
     public static final String TAG = "WashizuView";
 
@@ -32,7 +33,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         Tile.setSmallTileImages(loadSmallTileImages());
 
         game = new Game();
-        game.startRound(Constants.ROUND_EAST_1);
+        game.startGame();
     }
 
     private Bitmap[] loadTileImages(){
@@ -151,7 +152,6 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(Color.WHITE);
-        //TODO: figure out a way to remove the images from the call
         game.onDraw(canvas);
         postInvalidate();
     }

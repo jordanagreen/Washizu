@@ -19,8 +19,8 @@ public class Tile implements Comparable<Tile>{
     private static Bitmap[] tileImages;
     private static Bitmap[] smallTileImages;
 
-    public boolean isOpaque;
-    public boolean isRed;
+    boolean isOpaque;
+    boolean isRed;
 
 //  x and y of tile in the hand
     public int x;

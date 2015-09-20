@@ -47,6 +47,8 @@ public class DiscardPool {
         }
     }
 
+    public int getSize(){ return tiles.size(); }
+
     public void draw(Canvas canvas, int direction){
         switch (direction){
             case SEAT_DOWN:
