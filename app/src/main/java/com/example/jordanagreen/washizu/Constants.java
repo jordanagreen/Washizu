@@ -44,6 +44,9 @@ public class Constants {
     public static final int DISCARD_ROW_TILES = 6;
     public static final int DISCARD_NUM_ROWS = 4;
     public static final int DISCARD_MAX_TILES = DISCARD_ROW_TILES * DISCARD_NUM_ROWS;
+    public static final int DISCARD_SIDE_ROW_TILES = 12;
+    public static final int DISCARD_SIDE_NUM_ROWS = 2;
+    public static final int DISCARD_SIDE_MAX_TILES = DISCARD_SIDE_ROW_TILES * DISCARD_SIDE_NUM_ROWS;
 
     public static final int SUIT_MAN = 0;
     public static final int SUIT_PIN = 1;
@@ -98,6 +101,8 @@ public class Constants {
     public static final int ROUND_SOUTH_4 = 7;
 
     public static final int NUM_ROUNDS = ROUND_SOUTH_4;
+
+    public static final int DELAY_BETWEEN_TURNS_MS = 300;
 
     public static int convertToDp(int input) {
         // Get the screen's density scale

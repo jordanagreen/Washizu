@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import static com.example.jordanagreen.washizu.Constants.DISCARD_MAX_TILES;
 import static com.example.jordanagreen.washizu.Constants.DISCARD_NUM_ROWS;
 import static com.example.jordanagreen.washizu.Constants.DISCARD_ROW_TILES;
+import static com.example.jordanagreen.washizu.Constants.DISCARD_SIDE_ROW_TILES;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
@@ -33,6 +34,8 @@ public class DiscardPool {
     public ArrayList<Tile> getTiles(){
         return tiles;
     }
+
+    public Tile getLastTile() { return tiles.get(tiles.size()); }
 
     public void addTile(Tile tile, boolean calledRiichi){
         if (tiles.size() < DISCARD_MAX_TILES) {
@@ -73,8 +76,20 @@ public class DiscardPool {
                 }
                 break;
             //TODO: draw right and left discard pools
-            case SEAT_RIGHT:
             case SEAT_LEFT:
+            case SEAT_RIGHT:
+                int verCenterPadding = (canvas.getHeight() -
+                        (TILE_SMALL_WIDTH * DISCARD_SIDE_ROW_TILES)) / 2;
+                for (int i = 0; i < tiles.size(); i++){
+                        int x = TILE_HEIGHT + (TILE_SMALL_HEIGHT *
+                            (1 - (int) (Math.ceil(i/DISCARD_SIDE_ROW_TILES))));
+                        int y = (i % DISCARD_SIDE_ROW_TILES) * TILE_SMALL_WIDTH + verCenterPadding;
+                    if (direction == SEAT_RIGHT){
+                        x = canvas.getWidth() - TILE_SMALL_WIDTH - x;
+                        y = canvas.getHeight() - TILE_SMALL_HEIGHT - y;
+                    }
+                        tiles.get(i).drawSmall(canvas, x, y, direction);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Illegal direction: " + direction);

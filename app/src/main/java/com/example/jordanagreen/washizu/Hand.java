@@ -51,11 +51,16 @@ public class Hand {
     }
 
     public void discardTile(Tile tile){
+        Log.d(TAG, "drawn tile is " + drawnTile);
         if (tiles.contains(tile)){
             tiles.remove(tile);
+            //TODO: fix adding drawn tile not working for some reason
 //            addTile(drawnTile);
         }
-        else if (tile != drawnTile) {
+        else if (tile == drawnTile) {
+            Log.d(TAG, "discarded drawn tile");
+        }
+        else {
             throw new IllegalArgumentException("Trying to discard tile you don't have");
         }
     }
@@ -68,7 +73,10 @@ public class Hand {
         return melds;
     }
 
-    public void setDrawnTile(Tile tile){ drawnTile = tile; }
+    public void setDrawnTile(Tile tile){
+        Log.d(TAG, "drawn tile set to " + tile);
+        drawnTile = tile;
+    }
 
     public void sortHand(){
         Collections.sort(tiles);
@@ -143,10 +151,7 @@ public class Hand {
                 int horCenterPadding = (canvas.getWidth() - (TILE_WIDTH * HAND_BOTTOM_ROW_TILES))/2;
                 if (tiles.size() > HAND_BOTTOM_ROW_TILES) {
                     // draw the top row
-
                     int topRowTiles = Math.max(HAND_TOP_ROW_TILES - (HAND_SIZE - tiles.size()), 0);
-
-
                     for (int i = 0; i < topRowTiles; i++) {
                         if (tiles.get(i) != null) {
                             int x = TILE_WIDTH * i + (TILE_WIDTH / 2)
@@ -194,6 +199,13 @@ public class Hand {
                         }
                     }
                 }
+                // TODO: draw the drawn tile
+//                if (drawnTile != null && seatDirection == SEAT_DOWN){
+//                    int x = TILE_WIDTH * 4 + (TILE_WIDTH / 2)
+//                            + horCenterPadding;
+//                    int y = canvas.getHeight() - (TILE_HEIGHT * 2  + TILE_WIDTH);
+//                    drawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
+//                }
                 break;
             case SEAT_LEFT:
             case SEAT_RIGHT:

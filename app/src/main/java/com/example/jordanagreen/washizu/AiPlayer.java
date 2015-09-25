@@ -14,15 +14,18 @@ public class AiPlayer extends Player {
     }
 
     @Override
-    public int takeTurn(int playerIndex){
-        int nextPlayerIndex = (playerIndex + 1) % 4;
+    //return true if game is finished (tsumo)
+    //if returned false, should be a discarded tile
+    public void takeTurn(){
+//        int nextPlayerIndex = (playerIndex + 1) % 4;
         Tile tile = game.drawTile();
         hand.setDrawnTile(tile);
 
         //for now just discard a random tile
         Random rand = new Random();
-        int i = rand.nextInt(Constants.HAND_SIZE);
+        int i = rand.nextInt(hand.getTiles().size());
         discardTile(hand.getTile(i));
-        return nextPlayerIndex;
+//        return nextPlayerIndex;
+//        return false;
     }
 }

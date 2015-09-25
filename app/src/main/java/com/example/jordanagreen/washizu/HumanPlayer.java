@@ -16,14 +16,15 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public int takeTurn(int playerIndex){
-        int nextPlayerIndex = (playerIndex + 1) % 4;
+    public void takeTurn(){
+        Log.d(TAG, "Taking human player's turn");
+//        int nextPlayerIndex = (playerIndex + 1) % 4;
         Tile tile = game.drawTile();
         Log.d(TAG, "Drew tile " + tile);
         hand.setDrawnTile(tile);
         //TODO: stall until the user touches a tile
 
-        return nextPlayerIndex;
+//        return nextPlayerIndex;
     }
 
 

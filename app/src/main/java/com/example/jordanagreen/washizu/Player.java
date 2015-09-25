@@ -23,6 +23,7 @@ public abstract class Player {
     int score;
     int wind;
     private int direction;
+
     private Tile tileToDiscard;
 
     public Player(Game game, int direction){
@@ -34,10 +35,17 @@ public abstract class Player {
         this.inRiichi = false;
     }
 
-    public abstract int takeTurn(int playerIndex);
+    public abstract void takeTurn();
+
+    public Tile getTileToDiscard() {
+        return tileToDiscard;
+    }
 
     //TODO: move this to HumanPlayer, it's just here now to test drawing all four hands
+    //return true if a tile was discarded
     public boolean onTouch(MotionEvent event){
+
+        boolean didDiscardTile = false;
 
         int x = (int) event.getX();
         int y = (int) event.getY();
@@ -52,12 +60,13 @@ public abstract class Player {
                 tile.onTouch(event);
                 tileToDiscard = tile;
             }
-            if (tileToDiscard != null){
-                discardTile(tileToDiscard);
-                tileToDiscard = null;
-            }
         }
-        return false;
+        if (tileToDiscard != null){
+            discardTile(tileToDiscard);
+            tileToDiscard = null;
+            didDiscardTile = true;
+        }
+        return didDiscardTile;
     }
 
     public void setHand(Hand hand) { this.hand = hand; }
@@ -65,6 +74,7 @@ public abstract class Player {
     public void setWind(int wind) { this.wind = wind; }
 
     public void discardTile(Tile tile){
+        Log.d(TAG, "discarding tile " + tile);
         hand.discardTile(tile);
         //TODO: get rid of the try, a normal game won't have it happen
         try {
@@ -79,6 +89,10 @@ public abstract class Player {
         discards.addTile(tile, true);
         inRiichi = true;
         Log.d(TAG, "Discarded " + tile + " for Riichi");
+    }
+
+    public Tile getLastDiscardedTile(){
+        return discards.getLastTile();
     }
 
     public void draw(Canvas canvas){
