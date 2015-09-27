@@ -2,10 +2,6 @@ package com.example.jordanagreen.washizu;
 
 import android.graphics.Canvas;
 import android.util.Log;
-import android.view.MotionEvent;
-
-import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
-import static com.example.jordanagreen.washizu.Constants.TILE_WIDTH;
 
 /**
  * Created by Jordan on 9/13/2015.
@@ -23,8 +19,9 @@ public abstract class Player {
     int score;
     int wind;
     private int direction;
+    private boolean isMyTurn;
 
-    private Tile tileToDiscard;
+
 
     public Player(Game game, int direction){
         this.game = game;
@@ -33,54 +30,23 @@ public abstract class Player {
         this.score = Constants.STARTING_SCORE;
         this.discards = new DiscardPool();
         this.inRiichi = false;
+        isMyTurn = false;
     }
 
     public abstract void takeTurn();
-
-    public Tile getTileToDiscard() {
-        return tileToDiscard;
-    }
-
-    //TODO: move this to HumanPlayer, it's just here now to test drawing all four hands
-    //return true if a tile was discarded
-    public boolean onTouch(MotionEvent event){
-
-        boolean didDiscardTile = false;
-
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-        //can't remove tiles while iterating without using an iterator, so just mark it for discard
-        //doesn't matter because this is just for testing anyway
-        tileToDiscard = null;
-        //TODO: check if it's the drawn tile too
-        for (int i = 0; i < hand.getTiles().size(); i++){
-            Tile tile = hand.getTile(i);
-            if ((x > tile.x && x < tile.x + TILE_WIDTH) &&
-                    y > tile.y && y < tile.y + TILE_HEIGHT){
-                tile.onTouch(event);
-                tileToDiscard = tile;
-            }
-        }
-        if (tileToDiscard != null){
-            discardTile(tileToDiscard);
-            tileToDiscard = null;
-            didDiscardTile = true;
-        }
-        return didDiscardTile;
-    }
 
     public void setHand(Hand hand) { this.hand = hand; }
 
     public void setWind(int wind) { this.wind = wind; }
 
+    public void setIsMyTurn(boolean isMyTurn){
+        this.isMyTurn = isMyTurn;
+    }
+
     public void discardTile(Tile tile){
         Log.d(TAG, "discarding tile " + tile);
         hand.discardTile(tile);
-        //TODO: get rid of the try, a normal game won't have it happen
-        try {
-            discards.addTile(tile, false);
-        }
-        catch (IllegalStateException e){}
+        discards.addTile(tile, false);
         Log.d(TAG, "Discarded " + tile);
     }
 
@@ -96,7 +62,8 @@ public abstract class Player {
     }
 
     public void draw(Canvas canvas){
-        hand.draw(canvas, direction);
+        //if it's this player's turn, draw the tile they drew too
+        hand.draw(canvas, direction, isMyTurn);
         discards.draw(canvas, direction);
     }
 

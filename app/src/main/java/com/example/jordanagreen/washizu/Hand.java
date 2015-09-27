@@ -55,7 +55,7 @@ public class Hand {
         if (tiles.contains(tile)){
             tiles.remove(tile);
             //TODO: fix adding drawn tile not working for some reason
-//            addTile(drawnTile);
+            addTile(drawnTile);
         }
         else if (tile == drawnTile) {
             Log.d(TAG, "discarded drawn tile");
@@ -137,12 +137,12 @@ public class Hand {
         }
     }
 
-    public void draw(Canvas canvas, int seatDirection){
-        drawHand(canvas, seatDirection);
+    public void draw(Canvas canvas, int seatDirection, boolean drawDrawnTile){
+        drawHand(canvas, seatDirection, drawDrawnTile);
         drawMelds(canvas, seatDirection);
     }
 
-    private void drawHand(Canvas canvas, int seatDirection){
+    private void drawHand(Canvas canvas, int seatDirection, boolean drawDrawnTile){
         // draw the ones on the narrow sides of the phone in two rows
         // TODO: do the drawn tile if it's not null
         switch (seatDirection){
@@ -200,12 +200,12 @@ public class Hand {
                     }
                 }
                 // TODO: draw the drawn tile
-//                if (drawnTile != null && seatDirection == SEAT_DOWN){
-//                    int x = TILE_WIDTH * 4 + (TILE_WIDTH / 2)
-//                            + horCenterPadding;
-//                    int y = canvas.getHeight() - (TILE_HEIGHT * 2  + TILE_WIDTH);
-//                    drawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
-//                }
+                if (drawDrawnTile && drawnTile != null && seatDirection == SEAT_DOWN){
+                    int x = TILE_WIDTH * 4 + (TILE_WIDTH / 2)
+                            + horCenterPadding;
+                    int y = canvas.getHeight() - (TILE_HEIGHT * 2  + TILE_WIDTH);
+                    drawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
+                }
                 break;
             case SEAT_LEFT:
             case SEAT_RIGHT:

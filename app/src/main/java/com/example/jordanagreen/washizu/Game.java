@@ -34,11 +34,15 @@ public class Game {
     private Player[] players;
     private int roundNumber;
     private Stack<Tile> pool;
-    int mCurrentPlayerIndex;
+    private int mCurrentPlayerIndex;
 
     public Game(){
         players = new Player[4];
         pool = new Stack<>();
+    }
+
+    public int getCurrentPlayerIndex(){
+        return mCurrentPlayerIndex;
     }
 
     public void startGame(){
@@ -72,31 +76,47 @@ public class Game {
 
     //Call when taking the player's turn, starts a loop that goes through all the AI players' turns
     private void takeNextTurn(){
+        for (Player player: players){
+            player.setIsMyTurn(false);
+        }
         if (players[mCurrentPlayerIndex] instanceof AiPlayer){
             final Handler handler = new Handler();
             Log.d(TAG, "AI player's turn " + mCurrentPlayerIndex);
             // wait a little bit just so it doesn't look like everyone's going at once
             //TODO: this really needs to be in another thread
-            Log.d(TAG, "starting handler");
+//            Log.d(TAG, "starting handler");
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(TAG, "handler started");
+//                    Log.d(TAG, "handler started");
                     players[mCurrentPlayerIndex].takeTurn();
+                    players[mCurrentPlayerIndex].setIsMyTurn(true);
                     //for now, just go to the next person on the right
                     mCurrentPlayerIndex = (mCurrentPlayerIndex + 1) % 4;
                     // if the next player is also an AI, do this again
                     if (players[mCurrentPlayerIndex] instanceof AiPlayer){
                         handler.postDelayed(this, DELAY_BETWEEN_TURNS_MS);
+
+                    }
+                    else {
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                players[mCurrentPlayerIndex].takeTurn();
+                                players[mCurrentPlayerIndex].setIsMyTurn(true);
+                            }
+                        }, DELAY_BETWEEN_TURNS_MS);
                     }
                 }
             }, DELAY_BETWEEN_TURNS_MS);
         }
-        //now it's the player's turn - draw a tile and wait for input
-        else {
-            Log.d(TAG, "Human player's turn");
-            players[mCurrentPlayerIndex].takeTurn();
-        }
+        //otherwise it's the player's turn - draw a tile and wait for input
+//        else {
+//            Log.d(TAG, "Human player's turn");
+//            players[mCurrentPlayerIndex].takeTurn();
+//            mCurrentPlayerIndex = (mCurrentPlayerIndex + 1) % 4;
+//            takeNextTurn();
+//        }
 
         //TODO: see if anyone wants to call the tile (assuming the game isn't over by tsumo)
 //        if (players[mCurrentPlayerIndex] instanceof AiPlayer){
@@ -143,9 +163,9 @@ public class Game {
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             Log.d(TAG, "Touch down at " + event.getX() + ", " + event.getY());
             // if it's the player's turn, let him pick a tile to discard
-            if (mCurrentPlayerIndex == 0) {
+            if (players[mCurrentPlayerIndex] instanceof HumanPlayer) {
                 //once we've actually discarded a tile, start the next turn loop
-                if (players[mCurrentPlayerIndex].onTouch(event)){
+                if (((HumanPlayer)(players[mCurrentPlayerIndex])).onTouch(event)){
                     mCurrentPlayerIndex = mCurrentPlayerIndex + 1;
                     takeNextTurn();
                 }
