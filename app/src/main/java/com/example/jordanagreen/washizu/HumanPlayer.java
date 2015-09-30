@@ -25,6 +25,11 @@ public class HumanPlayer extends Player {
         hand.setDrawnTile(tile);
     }
 
+    @Override
+    public boolean shouldPon(Tile tile){
+        return true;
+    }
+
     //return true if a tile was discarded
     public boolean onTouch(MotionEvent event){
 
@@ -34,13 +39,21 @@ public class HumanPlayer extends Player {
         int x = (int) event.getX();
         int y = (int) event.getY();
         //can't remove tiles while iterating without using an iterator, so just mark it for discard
-        //TODO: check if it's the drawn tile too
         for (int i = 0; i < hand.getTiles().size(); i++){
             Tile tile = hand.getTile(i);
             if ((x > tile.x && x < tile.x + TILE_WIDTH) &&
                     y > tile.y && y < tile.y + TILE_HEIGHT){
                 tile.onTouch(event);
                 tileToDiscard = tile;
+            }
+        }
+        //check if it's the drawn tile
+        if (tileToDiscard == null && hand.getDrawnTile() != null){
+            Tile drawnTile = hand.getDrawnTile();
+            if (x > drawnTile.x && x < drawnTile.x + TILE_HEIGHT &&
+                    y > drawnTile.y && y < drawnTile.y + TILE_WIDTH){
+                drawnTile.onTouch(event);
+                tileToDiscard = drawnTile;
             }
         }
         if (tileToDiscard != null){

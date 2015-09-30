@@ -19,9 +19,6 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
     public static final String TAG = "WashizuView";
 
-    private Bitmap[] tileImages;
-    private Bitmap[] smallTileImages;
-
     private Game game;
 
     public WashizuView(Context context, AttributeSet attrs){
@@ -155,5 +152,6 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         game.onDraw(canvas);
         postInvalidate();
     }
+
 
 }

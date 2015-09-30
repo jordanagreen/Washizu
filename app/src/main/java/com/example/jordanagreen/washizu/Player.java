@@ -18,7 +18,7 @@ public abstract class Player {
     protected Game game;
     int score;
     int wind;
-    private int direction;
+    protected int direction;
     private boolean isMyTurn;
 
 
@@ -33,11 +33,26 @@ public abstract class Player {
         isMyTurn = false;
     }
 
+    public Player(Game game, int direction, Hand hand){
+        this.game = game;
+        this.direction = direction;
+        this.hand = new Hand();
+        this.score = Constants.STARTING_SCORE;
+        this.discards = new DiscardPool();
+        this.inRiichi = false;
+        isMyTurn = false;
+        this.hand = hand;
+    }
+
     public abstract void takeTurn(Game.GameCallback callback);
 
-    public void setHand(Hand hand) { this.hand = hand; }
+    public void setHand(Hand hand) {
+        this.hand = hand;
+    }
 
-    public void setWind(int wind) { this.wind = wind; }
+    public void setWind(int wind) {
+        this.wind = wind;
+    }
 
     public void setIsMyTurn(boolean isMyTurn){
         this.isMyTurn = isMyTurn;
@@ -63,6 +78,42 @@ public abstract class Player {
 
     public Tile getLastDiscardedTile(){
         return discards.getLastTile();
+    }
+
+    public boolean canPon(Tile tile){
+        int inHand = 0;
+        for (Tile t: hand.getTiles()){
+            if (tile.compareTo(t) == 0){
+                inHand++;
+            }
+        }
+        return inHand >= 2;
+    }
+
+    public abstract boolean shouldPon(Tile tile);
+
+    public void callPon(Tile tile, int direction){
+        //get the two other tiles from the hand
+        int ia = 0;
+        int ib = 0;
+        for (int i = 0; i < hand.getTiles().size(); i++){
+            if (hand.getTile(i).compareTo(tile) == 0){
+                ia = i;
+                break;
+            }
+        }
+        for (int i = ia + 1; i < hand.getTiles().size(); i++){
+            if (hand.getTile(i).compareTo(tile) == 0){
+                ib = i;
+                break;
+            }
+        }
+        if (ib == 0){
+            throw new IllegalStateException("Called pon but couldn't find two similar tiles");
+        }
+        Tile a = hand.getTile(ia);
+        Tile b = hand.getTile(ib);
+        hand.makePon(tile, a, b, direction);
     }
 
     public void draw(Canvas canvas){

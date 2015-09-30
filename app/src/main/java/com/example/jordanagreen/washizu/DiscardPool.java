@@ -35,7 +35,7 @@ public class DiscardPool {
         return tiles;
     }
 
-    public Tile getLastTile() { return tiles.get(tiles.size()); }
+    public Tile getLastTile() { return tiles.get(tiles.size()-1); }
 
     public void addTile(Tile tile, boolean calledRiichi){
         if (tiles.size() < DISCARD_MAX_TILES) {

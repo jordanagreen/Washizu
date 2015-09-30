@@ -35,6 +35,12 @@ public class Hand {
         mDrawnTile = null;
     }
 
+    public Hand(ArrayList<Tile> tiles){
+        this.tiles = tiles;
+        melds = new ArrayList<>();
+        mDrawnTile = null;
+    }
+
     public void addTile(Tile tile){
         if (tiles.size() < HAND_SIZE){
             Log.d(TAG, "Tile " + tile + " added");
@@ -54,7 +60,6 @@ public class Hand {
         Log.d(TAG, "drawn tile is " + mDrawnTile);
         if (tiles.contains(tile)){
             tiles.remove(tile);
-            //TODO: fix adding drawn tile not working for some reason
             addTile(mDrawnTile);
         }
         else if (tile == mDrawnTile) {
@@ -76,6 +81,10 @@ public class Hand {
     public void setDrawnTile(Tile tile){
         Log.d(TAG, "drawn tile set to " + tile);
         mDrawnTile = tile;
+    }
+
+    public Tile getDrawnTile(){
+        return mDrawnTile;
     }
 
     public void sortHand(){
@@ -130,6 +139,9 @@ public class Hand {
         //TODO: remove the tiles from the hand
         if (melds.size() < 4){
             melds.add(meld);
+            for (Tile tile: meld.getTiles()){
+                tiles.remove(tile);
+            }
             Log.d(TAG, "Meld added");
         }
         else {
@@ -144,7 +156,6 @@ public class Hand {
 
     private void drawHand(Canvas canvas, int seatDirection, boolean drawDrawnTile){
         // draw the ones on the narrow sides of the phone in two rows
-        // TODO: do the drawn tile if it's not null
         switch (seatDirection){
             case SEAT_DOWN:
             case SEAT_UP:
@@ -243,7 +254,9 @@ public class Hand {
     }
 
     private void drawMelds(Canvas canvas, int seatDirection){
-
+        for (int i = 0; i < melds.size(); i++){
+            melds.get(i).draw(canvas, seatDirection, i);
+        }
     }
 
 }

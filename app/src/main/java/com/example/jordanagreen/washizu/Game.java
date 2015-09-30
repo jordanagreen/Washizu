@@ -41,10 +41,6 @@ public class Game {
         pool = new Stack<>();
     }
 
-    public int getCurrentPlayerIndex(){
-        return mCurrentPlayerIndex;
-    }
-
     public void startGame(){
         players[0] = new HumanPlayer(this, SEAT_DOWN);
         players[1] = new AiPlayer(this, SEAT_RIGHT);
@@ -71,18 +67,23 @@ public class Game {
         dealHands();
     }
 
-    //Call when taking the player's turn, starts a loop that goes through all the AI players' turns
-    // if it's an AI, take their turn, else break the loop (i.e. wait for input)
+    interface GameCallback {
+        void callback();
+    }
+
     private void takeNextTurn(){
         players[mCurrentPlayerIndex].setIsMyTurn(true);
+        //if the player is an AI, immediately call onTurnFinished, which will start the next turn
         if (players[mCurrentPlayerIndex] instanceof AiPlayer){
             players[mCurrentPlayerIndex].takeTurn(new GameCallback() {
                 @Override
                 public void callback() {
-                    onTurnFinished();
+                    Tile discardedTile = players[mCurrentPlayerIndex].getLastDiscardedTile();
+                    onTurnFinished(discardedTile);
                 }
             });
         }
+        //otherwise wait for input and it'll finish the turn when a discard has been made
         else {
             players[mCurrentPlayerIndex].takeTurn(new GameCallback() {
                 @Override
@@ -91,31 +92,36 @@ public class Game {
                 }
             });
         }
-
     }
 
-    private void onTurnFinished(){
+    private void onTurnFinished(final Tile discardedTile){
         players[mCurrentPlayerIndex].setIsMyTurn(false);
-        //TODO: see if anyone wants to call the tile (assuming the game isn't over by tsumo)
-        //for now just go to the player on the right
-
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mCurrentPlayerIndex = getNextPlayerIndex();
+                mCurrentPlayerIndex = getNextPlayerIndex(discardedTile);
                 takeNextTurn();
             }
         }, DELAY_BETWEEN_TURNS_MS);
-//        takeNextTurn();
     }
 
-    private int getNextPlayerIndex(){
-        return (mCurrentPlayerIndex + 1) % 4;
-    }
+    private int getNextPlayerIndex(Tile discardedTile){
+        //TODO: see if anyone wants to call the tile (assuming the game isn't over by tsumo)
+        for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + 3; j++){
+            int i = j % players.length;
+            if (players[i].canPon(discardedTile)){
+                if (players[i].shouldPon(discardedTile)){
+                    Log.d(TAG, "Player " + i + " calling pon on " + discardedTile + " from " + mCurrentPlayerIndex);
+                    players[i].callPon(discardedTile, mCurrentPlayerIndex * 90);
+                }
+            }
+        }
 
-    interface GameCallback {
-        void callback();
+
+        //for now just go to the player on the right
+        Log.d(TAG, "Next player is " + (mCurrentPlayerIndex + 1) % players.length);
+        return (mCurrentPlayerIndex + 1) % players.length;
     }
 
     private void shufflePool(){
@@ -156,10 +162,11 @@ public class Game {
             Log.d(TAG, "Touch down at " + event.getX() + ", " + event.getY());
             // if it's the player's turn, let him pick a tile to discard
             if (players[mCurrentPlayerIndex] instanceof HumanPlayer
-                    && players[mCurrentPlayerIndex].getIsMyTurn() == true) {
-                //once we've actually discarded a tile, start the next turn loop
+                    && players[mCurrentPlayerIndex].getIsMyTurn()) {
+                //once we've actually discarded a tile, start the next turn
                 if (((HumanPlayer)(players[mCurrentPlayerIndex])).onTouch(event)){
-                    onTurnFinished();
+                    Tile discardedTile = players[mCurrentPlayerIndex].getLastDiscardedTile();
+                    onTurnFinished(discardedTile);
                 }
             }
         }
@@ -173,6 +180,4 @@ public class Game {
             }
         }
     }
-
-
 }
