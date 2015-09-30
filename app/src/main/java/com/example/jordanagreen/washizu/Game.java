@@ -1,6 +1,7 @@
 package com.example.jordanagreen.washizu;
 
 import android.graphics.Canvas;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -9,6 +10,7 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Stack;
 
+import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
 import static com.example.jordanagreen.washizu.Constants.ROUND_EAST_1;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
@@ -96,8 +98,16 @@ public class Game {
         players[mCurrentPlayerIndex].setIsMyTurn(false);
         //TODO: see if anyone wants to call the tile (assuming the game isn't over by tsumo)
         //for now just go to the player on the right
-        mCurrentPlayerIndex = getCurrentPlayerIndex();
-        takeNextTurn();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mCurrentPlayerIndex = getNextPlayerIndex();
+                takeNextTurn();
+            }
+        }, DELAY_BETWEEN_TURNS_MS);
+//        takeNextTurn();
     }
 
     private int getNextPlayerIndex(){

@@ -102,7 +102,7 @@ public class Constants {
 
     public static final int NUM_ROUNDS = ROUND_SOUTH_4;
 
-    public static final int DELAY_BETWEEN_TURNS_MS = 1000;
+    public static final int DELAY_BETWEEN_TURNS_MS = 500;
 
     public static int convertToDp(int input) {
         // Get the screen's density scale
