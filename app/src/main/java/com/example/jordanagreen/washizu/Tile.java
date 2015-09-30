@@ -22,7 +22,6 @@ public class Tile implements Comparable<Tile>{
     boolean isOpaque;
     boolean isRed;
 
-//  x and y of tile in the hand
     public int x;
     public int y;
 

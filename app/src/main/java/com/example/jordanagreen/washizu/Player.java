@@ -33,7 +33,7 @@ public abstract class Player {
         isMyTurn = false;
     }
 
-    public abstract void takeTurn();
+    public abstract void takeTurn(Game.GameCallback callback);
 
     public void setHand(Hand hand) { this.hand = hand; }
 
@@ -41,6 +41,10 @@ public abstract class Player {
 
     public void setIsMyTurn(boolean isMyTurn){
         this.isMyTurn = isMyTurn;
+    }
+
+    public boolean getIsMyTurn(){
+        return isMyTurn;
     }
 
     public void discardTile(Tile tile){

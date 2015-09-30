@@ -63,7 +63,7 @@ public class DiscardPool {
                 for (int i = 0; i < tiles.size(); i++){
                     //TODO: handle riichi sideways tile
                     int x = (i % DISCARD_ROW_TILES) * TILE_SMALL_WIDTH + horCenterPadding;
-                    //TODO: move it up a bit if it gets to a fourth row
+                    //TODO: make it a bit smaller if it gets to a fourth row?
                     int y = canvas.getHeight() - ((TILE_HEIGHT * 2) + (TILE_SMALL_HEIGHT *
                         (DISCARD_NUM_ROWS - (int)(Math.floor(i/DISCARD_ROW_TILES))))
                         + TILE_SMALL_HEIGHT/2);
@@ -75,7 +75,6 @@ public class DiscardPool {
 //                    Log.d(TAG, "Drawing discarded tile " + tiles.get(i) + "at " + x + ", " + y);
                 }
                 break;
-            //TODO: draw right and left discard pools
             case SEAT_LEFT:
             case SEAT_RIGHT:
                 int verCenterPadding = (canvas.getHeight() -

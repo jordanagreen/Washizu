@@ -27,12 +27,12 @@ public class Hand {
 
     private ArrayList<Tile> tiles;
     private ArrayList<Meld> melds;
-    private Tile drawnTile;
+    private Tile mDrawnTile;
 
     public Hand(){
         tiles = new ArrayList<>(HAND_SIZE);
         melds = new ArrayList<>();
-        drawnTile = null;
+        mDrawnTile = null;
     }
 
     public void addTile(Tile tile){
@@ -51,13 +51,13 @@ public class Hand {
     }
 
     public void discardTile(Tile tile){
-        Log.d(TAG, "drawn tile is " + drawnTile);
+        Log.d(TAG, "drawn tile is " + mDrawnTile);
         if (tiles.contains(tile)){
             tiles.remove(tile);
             //TODO: fix adding drawn tile not working for some reason
-            addTile(drawnTile);
+            addTile(mDrawnTile);
         }
-        else if (tile == drawnTile) {
+        else if (tile == mDrawnTile) {
             Log.d(TAG, "discarded drawn tile");
         }
         else {
@@ -75,7 +75,7 @@ public class Hand {
 
     public void setDrawnTile(Tile tile){
         Log.d(TAG, "drawn tile set to " + tile);
-        drawnTile = tile;
+        mDrawnTile = tile;
     }
 
     public void sortHand(){
@@ -199,12 +199,15 @@ public class Hand {
                         }
                     }
                 }
-                // TODO: draw the drawn tile
-                if (drawDrawnTile && drawnTile != null && seatDirection == SEAT_DOWN){
+                if (drawDrawnTile && mDrawnTile != null){
                     int x = TILE_WIDTH * 4 + (TILE_WIDTH / 2)
                             + horCenterPadding;
                     int y = canvas.getHeight() - (TILE_HEIGHT * 2  + TILE_WIDTH);
-                    drawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
+                    if (seatDirection == SEAT_UP){
+                        x = canvas.getWidth() - x - TILE_HEIGHT;
+                        y = canvas.getHeight() - y - TILE_WIDTH;
+                    }
+                    mDrawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
                 }
                 break;
             case SEAT_LEFT:
@@ -222,6 +225,15 @@ public class Hand {
                         tile.setLocation(x, y);
                         tile.draw(canvas, x, y, seatDirection);
                     }
+                }
+                if (drawDrawnTile && mDrawnTile != null){
+                    int x = TILE_HEIGHT;
+                    int y = (TILE_WIDTH * 11) + verCenterPadding;
+                    if (seatDirection == SEAT_RIGHT){
+                        x = canvas.getWidth() - x - TILE_HEIGHT;
+                        y = canvas.getHeight() - y - TILE_WIDTH;
+                    }
+                    mDrawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
                 }
                 break;
             default:
