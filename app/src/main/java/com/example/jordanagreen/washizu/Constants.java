@@ -21,16 +21,18 @@ public class Constants {
     public static final int HAND_SIZE = 13;
     public static final int STARTING_SCORE = 2500;
 
-//    public static final int TILE_WIDTH_PX = 44;
-//    public static final int TILE_HEIGHT_PX = 53;
 
-//    public static final int TILE_WIDTH_PX = 34;
-//    public static final int TILE_HEIGHT_PX = 41;
+//    public static final int TILE_WIDTH_PX = 33;
+//    public static final int TILE_HEIGHT_PX = 40;
 
-    public static final int TILE_WIDTH_PX = 33;
-    public static final int TILE_HEIGHT_PX = 40;
-    public static final int TILE_SMALL_WIDTH_PX = 25;
-    public static final int TILE_SMALL_HEIGHT_PX = 30;
+    public static final int TILE_WIDTH_PX = 27;
+    public static final int TILE_HEIGHT_PX = 39;
+
+//    public static final int TILE_SMALL_WIDTH_PX = 25;
+//    public static final int TILE_SMALL_HEIGHT_PX = 30;
+
+    public static final int TILE_SMALL_WIDTH_PX = 20;
+    public static final int TILE_SMALL_HEIGHT_PX = 29;
 
     public static final int TILE_WIDTH = convertToDp(TILE_WIDTH_PX);
     public static final int TILE_HEIGHT = convertToDp(TILE_HEIGHT_PX);
@@ -102,7 +104,7 @@ public class Constants {
 
     public static final int NUM_ROUNDS = ROUND_SOUTH_4;
 
-    public static final int DELAY_BETWEEN_TURNS_MS = 500;
+    public static final int DELAY_BETWEEN_TURNS_MS = 300;
 
     public static int convertToDp(int input) {
         // Get the screen's density scale

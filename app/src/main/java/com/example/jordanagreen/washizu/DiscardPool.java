@@ -84,8 +84,8 @@ public class DiscardPool {
                             (1 - (int) (Math.ceil(i/DISCARD_SIDE_ROW_TILES))));
                         int y = (i % DISCARD_SIDE_ROW_TILES) * TILE_SMALL_WIDTH + verCenterPadding;
                     if (direction == SEAT_RIGHT){
-                        x = canvas.getWidth() - TILE_SMALL_WIDTH - x;
-                        y = canvas.getHeight() - TILE_SMALL_HEIGHT - y;
+                        x = canvas.getWidth() - TILE_SMALL_HEIGHT - x;
+                        y = canvas.getHeight() - TILE_SMALL_WIDTH - y;
                     }
                         tiles.get(i).drawSmall(canvas, x, y, direction);
                 }
