@@ -65,21 +65,27 @@ public class Meld {
                     if (directionCalled == (seatDirection + 180) % 360){
                         rotatedIndex = 1;
                     }
-                    else if (directionCalled == (seatDirection + 270) % 360){
+                    else if (directionCalled == (seatDirection + 90) % 360){
                         rotatedIndex = 2;
                     }
                     int x = canvas.getWidth() - (2 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                     int y = canvas.getHeight() - (TILE_SMALL_HEIGHT * (meldNumber+1));
                     for (int i = 0; i < tiles.length; i++){
-//                        if (seatDirection == SEAT_UP){
-//                            x = canvas.getWidth() - x;
-//                            y = canvas.getHeight() - y;
-//                        }
-//                        if (i == rotatedIndex){
-//                            tiles[i].drawSmall(canvas, x, y, (seatDirection + 90) % 360);
-//                            x = x + TILE_SMALL_HEIGHT;
-//                        }
-//                        else {
+                        if (i == rotatedIndex){
+                            if (seatDirection == SEAT_DOWN){
+                                tiles[i].drawSmall(canvas, x,
+                                        y + (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
+                                        (seatDirection + 90) % 360);
+                            }
+                            else {
+                                tiles[i].drawSmall(canvas, canvas.getWidth() - x - TILE_SMALL_HEIGHT,
+                                        canvas.getHeight() - y - TILE_SMALL_WIDTH -
+                                                (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
+                                        (seatDirection + 90) % 360);
+                            }
+                            x = x + TILE_SMALL_HEIGHT;
+                        }
+                        else {
                         if (seatDirection == SEAT_DOWN){
                             tiles[i].drawSmall(canvas, x, y, seatDirection);
                         }
@@ -89,7 +95,7 @@ public class Meld {
                         }
 
                             x = x + TILE_SMALL_WIDTH;
-//                        }
+                        }
                     }
                 }
                 break;

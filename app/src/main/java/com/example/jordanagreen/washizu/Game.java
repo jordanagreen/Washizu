@@ -35,10 +35,13 @@ public class Game {
     private int roundNumber;
     private Stack<Tile> pool;
     private int mCurrentPlayerIndex;
+    //TODO: there should be a better way to implement this
+    private boolean mCallMade;
 
     public Game(){
         players = new Player[4];
         pool = new Stack<>();
+        mCallMade = false;
     }
 
     public void startGame(){
@@ -73,6 +76,16 @@ public class Game {
 
     private void takeNextTurn(){
         players[mCurrentPlayerIndex].setIsMyTurn(true);
+
+        //if they're getting their turn from calling a tile, they don't get to draw
+        if (!mCallMade){
+            Log.d(TAG, "drawing a tile");
+            players[mCurrentPlayerIndex].drawTile();
+        }
+        else {
+            Log.d(TAG, "pon called, no draw");
+        }
+        mCallMade = false;
         //if the player is an AI, immediately call onTurnFinished, which will start the next turn
         if (players[mCurrentPlayerIndex] instanceof AiPlayer){
             players[mCurrentPlayerIndex].takeTurn(new GameCallback() {
@@ -108,16 +121,19 @@ public class Game {
 
     private int getNextPlayerIndex(Tile discardedTile){
         //TODO: see if anyone wants to call the tile (assuming the game isn't over by tsumo)
-        for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + 3; j++){
+        for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++){
             int i = j % players.length;
             if (players[i].canPon(discardedTile)){
                 if (players[i].shouldPon(discardedTile)){
+                    //call the tile, remove it from the discard, and that player gets the next turn
                     Log.d(TAG, "Player " + i + " calling pon on " + discardedTile + " from " + mCurrentPlayerIndex);
                     players[i].callPon(discardedTile, mCurrentPlayerIndex * 90);
+                    players[mCurrentPlayerIndex].discards.removeLastTile();
+                    mCallMade = true;
+                    return i;
                 }
             }
         }
-
 
         //for now just go to the player on the right
         Log.d(TAG, "Next player is " + (mCurrentPlayerIndex + 1) % players.length);

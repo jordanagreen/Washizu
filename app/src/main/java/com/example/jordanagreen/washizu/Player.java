@@ -46,6 +46,12 @@ public abstract class Player {
 
     public abstract void takeTurn(Game.GameCallback callback);
 
+    public void drawTile(){
+        Tile tile = game.drawTile();
+        Log.d(TAG, "Drew tile " + tile);
+        hand.setDrawnTile(tile);
+    }
+
     public void setHand(Hand hand) {
         this.hand = hand;
     }

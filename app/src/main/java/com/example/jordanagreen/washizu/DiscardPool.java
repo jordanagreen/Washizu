@@ -35,8 +35,6 @@ public class DiscardPool {
         return tiles;
     }
 
-    public Tile getLastTile() { return tiles.get(tiles.size()-1); }
-
     public void addTile(Tile tile, boolean calledRiichi){
         if (tiles.size() < DISCARD_MAX_TILES) {
             tiles.add(tile);
@@ -48,6 +46,14 @@ public class DiscardPool {
         else {
             throw new IllegalStateException("Discard pool is full, can't discard more");
         }
+    }
+
+    public Tile getLastTile() {
+        return tiles.get(tiles.size()-1);
+    }
+
+    public Tile removeLastTile(){
+        return tiles.remove(tiles.size()-1);
     }
 
     public int getSize(){ return tiles.size(); }

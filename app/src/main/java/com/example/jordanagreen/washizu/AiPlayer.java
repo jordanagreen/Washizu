@@ -21,8 +21,6 @@ public class AiPlayer extends Player {
 
     @Override
     public void takeTurn(final Game.GameCallback callback){
-        Tile tile = game.drawTile();
-        hand.setDrawnTile(tile);
         //for now just discard a random tile
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

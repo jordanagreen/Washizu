@@ -1,6 +1,5 @@
 package com.example.jordanagreen.washizu;
 
-import android.util.Log;
 import android.view.MotionEvent;
 
 import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
@@ -19,10 +18,6 @@ public class HumanPlayer extends Player {
 
     @Override
     public void takeTurn(Game.GameCallback callback){
-        Log.d(TAG, "Taking human player's turn");
-        Tile tile = game.drawTile();
-        Log.d(TAG, "Drew tile " + tile);
-        hand.setDrawnTile(tile);
     }
 
     @Override

@@ -60,7 +60,9 @@ public class Hand {
         Log.d(TAG, "drawn tile is " + mDrawnTile);
         if (tiles.contains(tile)){
             tiles.remove(tile);
-            addTile(mDrawnTile);
+            if (mDrawnTile != null){
+                addTile(mDrawnTile);
+            }
         }
         else if (tile == mDrawnTile) {
             Log.d(TAG, "discarded drawn tile");
@@ -68,6 +70,7 @@ public class Hand {
         else {
             throw new IllegalArgumentException("Trying to discard tile you don't have");
         }
+        mDrawnTile = null;
     }
 
     public ArrayList<Tile> getTiles() {
@@ -210,6 +213,7 @@ public class Hand {
                         }
                     }
                 }
+                //TODO: if there's only one row, draw this tile lower
                 if (drawDrawnTile && mDrawnTile != null){
                     int x = TILE_WIDTH * 4 + (TILE_WIDTH / 2)
                             + horCenterPadding;
