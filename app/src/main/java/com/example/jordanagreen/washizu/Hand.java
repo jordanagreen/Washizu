@@ -222,6 +222,7 @@ public class Hand {
                         x = canvas.getWidth() - x - TILE_HEIGHT;
                         y = canvas.getHeight() - y - TILE_WIDTH;
                     }
+                    mDrawnTile.setLocation(x, y);
                     mDrawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
                 }
                 break;
