@@ -3,6 +3,8 @@ package com.example.jordanagreen.washizu;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
+
 /**
  * Created by Jordan on 9/13/2015.
  */
@@ -97,6 +99,7 @@ public abstract class Player {
     }
 
     public abstract boolean shouldPon(Tile tile);
+    public abstract boolean shouldChii(Tile tile);
 
     public void callPon(Tile tile, int direction){
         //get the two other tiles from the hand
@@ -120,6 +123,36 @@ public abstract class Player {
         Tile a = hand.getTile(ia);
         Tile b = hand.getTile(ib);
         hand.makePon(tile, a, b, direction);
+    }
+
+    public boolean canChii(Tile tile){
+        if (tile.getSuit() == SUIT_HONOR){
+            return false;
+        }
+        int id = tile.getId();
+        if (hand.containsTileById(id - 1) && hand.containsTileById(id - 2)){
+            if (Tile.areSameSuit(id, id-1, id-2)){
+                return true;
+            }
+        }
+        if (hand.containsTileById(id - 1) && hand.containsTileById(id + 1)){
+            if (Tile.areSameSuit(id-1, id, id+1)){
+                return true;
+            }
+        }
+        if (hand.containsTileById(id + 1) && hand.containsTileById(id + 2)){
+            if (Tile.areSameSuit(id, id+1, id+2)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    abstract Tile[] getTilesForChii(Tile tile);
+
+    public void callChii(Tile tile, int direction){
+        Tile[] tiles = getTilesForChii(tile);
+        hand.makeChii(tiles[0], tiles[1], tiles[2], direction);
     }
 
     public void draw(Canvas canvas){

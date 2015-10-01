@@ -25,6 +25,41 @@ public class HumanPlayer extends Player {
         return true;
     }
 
+    @Override
+    public boolean shouldChii(Tile tile){
+        return true;
+    }
+
+    @Override
+    protected Tile[] getTilesForChii(Tile tile){
+        //TODO: get some better logic for this, for now it's just picking an option randomly
+        int id = tile.getId();
+        Tile tilea = null;
+        Tile tileb = null;
+        if (hand.containsTileById(id - 1) && hand.containsTileById(id - 2)){
+            if (Tile.areSameSuit(id, id-1, id-2)){
+                tilea = hand.getTileById(id-2);
+                tileb = hand.getTileById(id-1);
+            }
+        }
+        else if (hand.containsTileById(id - 1) && hand.containsTileById(id + 1)){
+            if (Tile.areSameSuit(id-1, id, id+1)){
+                tilea = hand.getTileById(id-1);
+                tileb = hand.getTileById(id+1);
+            }
+        }
+        else if (hand.containsTileById(id + 1) && hand.containsTileById(id + 2)){
+            if (Tile.areSameSuit(id, id+1, id+2)){
+                tilea = hand.getTileById(id+1);
+                tileb = hand.getTileById(id+2);
+            }
+        }
+        if (tilea == null || tileb == null){
+            throw new IllegalStateException("Couldn't find legal tiles for chii");
+        }
+        return new Tile[]{tilea, tileb, tile};
+    }
+
     //return true if a tile was discarded
     public boolean onTouch(MotionEvent event){
 
@@ -57,5 +92,4 @@ public class HumanPlayer extends Player {
         }
         return didDiscardTile;
     }
-
 }

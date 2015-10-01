@@ -120,13 +120,16 @@ public class Game {
     }
 
     private int getNextPlayerIndex(Tile discardedTile){
-        //TODO: see if anyone wants to call the tile (assuming the game isn't over by tsumo)
+        //TODO: check for kan and ron
+
+        //check all other players for pon
         for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++){
             int i = j % players.length;
             if (players[i].canPon(discardedTile)){
                 if (players[i].shouldPon(discardedTile)){
                     //call the tile, remove it from the discard, and that player gets the next turn
-                    Log.d(TAG, "Player " + i + " calling pon on " + discardedTile + " from " + mCurrentPlayerIndex);
+                    Log.d(TAG, "Player " + i + " calling pon on " + discardedTile + " from "
+                            + mCurrentPlayerIndex);
                     players[i].callPon(discardedTile, mCurrentPlayerIndex * 90);
                     players[mCurrentPlayerIndex].discards.removeLastTile();
                     mCallMade = true;
@@ -134,6 +137,19 @@ public class Game {
                 }
             }
         }
+        //check next player for chii
+        if (players[(mCurrentPlayerIndex+1)%players.length].canChii(discardedTile)){
+            if (players[(mCurrentPlayerIndex+1)%players.length].shouldChii(discardedTile)){
+                //call the tile, remove it from the discard, and that player gets the next turn
+                Log.d(TAG, "Player " + (mCurrentPlayerIndex+1)%players.length +
+                        " calling chii on " + discardedTile + " from " + mCurrentPlayerIndex);
+                players[(mCurrentPlayerIndex+1)% players.length].callChii(discardedTile,
+                        mCurrentPlayerIndex * 90);
+                players[mCurrentPlayerIndex].discards.removeLastTile();
+                mCallMade = true;
+            }
+        }
+
 
         //for now just go to the player on the right
         Log.d(TAG, "Next player is " + (mCurrentPlayerIndex + 1) % players.length);

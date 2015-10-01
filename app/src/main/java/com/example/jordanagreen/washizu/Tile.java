@@ -47,6 +47,14 @@ public class Tile implements Comparable<Tile>{
         return id / 9;
     }
 
+    public static boolean areSameSuit(int a, int b){
+        return (a/9) == (b/9);
+    }
+
+    public static boolean areSameSuit(int a, int b, int c){
+        return (a/9) == (b/9) && (b/9) == (c/9);
+    }
+
     public void draw(Canvas canvas, int x, int y, int seatDirection){
         Matrix matrix = new Matrix();
         matrix.postRotate(seatDirection);

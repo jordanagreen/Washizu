@@ -56,6 +56,24 @@ public class Hand {
         return tiles.get(i);
     }
 
+    public Tile getTileById(int id){
+        for (Tile tile: tiles){
+            if (tile.getId() == id){
+                return tile;
+            }
+        }
+        throw new IllegalArgumentException("Trying to get tile that isn't in hand");
+    }
+
+    public boolean containsTileById(int id){
+        for (Tile tile: tiles){
+            if (tile.getId() == id){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void discardTile(Tile tile){
         Log.d(TAG, "drawn tile is " + mDrawnTile);
         if (tiles.contains(tile)){
