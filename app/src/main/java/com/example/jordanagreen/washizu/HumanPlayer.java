@@ -20,6 +20,8 @@ public class HumanPlayer extends Player {
     public void takeTurn(Game.GameCallback callback){
     }
 
+    //TODO: make buttons appear on the screen
+
     @Override
     public boolean shouldPon(Tile tile){
         return true;

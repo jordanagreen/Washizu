@@ -15,7 +15,7 @@ public abstract class Player {
     //TODO: split into human and AI
 
     protected Hand hand;
-    protected DiscardPool discards;
+    private DiscardPool discards;
     protected boolean inRiichi;
     protected Game game;
     int score;
@@ -86,6 +86,10 @@ public abstract class Player {
 
     public Tile getLastDiscardedTile(){
         return discards.getLastTile();
+    }
+
+    public void removeLastDiscardedTile(){
+        discards.removeLastTile();
     }
 
     public boolean canPon(Tile tile){
