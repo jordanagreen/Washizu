@@ -35,17 +35,6 @@ public abstract class Player {
         isMyTurn = false;
     }
 
-    public Player(Game game, int direction, Hand hand){
-        this.game = game;
-        this.direction = direction;
-        this.hand = new Hand();
-        this.score = Constants.STARTING_SCORE;
-        this.discards = new DiscardPool();
-        this.inRiichi = false;
-        isMyTurn = false;
-        this.hand = hand;
-    }
-
     public abstract void takeTurn(Game.GameCallback callback);
 
     public void drawTile(){
