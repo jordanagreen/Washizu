@@ -167,7 +167,13 @@ public class Game {
     }
 
     private Tile getLastDiscardedTile(){
-        return players[mCurrentPlayerIndex].getLastDiscardedTile();
+        try{
+            return players[mCurrentPlayerIndex].getLastDiscardedTile();
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            return null;
+        }
+
     }
 
     private void onCallMade(int playerIndex, MeldType callType){
@@ -237,12 +243,15 @@ public class Game {
                 //TODO: make this better
                 //for now just do it because no actual buttons yet
                 if (players[0] instanceof HumanPlayer){
-                    if (players[0].canPon(getLastDiscardedTile())){
-                        onCallMade(0, MeldType.PON);
+                    if (getLastDiscardedTile() != null){
+                        if (players[0].canPon(getLastDiscardedTile())){
+                            onCallMade(0, MeldType.PON);
+                        }
+                        else if ((players[0].canChii(getLastDiscardedTile()))){
+                            onCallMade(0, MeldType.CHII);
+                        }
                     }
-                    else if ((players[0].canChii(getLastDiscardedTile()))){
-                        onCallMade(0, MeldType.CHII);
-                    }
+
                 }
             }
 

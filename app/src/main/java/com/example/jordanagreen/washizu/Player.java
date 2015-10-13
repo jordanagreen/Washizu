@@ -94,7 +94,7 @@ public abstract class Player {
     public abstract boolean shouldPon(Tile tile);
     public abstract boolean shouldChii(Tile tile);
 
-    public void callPon(Tile tile, int direction){
+    public void callPon(Tile tile, int calledDirection){
         //get the two other tiles from the hand
         int ia = 0;
         int ib = 0;
@@ -115,7 +115,7 @@ public abstract class Player {
         }
         Tile a = hand.getTile(ia);
         Tile b = hand.getTile(ib);
-        hand.makePon(tile, a, b, direction);
+        hand.makePon(tile, a, b, direction, calledDirection);
     }
 
     public boolean canChii(Tile tile){
@@ -143,9 +143,9 @@ public abstract class Player {
 
     abstract Tile[] getTilesForChii(Tile tile);
 
-    public void callChii(Tile tile, int direction){
+    public void callChii(Tile tile, int calledDirection){
         Tile[] tiles = getTilesForChii(tile);
-        hand.makeChii(tiles[0], tiles[1], tiles[2], direction);
+        hand.makeChii(tiles[0], tiles[1], tiles[2], calledDirection, direction);
     }
 
     public void draw(Canvas canvas){

@@ -5,8 +5,6 @@ import android.os.Handler;
 import java.util.Random;
 
 import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
-import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
-import static com.example.jordanagreen.washizu.Constants.SEAT_UP;
 
 /**
  * Created by Jordan on 9/20/2015.
@@ -41,12 +39,12 @@ public class AiPlayer extends Player {
 
     @Override
     public boolean shouldPon(Tile tile){
-        return (direction == SEAT_UP || direction == SEAT_DOWN);
+        return true;
     }
 
     @Override
     public boolean shouldChii(Tile tile){
-        return (direction == SEAT_UP || direction == SEAT_DOWN);
+        return true;
     }
 
     @Override

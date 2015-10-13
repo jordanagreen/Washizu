@@ -112,7 +112,7 @@ public class Hand {
         Collections.sort(tiles);
     }
 
-    public void makeChii(Tile a, Tile b, Tile c, int direction){
+    public void makeChii(Tile a, Tile b, Tile c, int direction, int calledDirection){
         if (a.getSuit() != b.getSuit() || b.getSuit() != c.getSuit()){
             throw new IllegalArgumentException("Making chii with tiles of different suits");
         }
@@ -122,7 +122,7 @@ public class Hand {
                 tiles.get(1).getId() == tiles.get(2).getId() - 1){
             Log.d(TAG, "Chii with " + tiles.get(0) + " " + tiles.get(1) + " " + tiles.get(2));
             Meld meld = new Meld(tiles.get(0), tiles.get(1), tiles.get(2),
-                    direction, Meld.MeldType.CHII);
+                    direction, calledDirection, Meld.MeldType.CHII, this);
             addMeld(meld);
         }
         else {
@@ -130,12 +130,12 @@ public class Hand {
         }
     }
 
-    public void makePon(Tile a, Tile b, Tile c, int direction){
+    public void makePon(Tile a, Tile b, Tile c, int direction, int calledDirection){
         if (a.compareTo(b) != 0 || b.compareTo(c) != 0){
             throw new IllegalArgumentException("Illegal tiles for pon");
         }
         Log.d(TAG, "Pon with " + a + " " + b + " " + c);
-        Meld meld = new Meld(a, b, c, direction, Meld.MeldType.PON);
+        Meld meld = new Meld(a, b, c, direction, calledDirection, Meld.MeldType.PON, this);
         addMeld(meld);
 
     }
@@ -146,7 +146,7 @@ public class Hand {
         }
         if (isClosed){
             Log.d(TAG, "Closed kan with " + a + " " + b + " " + c + " " + d);
-            Meld meld = new Meld(a, b, c, d, direction, Meld.MeldType.CLOSED_KAN);
+            Meld meld = new Meld(a, b, c, d, direction, Meld.MeldType.SHOUMINKAN);
             addMeld(meld);
         }
         else {
