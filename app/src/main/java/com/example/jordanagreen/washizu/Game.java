@@ -49,10 +49,13 @@ public class Game {
     }
 
     public void startGame(){
-        players[0] = new HumanPlayer(this, SEAT_DOWN);
-        players[1] = new AiPlayer(this, SEAT_RIGHT);
-        players[2] = new AiPlayer(this, SEAT_UP);
-        players[3] = new AiPlayer(this, SEAT_LEFT);
+        players[0] = new HumanPlayer(SEAT_DOWN);
+        players[1] = new AiPlayer(SEAT_RIGHT);
+        players[2] = new AiPlayer(SEAT_UP);
+        players[3] = new AiPlayer(SEAT_LEFT);
+        for (Player player: players){
+            player.setGame(this);
+        }
 
         Random rand = new Random();
         int firstEast = rand.nextInt(4);
@@ -189,7 +192,7 @@ public class Game {
             case CHII:
                 Log.d(TAG, "Player " + (mCurrentPlayerIndex + 1) % players.length +
                         " calling chii on " + discardedTile + " from " + mCurrentPlayerIndex);
-                players[playerIndex].callChii(discardedTile, mCurrentPlayerIndex * 90);
+                players[playerIndex].callChii(discardedTile);
                 break;
             default:
                 throw new IllegalArgumentException("Illegal call type");
@@ -216,11 +219,9 @@ public class Game {
 
     private void dealHands(){
         for (Player player: players){
-            Hand hand = new Hand();
             for (int i = 0; i < HAND_SIZE; i++){
-                hand.addTile(drawTile());
+                player.hand.addTile(drawTile());
             }
-            player.setHand(hand);
         }
     }
 

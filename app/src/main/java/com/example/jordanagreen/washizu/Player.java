@@ -20,26 +20,29 @@ public abstract class Player {
     protected Game game;
     int score;
     int wind;
-    protected int direction;
+    private int direction;
     private boolean isMyTurn;
 
 
 
-    public Player(Game game, int direction){
-        this.game = game;
+    public Player(int direction){
         this.direction = direction;
-        this.hand = new Hand();
+        this.hand = new Hand(this);
         this.score = Constants.STARTING_SCORE;
         this.discards = new DiscardPool();
         this.inRiichi = false;
         isMyTurn = false;
     }
 
+    public void setGame(Game game){
+        this.game = game;
+    }
+
     public abstract void takeTurn(Game.GameCallback callback);
 
     public void drawTile(){
         Tile tile = game.drawTile();
-        Log.d(TAG, "Drew tile " + tile);
+        Log.d(TAG, "Player + " + direction + " Drew tile " + tile);
         hand.setDrawnTile(tile);
     }
 
@@ -57,6 +60,10 @@ public abstract class Player {
 
     public boolean getIsMyTurn(){
         return isMyTurn;
+    }
+
+    public int getDirection(){
+        return direction;
     }
 
     public void discardTile(Tile tile){
@@ -115,7 +122,7 @@ public abstract class Player {
         }
         Tile a = hand.getTile(ia);
         Tile b = hand.getTile(ib);
-        hand.makePon(tile, a, b, direction, calledDirection);
+        hand.makePon(tile, a, b, calledDirection);
     }
 
     public boolean canChii(Tile tile){
@@ -143,9 +150,9 @@ public abstract class Player {
 
     abstract Tile[] getTilesForChii(Tile tile);
 
-    public void callChii(Tile tile, int calledDirection){
+    public void callChii(Tile tile){
         Tile[] tiles = getTilesForChii(tile);
-        hand.makeChii(tiles[0], tiles[1], tiles[2], calledDirection, direction);
+        hand.makeChii(tiles[0], tiles[1], tiles[2]);
     }
 
     public void draw(Canvas canvas){

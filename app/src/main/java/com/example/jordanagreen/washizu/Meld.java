@@ -20,27 +20,15 @@ public class Meld {
 
     private MeldType type;
     private Tile[] tiles;
-    private int directionCalled;
     private int rotatedIndex;
     private Hand hand; // for drawing horizontally - need to know about the other melds
 
-    public Meld(Tile a, Tile b, Tile c, int playerDirection, int directionCalled, MeldType type,
-                Hand hand){
+    public Meld(Tile a, Tile b, Tile c, int rotatedIndex, MeldType type, Hand hand){
         tiles = new Tile[] {a, b, c};
-        this.directionCalled = directionCalled;
         this.type = type;
-        this.rotatedIndex = 0;
-        if (this.type != MeldType.CHII){
-            if (directionCalled == (playerDirection + 180) % 360){
-                this.rotatedIndex = 1;
-            }
-            else if (directionCalled == (playerDirection + 270) % 360){
-                this.rotatedIndex = 2;
-            }
-        }
+        this.rotatedIndex = rotatedIndex;
         this.hand = hand;
-        Log.d(TAG, "Meld made type " + type + " player " + playerDirection + " from " +
-                directionCalled + " rotated index " + rotatedIndex);
+        Log.d(TAG, "Meld made type " + type +  " rotated index " + rotatedIndex);
     }
 
     public Meld(Tile a, Tile b, Tile c, Tile d, int directionCalled, MeldType type){
@@ -49,7 +37,6 @@ public class Meld {
         }
         else {
             tiles = new Tile[] {a, b, c, d};
-            this.directionCalled = directionCalled;
             this.type = type;
         }
     }

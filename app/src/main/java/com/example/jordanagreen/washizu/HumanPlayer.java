@@ -12,8 +12,8 @@ public class HumanPlayer extends Player {
 
     public static final String TAG = "HumanPlayer";
 
-    public HumanPlayer(Game game, int direction){
-        super(game, direction);
+    public HumanPlayer(int direction){
+        super(direction);
     }
 
     @Override

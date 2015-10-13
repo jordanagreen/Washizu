@@ -28,17 +28,13 @@ public class Hand {
     private ArrayList<Tile> tiles;
     private ArrayList<Meld> melds;
     private Tile mDrawnTile;
+    private Player mPlayer;
 
-    public Hand(){
+    public Hand(Player player){
         tiles = new ArrayList<>(HAND_SIZE);
         melds = new ArrayList<>();
         mDrawnTile = null;
-    }
-
-    public Hand(ArrayList<Tile> tiles){
-        this.tiles = tiles;
-        melds = new ArrayList<>();
-        mDrawnTile = null;
+        this.mPlayer = player;
     }
 
     public void addTile(Tile tile){
@@ -112,7 +108,7 @@ public class Hand {
         Collections.sort(tiles);
     }
 
-    public void makeChii(Tile a, Tile b, Tile c, int direction, int calledDirection){
+    public void makeChii(Tile a, Tile b, Tile c){
         if (a.getSuit() != b.getSuit() || b.getSuit() != c.getSuit()){
             throw new IllegalArgumentException("Making chii with tiles of different suits");
         }
@@ -121,8 +117,8 @@ public class Hand {
         if (tiles.get(0).getId() == tiles.get(1).getId() - 1 &&
                 tiles.get(1).getId() == tiles.get(2).getId() - 1){
             Log.d(TAG, "Chii with " + tiles.get(0) + " " + tiles.get(1) + " " + tiles.get(2));
-            Meld meld = new Meld(tiles.get(0), tiles.get(1), tiles.get(2),
-                    direction, calledDirection, Meld.MeldType.CHII, this);
+            Meld meld = new Meld(tiles.get(0), tiles.get(1), tiles.get(2), 0,
+                    Meld.MeldType.CHII, this);
             addMeld(meld);
         }
         else {
@@ -130,12 +126,20 @@ public class Hand {
         }
     }
 
-    public void makePon(Tile a, Tile b, Tile c, int direction, int calledDirection){
+    public void makePon(Tile a, Tile b, Tile c, int calledDirection){
         if (a.compareTo(b) != 0 || b.compareTo(c) != 0){
             throw new IllegalArgumentException("Illegal tiles for pon");
         }
-        Log.d(TAG, "Pon with " + a + " " + b + " " + c);
-        Meld meld = new Meld(a, b, c, direction, calledDirection, Meld.MeldType.PON, this);
+        Log.d(TAG, "Pon with " + a + " " + b + " " + c + " by " + mPlayer.getDirection()
+                + " from " + calledDirection);
+        int rotatedIndex = 0;
+        if (calledDirection == (mPlayer.getDirection() + 180) % 360){
+           rotatedIndex = 1;
+        }
+        else if (calledDirection == (mPlayer.getDirection() + 270) % 360){
+           rotatedIndex = 2;
+        }
+        Meld meld = new Meld(a, b, c, rotatedIndex, Meld.MeldType.PON, this);
         addMeld(meld);
 
     }
@@ -157,7 +161,6 @@ public class Hand {
     }
 
     private void addMeld(Meld meld){
-        //TODO: remove the tiles from the hand
         if (melds.size() < 4){
             melds.add(meld);
             for (Tile tile: meld.getTiles()){

@@ -13,8 +13,8 @@ public class AiPlayer extends Player {
 
     public static final String TAG = "AiPlayer";
 
-    public AiPlayer(Game game, int direction){
-        super(game, direction);
+    public AiPlayer(int direction){
+        super(direction);
     }
 
     @Override
