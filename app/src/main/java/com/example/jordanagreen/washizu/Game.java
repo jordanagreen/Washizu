@@ -222,6 +222,8 @@ public class Game {
             for (int i = 0; i < HAND_SIZE; i++){
                 player.hand.addTile(drawTile());
             }
+//            Leave this off for debugging right now
+//            player.hand.setTilesVisibility();
         }
     }
 

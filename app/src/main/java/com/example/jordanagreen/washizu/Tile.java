@@ -6,6 +6,7 @@ import android.graphics.Matrix;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import static com.example.jordanagreen.washizu.Constants.UNKNOWN;
 
 /**
  * Created by Jordan on 9/9/2015.
@@ -20,7 +21,7 @@ public class Tile implements Comparable<Tile>{
     private static Bitmap[] smallTileImages;
 
     boolean isOpaque;
-    boolean isRed;
+    boolean isReversed;
 
     public int x;
     public int y;
@@ -56,22 +57,25 @@ public class Tile implements Comparable<Tile>{
     }
 
     public void draw(Canvas canvas, int x, int y, int seatDirection){
+        int drawId = isReversed ? UNKNOWN : id;
         Matrix matrix = new Matrix();
         matrix.postRotate(seatDirection);
 
         // for some reason just applying the rotated matrix to the canvas doesn't work?
-        Bitmap result = Bitmap.createBitmap(tileImages[id], 0, 0, tileImages[id].getWidth(),
-                tileImages[id].getHeight(), matrix, false);
+        Bitmap result = Bitmap.createBitmap(tileImages[drawId], 0, 0, tileImages[drawId].getWidth(),
+                tileImages[drawId].getHeight(), matrix, false);
         canvas.drawBitmap(result, x, y, null);
     }
 
     public void drawSmall(Canvas canvas, int x, int y, int seatDirection){
+        int drawId = isReversed ? UNKNOWN : id;
         Matrix matrix = new Matrix();
         matrix.postRotate(seatDirection);
 
         // for some reason just applying the rotated matrix to the canvas doesn't work?
-        Bitmap result = Bitmap.createBitmap(smallTileImages[id], 0, 0,
-                smallTileImages[id].getWidth(), smallTileImages[id].getHeight(), matrix, false);
+        Bitmap result = Bitmap.createBitmap(smallTileImages[drawId], 0, 0,
+                smallTileImages[drawId].getWidth(), smallTileImages[drawId].getHeight(), matrix,
+                false);
         canvas.drawBitmap(result, x, y, null);
     }
 

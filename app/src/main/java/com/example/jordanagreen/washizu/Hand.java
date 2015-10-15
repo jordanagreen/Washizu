@@ -48,6 +48,14 @@ public class Hand {
         }
     }
 
+    public void setTilesVisibility(){
+        if (mPlayer instanceof AiPlayer){
+            for (Tile tile: tiles){
+                tile.isReversed = tile.isOpaque;
+            }
+        }
+    }
+
     public Tile getTile(int i){
         return tiles.get(i);
     }
@@ -71,7 +79,6 @@ public class Hand {
     }
 
     public void discardTile(Tile tile){
-        Log.d(TAG, "drawn tile is " + mDrawnTile);
         if (tiles.contains(tile)){
             tiles.remove(tile);
             if (mDrawnTile != null){

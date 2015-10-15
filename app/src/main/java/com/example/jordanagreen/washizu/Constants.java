@@ -92,6 +92,8 @@ public class Constants {
 
     public static final int TILE_MIN_ID = MAN_1;
     public static final int TILE_MAX_ID = TON;
+    public static final int UNKNOWN = TON + 1;
+    public static final int TOTAL_TILE_IMAGES = UNKNOWN + 1;
 
     public static final int ROUND_EAST_1 = 0;
     public static final int ROUND_EAST_2 = 1;

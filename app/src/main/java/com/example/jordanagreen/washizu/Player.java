@@ -12,8 +12,6 @@ public abstract class Player {
 
     public static final String TAG = "Player";
 
-    //TODO: split into human and AI
-
     protected Hand hand;
     private DiscardPool discards;
     protected boolean inRiichi;
@@ -22,8 +20,6 @@ public abstract class Player {
     int wind;
     private int direction;
     private boolean isMyTurn;
-
-
 
     public Player(int direction){
         this.direction = direction;
@@ -69,6 +65,7 @@ public abstract class Player {
     public void discardTile(Tile tile){
         Log.d(TAG, "discarding tile " + tile);
         hand.discardTile(tile);
+        tile.isReversed = false;
         discards.addTile(tile, false);
         Log.d(TAG, "Discarded " + tile);
     }
