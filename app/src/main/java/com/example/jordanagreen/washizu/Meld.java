@@ -56,7 +56,7 @@ public class Meld {
         }
         else {
             tiles = new Tile[] {tiles[0], tiles[1], tiles[2], tile};
-            type = MeldType.KAN;
+            type = MeldType.SHOUMINKAN;
         }
     }
 
@@ -97,6 +97,47 @@ public class Meld {
 
                             x = x + TILE_SMALL_WIDTH;
                         }
+                    }
+                }
+                //kan
+                else {
+                    if (type == MeldType.KAN){
+                        int x = canvas.getWidth() - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
+                        int y = canvas.getHeight() - (TILE_SMALL_HEIGHT * (meldNumber+1));
+                        for (int i = 0; i < tiles.length; i++){
+                            if (i == rotatedIndex){
+                                if (seatDirection == SEAT_DOWN){
+                                    tiles[i].drawSmall(canvas, x,
+                                            y + (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
+                                            (seatDirection + 90) % 360);
+                                }
+                                else {
+                                    tiles[i].drawSmall(canvas,
+                                            canvas.getWidth() - x - TILE_SMALL_HEIGHT,
+                                            canvas.getHeight() - y - TILE_SMALL_WIDTH -
+                                                    (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
+                                            (seatDirection + 90) % 360);
+                                }
+                                x = x + TILE_SMALL_HEIGHT;
+                            }
+                            else {
+                                if (seatDirection == SEAT_DOWN){
+                                    tiles[i].drawSmall(canvas, x, y, seatDirection);
+                                }
+                                else {
+                                    tiles[i].drawSmall(canvas,
+                                            canvas.getWidth() - x - TILE_SMALL_WIDTH,
+                                            canvas.getHeight() - y - TILE_SMALL_HEIGHT,
+                                            seatDirection);
+                                }
+
+                                x = x + TILE_SMALL_WIDTH;
+                            }
+                        }
+                    }
+                    //shouminkan
+                    else {
+
                     }
                 }
                 break;

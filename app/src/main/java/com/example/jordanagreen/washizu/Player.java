@@ -158,4 +158,31 @@ public abstract class Player {
         discards.draw(canvas, direction);
     }
 
+    public boolean canKan(Tile tile){
+        int inHand = 0;
+        for (Tile t : hand.getTiles()){
+            if (t.compareTo(tile) == 0){
+                inHand++;
+            }
+        }
+        return inHand == 3;
+    }
+
+    public boolean canKanOnDraw(Tile tile){
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == Meld.MeldType.PON){
+                if (meld.getTiles()[0].compareTo(tile) == 0){
+                    return true;
+                }
+            }
+        }
+        int inHand = 0;
+        for (Tile t : hand.getTiles()){
+            if (t.compareTo(tile) == 0){
+                inHand++;
+            }
+        }
+        return inHand == 3;
+    }
+
 }
