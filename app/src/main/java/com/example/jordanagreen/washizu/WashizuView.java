@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -230,5 +231,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         game.startGame();
 
     }
+
+
 
 }

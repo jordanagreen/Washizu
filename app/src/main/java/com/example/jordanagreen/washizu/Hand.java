@@ -35,7 +35,7 @@ public class Hand {
 
     public static final String KEY_MELDS = "melds";
     public static final String KEY_TILES = "tiles";
-    public static final String KEY_DRAWN_TILE = "drawn_tile";
+//    public static final String KEY_DRAWN_TILE = "drawn_tile";
 
     private ArrayList<Tile> tiles;
     private ArrayList<Meld> melds;
@@ -115,6 +115,16 @@ public class Hand {
             }
         }
         throw new IllegalArgumentException("Trying to get tile that isn't in hand");
+    }
+
+    public ArrayList<Tile> getAllTilesById(int id){
+        ArrayList<Tile> t = new ArrayList<>();
+        for (Tile tile: tiles){
+            if (tile.getId() == id){
+                t.add(tile);
+            }
+        }
+        return t;
     }
 
     public boolean containsTileById(int id){
@@ -213,6 +223,24 @@ public class Hand {
             Meld meld = new Meld(a, b, c, d, direction, MELD_TYPE_KAN);
             addMeld(meld);
         }
+    }
+
+    public void makeShouminkan(Tile tile, Meld meld){
+        meld.ponToKan(tile);
+    }
+
+    //TODO: finish doing this, can't be put into its own meld
+    public void makeClosedKan(Tile tile){
+        ArrayList<Tile> kanTiles = getAllTilesById(tile.getId());
+        if (kanTiles.size() != 3){
+            throw new IllegalArgumentException("Trying to call closed kan without three tiles");
+        }
+        kanTiles.add(tile);
+        for (Tile t: kanTiles){
+            t.isDiscardable = false;
+        }
+        kanTiles.get(0).isReversed = true;
+        kanTiles.get(3).isReversed = true;
     }
 
     private void addMeld(Meld meld){

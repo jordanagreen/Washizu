@@ -6,6 +6,8 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
 import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
 
@@ -193,7 +195,7 @@ public abstract class Player {
         discards.draw(canvas, direction);
     }
 
-    public boolean canKan(Tile tile){
+    public boolean canKanOnCall(Tile tile){
         int inHand = 0;
         for (Tile t : hand.getTiles()){
             if (t.compareTo(tile) == 0){
@@ -218,6 +220,28 @@ public abstract class Player {
             }
         }
         return inHand == 3;
+    }
+
+    public void callKan(Tile tile, int calledDirection){
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == MELD_TYPE_PON && meld.getTiles()[0].compareTo(tile) == 0){
+                hand.makeShouminkan(tile, meld);
+                return;
+            }
+        }
+        ArrayList<Tile> tiles = hand.getAllTilesById(tile.getId());
+        if (tiles.size() != 3){
+            throw new IllegalArgumentException("Trying to call kan without three tiles in hand");
+        }
+        hand.makeKan(tiles.get(0), tiles.get(1), tiles.get(2), tile, calledDirection, false);
+    }
+
+    public void callKanOnDraw(Tile tile){
+        ArrayList<Tile> tiles = hand.getAllTilesById(tile.getId());
+        if (tiles.size() != 3){
+            throw new IllegalArgumentException("Trying to call kan without three tiles in hand");
+        }
+//        hand.makeKan(tiles.get(0), tiles.get(1), tiles.get(2), tile, calledDirection, false);
     }
 
 }
