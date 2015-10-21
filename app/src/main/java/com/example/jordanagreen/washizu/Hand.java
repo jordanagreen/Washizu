@@ -3,6 +3,10 @@ package com.example.jordanagreen.washizu;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +15,10 @@ import java.util.List;
 import static com.example.jordanagreen.washizu.Constants.HAND_BOTTOM_ROW_TILES;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
 import static com.example.jordanagreen.washizu.Constants.HAND_TOP_ROW_TILES;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_CHII;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_KAN;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_SHOUMINKAN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
@@ -25,6 +33,10 @@ public class Hand {
 
     public static final String TAG = "Hand";
 
+    public static final String KEY_MELDS = "melds";
+    public static final String KEY_TILES = "tiles";
+    public static final String KEY_DRAWN_TILE = "drawn_tile";
+
     private ArrayList<Tile> tiles;
     private ArrayList<Meld> melds;
     private Tile mDrawnTile;
@@ -35,6 +47,42 @@ public class Hand {
         melds = new ArrayList<>();
         mDrawnTile = null;
         this.mPlayer = player;
+    }
+
+    public Hand(JSONObject json, Player player) throws JSONException{
+        JSONArray jsonMelds = json.getJSONArray(KEY_MELDS);
+        melds = new ArrayList<>();
+        for (int i = 0; i < jsonMelds.length(); i++){
+            melds.add(new Meld(jsonMelds.getJSONObject(i), this));
+        }
+        JSONArray jsonTiles = json.getJSONArray(KEY_TILES);
+        tiles = new ArrayList<>();
+        for (int i = 0; i < jsonTiles.length(); i++){
+            tiles.add(new Tile(jsonTiles.getJSONObject(i)));
+        }
+//        if (!json.isNull(KEY_DRAWN_TILE)){
+//            mDrawnTile = new Tile(json.getJSONObject(KEY_DRAWN_TILE));
+//        }
+//        else {
+//            mDrawnTile = null;
+//        }
+        this.mPlayer = player;
+    }
+
+    public JSONObject toJson() throws JSONException{
+        JSONObject json = new JSONObject();
+        JSONArray jsonMelds = new JSONArray();
+        for (int i = 0; i < melds.size(); i++){
+            jsonMelds.put(melds.get(i).toJson());
+        }
+        json.put(KEY_MELDS, jsonMelds);
+        JSONArray jsonTiles = new JSONArray();
+        for (int i = 0; i < tiles.size(); i++){
+            jsonTiles.put(tiles.get(i).toJson());
+        }
+        json.put(KEY_TILES, jsonTiles);
+//        json.put(KEY_DRAWN_TILE, mDrawnTile == null ? null : mDrawnTile.toJson());
+        return json;
     }
 
     public void addTile(Tile tile){
@@ -125,7 +173,7 @@ public class Hand {
                 tiles.get(1).getId() == tiles.get(2).getId() - 1){
             Log.d(TAG, "Chii with " + tiles.get(0) + " " + tiles.get(1) + " " + tiles.get(2));
             Meld meld = new Meld(tiles.get(0), tiles.get(1), tiles.get(2), 0,
-                    Meld.MeldType.CHII, this);
+                    MELD_TYPE_CHII, this);
             addMeld(meld);
         }
         else {
@@ -146,7 +194,7 @@ public class Hand {
         else if (calledDirection == (mPlayer.getDirection() + 270) % 360){
            rotatedIndex = 2;
         }
-        Meld meld = new Meld(a, b, c, rotatedIndex, Meld.MeldType.PON, this);
+        Meld meld = new Meld(a, b, c, rotatedIndex, MELD_TYPE_PON, this);
         addMeld(meld);
 
     }
@@ -157,12 +205,12 @@ public class Hand {
         }
         if (isClosed){
             Log.d(TAG, "Closed kan with " + a + " " + b + " " + c + " " + d);
-            Meld meld = new Meld(a, b, c, d, direction, Meld.MeldType.SHOUMINKAN);
+            Meld meld = new Meld(a, b, c, d, direction, MELD_TYPE_SHOUMINKAN);
             addMeld(meld);
         }
         else {
             Log.d(TAG, "Kan with " + a + " " + b + " " + c + " " + d);
-            Meld meld = new Meld(a, b, c, d, direction, Meld.MeldType.KAN);
+            Meld meld = new Meld(a, b, c, d, direction, MELD_TYPE_KAN);
             addMeld(meld);
         }
     }

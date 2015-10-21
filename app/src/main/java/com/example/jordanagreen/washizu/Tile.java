@@ -6,6 +6,9 @@ import android.graphics.Matrix;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static com.example.jordanagreen.washizu.Constants.UNKNOWN;
 
 /**
@@ -14,6 +17,12 @@ import static com.example.jordanagreen.washizu.Constants.UNKNOWN;
 public class Tile implements Comparable<Tile>{
 
     public static final String TAG = "tile";
+
+    public static final String KEY_ID = "id";
+    public static final String KEY_IS_OPAQUE = "is_opaque";
+    public static final String KEY_IS_REVERSED = "is_reversed";
+    public static final String KEY_X = "x";
+    public final String KEY_Y = "y";
 
     private int id;
 
@@ -34,6 +43,14 @@ public class Tile implements Comparable<Tile>{
         else {
             throw new IllegalArgumentException("Invalid tile id: " + id);
         }
+    }
+
+    public Tile(JSONObject json) throws JSONException{
+        this.id = json.getInt(KEY_ID);
+        this.isOpaque = json.getBoolean(KEY_IS_OPAQUE);
+        this.isReversed = json.getBoolean(KEY_IS_REVERSED);
+//        this.x = json.getInt(KEY_X);
+//        this.y = json.getInt(KEY_Y);
     }
 
     public static void setTileImages(Bitmap[] images){
@@ -101,5 +118,15 @@ public class Tile implements Comparable<Tile>{
     @Override
     public int compareTo(Tile another) {
         return this.id - another.id;
+    }
+
+    public JSONObject toJson() throws JSONException{
+        JSONObject json = new JSONObject();
+        json.put(KEY_ID, id);
+        json.put(KEY_IS_OPAQUE, isOpaque);
+        json.put(KEY_IS_REVERSED, isReversed);
+        json.put(KEY_X, x);
+        json.put(KEY_Y, y);
+        return json;
     }
 }

@@ -7,10 +7,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.example.jordanagreen.washizu.Constants.CHUN;
+import static com.example.jordanagreen.washizu.Constants.HAKU;
+import static com.example.jordanagreen.washizu.Constants.HATSU;
 import static com.example.jordanagreen.washizu.Constants.MAN_1;
 import static com.example.jordanagreen.washizu.Constants.MAN_2;
 import static com.example.jordanagreen.washizu.Constants.MAN_3;
@@ -20,6 +27,8 @@ import static com.example.jordanagreen.washizu.Constants.MAN_6;
 import static com.example.jordanagreen.washizu.Constants.MAN_7;
 import static com.example.jordanagreen.washizu.Constants.MAN_8;
 import static com.example.jordanagreen.washizu.Constants.MAN_9;
+import static com.example.jordanagreen.washizu.Constants.NAN;
+import static com.example.jordanagreen.washizu.Constants.PEI;
 import static com.example.jordanagreen.washizu.Constants.PIN_1;
 import static com.example.jordanagreen.washizu.Constants.PIN_2;
 import static com.example.jordanagreen.washizu.Constants.PIN_3;
@@ -38,15 +47,10 @@ import static com.example.jordanagreen.washizu.Constants.SOU_6;
 import static com.example.jordanagreen.washizu.Constants.SOU_7;
 import static com.example.jordanagreen.washizu.Constants.SOU_8;
 import static com.example.jordanagreen.washizu.Constants.SOU_9;
-import static com.example.jordanagreen.washizu.Constants.CHUN;
-import static com.example.jordanagreen.washizu.Constants.HAKU;
-import static com.example.jordanagreen.washizu.Constants.HATSU;
-import static com.example.jordanagreen.washizu.Constants.NAN;
-import static com.example.jordanagreen.washizu.Constants.PEI;
-import static com.example.jordanagreen.washizu.Constants.TOTAL_TILE_IMAGES;
-import static com.example.jordanagreen.washizu.Constants.XIA;
 import static com.example.jordanagreen.washizu.Constants.TON;
+import static com.example.jordanagreen.washizu.Constants.TOTAL_TILE_IMAGES;
 import static com.example.jordanagreen.washizu.Constants.UNKNOWN;
+import static com.example.jordanagreen.washizu.Constants.XIA;
 
 /**
  * Created by Jordan on 9/9/2015.
@@ -67,8 +71,9 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         Tile.setTileImages(loadTileImages());
         Tile.setSmallTileImages(loadSmallTileImages());
 
-        game = new Game();
-        game.startGame();
+        Log.d(TAG, "constructor called");
+//        game = new Game();
+//        game.startGame();
     }
 
     private Bitmap[] loadTileImages(){
@@ -195,5 +200,35 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         postInvalidate();
     }
 
+    public String getGameJsonAsString(){
+        try{
+            return game.toJson().toString();
+        }
+        catch (JSONException e){
+            Log.e(TAG, "error", e);
+            return null;
+        }
+    }
+
+    public void restoreGameFromJsonString(String jsonString){
+        Log.d(TAG, "restoring from string");
+        Log.d(TAG, jsonString);
+        try {
+            JSONObject json = new JSONObject(jsonString);
+            game = new Game(json);
+        }
+        catch (JSONException e){
+            Log.e(TAG, "error", e);
+            startNewGame();
+        }
+
+    }
+
+    public void startNewGame(){
+        Log.d(TAG, "starting new game");
+        game = new Game();
+        game.startGame();
+
+    }
 
 }

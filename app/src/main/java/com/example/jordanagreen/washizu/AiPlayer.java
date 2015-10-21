@@ -2,6 +2,9 @@ package com.example.jordanagreen.washizu;
 
 import android.os.Handler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Random;
 
 import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
@@ -15,6 +18,10 @@ public class AiPlayer extends Player {
 
     public AiPlayer(int direction){
         super(direction);
+    }
+
+    public AiPlayer(JSONObject json) throws JSONException{
+        super(json);
     }
 
     @Override
@@ -71,6 +78,7 @@ public class AiPlayer extends Player {
                 tileb = hand.getTileById(id+2);
             }
         }
+        //TODO: figure out why this sometimes gets thrown
         if (tilea == null || tileb == null){
             throw new IllegalStateException("Couldn't find legal tiles for chii");
         }

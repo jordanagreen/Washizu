@@ -5,15 +5,19 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.example.jordanagreen.washizu.Meld.MeldType;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.Stack;
 
 import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_CHII;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
 import static com.example.jordanagreen.washizu.Constants.ROUND_EAST_1;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
@@ -33,22 +37,92 @@ public class Game {
 
     public static final String TAG = "Game";
 
+    public static final String KEY_PLAYERS = "players";
+    public static final String KEY_ROUND_NUMBER = "round_number";
+    public static final String KEY_CURRENT_PLAYER_INDEX = "current_player_index";
+    public static final String KEY_CALL_MADE = "call_made";
+    public static final String KEY_WAITING_FOR_DECISION_CALL = "waiting_for_decision_on_call";
+    public static final String KEY_POOL = "pool";
+
     private Player[] players;
     private int roundNumber;
-    private Stack<Tile> pool;
+    private ArrayDeque<Tile> pool;
     private int mCurrentPlayerIndex;
-    //TODO: there should be a better way to implement this
     private boolean mCallMade;
     private boolean mWaitingForDecisionOnCall;
 
     public Game(){
+        Log.d(TAG, "default game constructor called");
         players = new Player[4];
-        pool = new Stack<>();
+        pool = new ArrayDeque<>();
         mCallMade = false;
         mWaitingForDecisionOnCall = false;
     }
 
+    //TODO: find out when this doesn't work right, seems to be good enough for now
+    public Game(JSONObject json) throws JSONException{
+        Log.d(TAG, "Starting recreation");
+        players = new Player[4];
+        JSONArray jsonPlayers = json.getJSONArray(KEY_PLAYERS);
+        for (int i = 0; i < jsonPlayers.length(); i++){
+            JSONObject jsonPlayer = jsonPlayers.getJSONObject(i);
+            boolean isAi = jsonPlayer.getBoolean(Player.KEY_IS_AI);
+            if (isAi){
+                players[i] = new AiPlayer(jsonPlayer);
+            }
+            else {
+                players[i] = new HumanPlayer(jsonPlayer);
+            }
+            players[i].setGame(this);
+        }
+        pool = new ArrayDeque<>();
+        JSONArray jsonPool = json.getJSONArray(KEY_POOL);
+        for (int i = 0; i < jsonPool.length(); i++){
+            pool.push(new Tile(jsonPool.getJSONObject(i)));
+        }
+        roundNumber = json.getInt(KEY_ROUND_NUMBER);
+        mCurrentPlayerIndex = json.getInt(KEY_CURRENT_PLAYER_INDEX);
+        mCallMade = json.getBoolean(KEY_CALL_MADE);
+        mWaitingForDecisionOnCall = json.getBoolean(KEY_WAITING_FOR_DECISION_CALL);
+        Log.d(TAG, "Finishing recreation");
+        //not entirely sure this will work, but looks like it does for now
+        if (!mWaitingForDecisionOnCall){
+            takeNextTurn();
+        }
+    }
+
+    public JSONObject toJson() throws JSONException{
+        JSONObject json = new JSONObject();
+        JSONArray jsonPlayers = new JSONArray();
+        for (int i = 0; i < players.length; i++){
+            jsonPlayers.put(players[i].toJson());
+        }
+        json.put(KEY_PLAYERS, jsonPlayers);
+        JSONArray jsonPool = new JSONArray();
+        //get the last tile that was drawn and put it back in the pool, then just restart the turn
+        //need to copy the pool or we might try drawing from it after it's already empty
+        ArrayDeque<Tile> poolCopy = new ArrayDeque<>(pool);
+        while (!poolCopy.isEmpty()){
+            jsonPool.put(poolCopy.pop().toJson());
+        }
+        if (!mWaitingForDecisionOnCall) {
+            Tile lastDrawnTile = players[mCurrentPlayerIndex].getHand().getDrawnTile();
+            //might be null for calls, etc.
+            if (lastDrawnTile != null) {
+                jsonPool.put(lastDrawnTile.toJson());
+            }
+        }
+        json.put(KEY_ROUND_NUMBER, roundNumber);
+        json.put(KEY_CURRENT_PLAYER_INDEX, mCurrentPlayerIndex);
+        json.put(KEY_CALL_MADE, mCallMade);
+        json.put(KEY_WAITING_FOR_DECISION_CALL, mWaitingForDecisionOnCall);
+        json.put(KEY_POOL, jsonPool);
+        return json;
+    }
+
+
     public void startGame(){
+        Log.d(TAG, "startGame");
         players[0] = new HumanPlayer(SEAT_DOWN);
         players[1] = new AiPlayer(SEAT_RIGHT);
         players[2] = new AiPlayer(SEAT_UP);
@@ -86,7 +160,7 @@ public class Game {
 
         //if they're getting their turn from calling a tile, they don't get to draw
         if (!mCallMade){
-            Log.d(TAG, "drawing a tile");
+            Log.d(TAG, "player " + mCurrentPlayerIndex + " drawing a tile");
             players[mCurrentPlayerIndex].drawTile();
         }
         else {
@@ -137,7 +211,7 @@ public class Game {
             if (players[i].canPon(discardedTile)){
                 if (players[i].shouldPon(discardedTile)){
                     if (players[i] instanceof AiPlayer){
-                        onCallMade(i, MeldType.PON);
+                        onCallMade(i, MELD_TYPE_PON);
                     }
                     else {
                         mWaitingForDecisionOnCall = true;
@@ -152,7 +226,7 @@ public class Game {
                 if (players[(mCurrentPlayerIndex + 1) % players.length].shouldChii(discardedTile)) {
 
                     if (players[(mCurrentPlayerIndex + 1) % players.length] instanceof AiPlayer){
-                        onCallMade((mCurrentPlayerIndex + 1) % players.length, MeldType.CHII);
+                        onCallMade((mCurrentPlayerIndex + 1) % players.length, MELD_TYPE_CHII);
                     }
                     else {
                         mWaitingForDecisionOnCall = true;
@@ -179,17 +253,17 @@ public class Game {
 
     }
 
-    private void onCallMade(int playerIndex, MeldType callType){
+    private void onCallMade(int playerIndex, int callType){
         //call the tile, remove it from the discard, and that player gets the next turn
         Log.d(TAG, "Player " + playerIndex + " making a call from player " + mCurrentPlayerIndex);
         Tile discardedTile = getLastDiscardedTile();
         switch (callType){
-            case PON:
+            case MELD_TYPE_PON:
                 Log.d(TAG, "Player " + playerIndex + " calling pon on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
                 players[playerIndex].callPon(discardedTile, mCurrentPlayerIndex * 90);
                 break;
-            case CHII:
+            case MELD_TYPE_CHII:
                 Log.d(TAG, "Player " + (mCurrentPlayerIndex + 1) % players.length +
                         " calling chii on " + discardedTile + " from " + mCurrentPlayerIndex);
                 players[playerIndex].callChii(discardedTile);
@@ -213,7 +287,7 @@ public class Game {
             }
         }
         Collections.shuffle(list);
-        pool.empty();
+        pool.clear();
         pool.addAll(list);
     }
 
@@ -228,6 +302,7 @@ public class Game {
     }
 
     public Tile drawTile(){
+        Log.d(TAG, "pool has " + pool.size() + " tiles, drawing");
         if (pool.isEmpty()){
             throw new IllegalStateException("Pool is empty, can't draw");
         }
@@ -248,10 +323,10 @@ public class Game {
                 if (players[0] instanceof HumanPlayer){
                     if (getLastDiscardedTile() != null){
                         if (players[0].canPon(getLastDiscardedTile())){
-                            onCallMade(0, MeldType.PON);
+                            onCallMade(0, MELD_TYPE_PON);
                         }
                         else if ((players[0].canChii(getLastDiscardedTile()))){
-                            onCallMade(0, MeldType.CHII);
+                            onCallMade(0, MELD_TYPE_CHII);
                         }
                     }
 

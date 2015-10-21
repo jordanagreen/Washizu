@@ -2,6 +2,9 @@ package com.example.jordanagreen.washizu;
 
 import android.view.MotionEvent;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
 import static com.example.jordanagreen.washizu.Constants.TILE_WIDTH;
 
@@ -14,6 +17,10 @@ public class HumanPlayer extends Player {
 
     public HumanPlayer(int direction){
         super(direction);
+    }
+
+    public HumanPlayer(JSONObject json) throws JSONException{
+        super(json);
     }
 
     @Override

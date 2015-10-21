@@ -2,6 +2,10 @@ package com.example.jordanagreen.washizu;
 
 import android.graphics.Canvas;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import static com.example.jordanagreen.washizu.Constants.DISCARD_MAX_TILES;
@@ -23,12 +27,35 @@ public class DiscardPool {
 
     public static final String TAG = "DiscardPool";
 
+    public static final String KEY_TILES = "tiles";
+    public static final String KEY_RIICHI_INDEX = "riichi_index";
+
     private ArrayList<Tile> tiles;
     private int riichiIndex;
 
     public DiscardPool(){
         this.tiles = new ArrayList<>();
         this.riichiIndex = -1;
+    }
+
+    public DiscardPool(JSONObject json) throws JSONException {
+        this.tiles = new ArrayList<>();
+        JSONArray jsonTiles = json.getJSONArray(KEY_TILES);
+        for (int i = 0; i < jsonTiles.length(); i++){
+            tiles.add(new Tile(jsonTiles.getJSONObject(i)));
+        }
+        this.riichiIndex = json.getInt(KEY_RIICHI_INDEX);
+    }
+
+    public JSONObject toJson() throws JSONException{
+        JSONObject json = new JSONObject();
+        JSONArray jsonTiles = new JSONArray();
+        for (int i = 0; i < tiles.size(); i++){
+            jsonTiles.put(tiles.get(i).toJson());
+        }
+        json.put(KEY_TILES, jsonTiles);
+        json.put(KEY_RIICHI_INDEX, riichiIndex);
+        return json;
     }
 
     public ArrayList<Tile> getTiles(){
@@ -49,11 +76,11 @@ public class DiscardPool {
     }
 
     public Tile getLastTile() {
-        return tiles.get(tiles.size()-1);
+        return tiles.get(tiles.size() - 1);
     }
 
     public Tile removeLastTile(){
-        return tiles.remove(tiles.size()-1);
+        return tiles.remove(tiles.size() - 1);
     }
 
     public int getSize(){ return tiles.size(); }
@@ -100,4 +127,5 @@ public class DiscardPool {
                 throw new IllegalArgumentException("Illegal direction: " + direction);
         }
     }
+
 }

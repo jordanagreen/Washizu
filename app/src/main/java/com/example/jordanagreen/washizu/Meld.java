@@ -3,6 +3,13 @@ package com.example.jordanagreen.washizu;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_KAN;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_SHOUMINKAN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
@@ -16,14 +23,16 @@ import static com.example.jordanagreen.washizu.Constants.TILE_SMALL_WIDTH;
 public class Meld {
     public static final String TAG = "MELD";
 
-    enum MeldType {CHII, PON, KAN, SHOUMINKAN}
+    public static final String KEY_TYPE = "type";
+    public static final String KEY_ROTATED_INDEX = "rotated_index";
+    public static final String KEY_TILES = "tiles";
 
-    private MeldType type;
+    private int type;
     private Tile[] tiles;
     private int rotatedIndex;
     private Hand hand; // for drawing horizontally - need to know about the other melds
 
-    public Meld(Tile a, Tile b, Tile c, int rotatedIndex, MeldType type, Hand hand){
+    public Meld(Tile a, Tile b, Tile c, int rotatedIndex, int type, Hand hand){
         tiles = new Tile[] {a, b, c};
         this.type = type;
         this.rotatedIndex = rotatedIndex;
@@ -31,8 +40,19 @@ public class Meld {
         Log.d(TAG, "Meld made type " + type +  " rotated index " + rotatedIndex);
     }
 
-    public Meld(Tile a, Tile b, Tile c, Tile d, int directionCalled, MeldType type){
-        if (type != MeldType.KAN && type != MeldType.SHOUMINKAN){
+    public Meld(JSONObject json, Hand hand) throws JSONException{
+        JSONArray jsonTiles = json.getJSONArray(KEY_TILES);
+        tiles = new Tile[jsonTiles.length()];
+        for (int i = 0; i < jsonTiles.length(); i++){
+            tiles[i] = new Tile(jsonTiles.getJSONObject(i));
+        }
+        rotatedIndex = json.getInt(KEY_ROTATED_INDEX);
+        type = json.getInt(KEY_TYPE);
+        this.hand = hand;
+    }
+
+    public Meld(Tile a, Tile b, Tile c, Tile d, int directionCalled, int type){
+        if (type != MELD_TYPE_KAN && type != MELD_TYPE_SHOUMINKAN){
             throw new IllegalArgumentException("Four tiles but not a kan");
         }
         else {
@@ -45,18 +65,18 @@ public class Meld {
         return tiles;
     }
 
-    public MeldType getType(){
+    public int getType(){
         return type;
     }
 
     public void ponToKan(Tile tile){
-        if (type != MeldType.PON || tile.compareTo(tiles[0]) != 0 ||
+        if (type != MELD_TYPE_PON || tile.compareTo(tiles[0]) != 0 ||
                 tile.compareTo(tiles[1]) != 0 || tile.compareTo(tiles[2]) != 0){
             throw new IllegalArgumentException("Illegal kan");
         }
         else {
             tiles = new Tile[] {tiles[0], tiles[1], tiles[2], tile};
-            type = MeldType.SHOUMINKAN;
+            type = MELD_TYPE_SHOUMINKAN;
         }
     }
 
@@ -101,7 +121,7 @@ public class Meld {
                 }
                 //kan
                 else {
-                    if (type == MeldType.KAN){
+                    if (type ==MELD_TYPE_KAN){
                         int x = canvas.getWidth() - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                         int y = canvas.getHeight() - (TILE_SMALL_HEIGHT * (meldNumber+1));
                         for (int i = 0; i < tiles.length; i++){
@@ -185,7 +205,7 @@ public class Meld {
                     // add space for previous melds
                     for (int i = 0; i < meldNumber; i++){
                         Meld meld = hand.getMelds().get(i);
-                        if (meld.getType() == MeldType.KAN){
+                        if (meld.getType() == MELD_TYPE_KAN){
                             y = y - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                         }
                         else {
@@ -224,5 +244,17 @@ public class Meld {
                 throw new IllegalArgumentException("Illegal direction: " + seatDirection);
 
         }
+    }
+
+    public JSONObject toJson() throws JSONException{
+        JSONObject json = new JSONObject();
+        json.put(KEY_TYPE, type);
+        json.put(KEY_ROTATED_INDEX, rotatedIndex);
+        JSONArray jsonTiles = new JSONArray();
+        for (int i = 0; i < tiles.length; i++){
+            jsonTiles.put(tiles[i].toJson());
+        }
+        json.put(KEY_TILES, jsonTiles);
+        return json;
     }
 }

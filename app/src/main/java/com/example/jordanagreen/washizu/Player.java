@@ -3,6 +3,10 @@ package com.example.jordanagreen.washizu;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
 import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
 
 /**
@@ -11,6 +15,15 @@ import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
 public abstract class Player {
 
     public static final String TAG = "Player";
+
+    public static final String KEY_HAND = "hand";
+    public static final String KEY_DISCARDS = "discards";
+    public static final String KEY_DIRECTION = "direction";
+    public static final String KEY_WIND = "wind";
+    public static final String KEY_SCORE = "score";
+    public static final String KEY_IN_RIICHI = "in_riichi";
+    public static final String KEY_IS_MY_TURN = "is_my_turn";
+    public static final String KEY_IS_AI = "is_ai";
 
     protected Hand hand;
     private DiscardPool discards;
@@ -30,6 +43,28 @@ public abstract class Player {
         isMyTurn = false;
     }
 
+    public Player(JSONObject json) throws JSONException {
+        this.hand = new Hand(json.getJSONObject(KEY_HAND), this);
+        this.discards = new DiscardPool(json.getJSONObject(KEY_DISCARDS));
+        this.direction = json.getInt(KEY_DIRECTION);
+        this.score = json.getInt(KEY_SCORE);
+        this.inRiichi = json.getBoolean(KEY_IN_RIICHI);
+        this.isMyTurn = json.getBoolean(KEY_IS_MY_TURN);
+    }
+
+    public JSONObject toJson() throws JSONException{
+        JSONObject json = new JSONObject();
+        json.put(KEY_HAND, hand.toJson());
+        json.put(KEY_DISCARDS, discards.toJson());
+        json.put(KEY_DIRECTION, direction);
+        json.put(KEY_WIND, wind);
+        json.put(KEY_SCORE, score);
+        json.put(KEY_IN_RIICHI, inRiichi);
+        json.put(KEY_IS_MY_TURN, isMyTurn);
+        json.put(KEY_IS_AI, this instanceof AiPlayer);
+        return json;
+    }
+
     public void setGame(Game game){
         this.game = game;
     }
@@ -38,12 +73,12 @@ public abstract class Player {
 
     public void drawTile(){
         Tile tile = game.drawTile();
-        Log.d(TAG, "Player + " + direction + " Drew tile " + tile);
+        Log.d(TAG, "Player " + direction + " Drew tile " + tile);
         hand.setDrawnTile(tile);
     }
 
-    public void setHand(Hand hand) {
-        this.hand = hand;
+    public Hand getHand(){
+        return hand;
     }
 
     public void setWind(int wind) {
@@ -170,7 +205,7 @@ public abstract class Player {
 
     public boolean canKanOnDraw(Tile tile){
         for (Meld meld: hand.getMelds()){
-            if (meld.getType() == Meld.MeldType.PON){
+            if (meld.getType() == MELD_TYPE_PON){
                 if (meld.getTiles()[0].compareTo(tile) == 0){
                     return true;
                 }
