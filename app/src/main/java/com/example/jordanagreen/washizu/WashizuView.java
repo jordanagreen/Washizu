@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -213,7 +212,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void restoreGameFromJsonString(String jsonString){
         Log.d(TAG, "restoring from string");
-        Log.d(TAG, jsonString);
+//        Log.d(TAG, jsonString);
         try {
             JSONObject json = new JSONObject(jsonString);
             game = new Game(json);

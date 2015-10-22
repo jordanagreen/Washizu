@@ -1,35 +1,82 @@
 package com.example.jordanagreen.washizu;
 
-import android.app.Activity;
+import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ListActivity {
+
+    //TODO: start with a list of json states to start from, or a new game
 
     public static final String TAG = "MainActivity";
-    public static final String GAME_STATE_KEY = "game_state";
+
+    public static final String EXTRA_FILENAME = "filename";
+
+    public static final String NEW_GAME = "New Game";
+
+    private List<String> listItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState != null){
-            String jsonString;
-            if ((jsonString = savedInstanceState.getString(GAME_STATE_KEY)) != null){
-                WashizuView washizuView = (WashizuView) findViewById(R.id.game_view);
-                washizuView.restoreGameFromJsonString(jsonString);
+        listItems = getListOfSavedGames();
+        listItems.add(0, NEW_GAME);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.row_layout, listItems);
+        setListAdapter(adapter);
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Log.d(TAG, "List item " + position + " clicked");
+        //new game
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        if (position != 0) {
+            String filename = (String) getListView().getItemAtPosition(position);
+            intent.putExtra(EXTRA_FILENAME, filename);
+        }
+        MainActivity.this.startActivity(intent);
+    }
+
+    private List<String> getListOfSavedGames(){
+        List<String> games = new ArrayList<>();
+        //TODO: switch to a different folder, for now just using Assets for test cases
+//        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+//        Log.d(TAG, "looking for files in " + root.getAbsolutePath());
+//        File[] files = root.listFiles();
+        try {
+            String assetFiles[] = getResources().getAssets().list("");
+
+//        for (File file: files){
+//            if (file.isFile()){
+//                String filename = file.getName();
+            for (String filename: assetFiles){
+                Log.d(TAG, "checking file " + filename);
+                int i = filename.lastIndexOf('.');
+                if (i < 0){
+                    continue;
+                }
+                String ext = filename.substring(i);
+                if (ext.equals(".json")){
+                    games.add(filename);
+                }
+//            }
             }
         }
-        else {
-            WashizuView washizuView = (WashizuView) findViewById(R.id.game_view);
-            washizuView.startNewGame();
+        catch (IOException e){
+            return new ArrayList<>();
         }
+        return games;
     }
 
     @Override
@@ -47,47 +94,4 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        WashizuView game = (WashizuView) findViewById(R.id.game_view);
-        String gameState = game.getGameJsonAsString();
-        if (gameState != null){
-            outState.putString(GAME_STATE_KEY, gameState);
-//            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
-//            String filename = "game-state-" + df.format(Calendar.getInstance().getTime()) + ".json";
-            String filename = "game-state.json";
-            writeToFile(filename, gameState);
-        }
-        super.onSaveInstanceState(outState);
-    }
-
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//
-//    }
-
-    //just for writing JSON to a file for testing, this can be taken out later
-
-    private void writeToFile(String filename, String text){
-        File root = Environment.getExternalStorageDirectory();
-        File file = new File(root, filename);
-        Log.d(TAG, "Wrote JSON to " + file.getAbsolutePath());
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-
-            try {
-                fos.write(text.getBytes());
-            }
-            catch (IOException e){
-                Log.e(TAG, "Error writing file", e);
-            }
-            finally {
-                fos.close();
-            }
-        }
-        catch (IOException e){
-            Log.e(TAG, "Error writing file", e);
-        }
-    }
 }
