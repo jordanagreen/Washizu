@@ -14,8 +14,10 @@ import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_UP;
+import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
 import static com.example.jordanagreen.washizu.Constants.TILE_SMALL_HEIGHT;
 import static com.example.jordanagreen.washizu.Constants.TILE_SMALL_WIDTH;
+import static com.example.jordanagreen.washizu.Constants.TILE_WIDTH;
 
 /**
  * Created by Jordan on 9/17/2015.
@@ -200,8 +202,11 @@ public class Meld {
                     */
 
                     // put the melds horizontally to take up the space lost by the hand
+
                     int x = 0;
-                    int y = canvas.getHeight() - (2 * TILE_SMALL_WIDTH + TILE_SMALL_HEIGHT);
+                    int y = canvas.getHeight() - (2 * TILE_SMALL_WIDTH + TILE_SMALL_HEIGHT)
+                    //don't overlap the hand of the player to the right
+                        - (TILE_HEIGHT + TILE_WIDTH);
                     // add space for previous melds
                     for (int i = 0; i < meldNumber; i++){
                         Meld meld = hand.getMelds().get(i);

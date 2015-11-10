@@ -15,13 +15,9 @@ import java.util.List;
 
 public class MainActivity extends ListActivity {
 
-    //TODO: start with a list of json states to start from, or a new game
-
     public static final String TAG = "MainActivity";
 
     public static final String EXTRA_FILENAME = "filename";
-
-    public static final String NEW_GAME = "New Game";
 
     private List<String> listItems;
 
@@ -30,7 +26,7 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listItems = getListOfSavedGames();
-        listItems.add(0, NEW_GAME);
+        listItems.add(0, getString(R.string.new_game));
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.row_layout, listItems);
         setListAdapter(adapter);
     }
