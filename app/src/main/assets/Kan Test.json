@@ -7,25 +7,25 @@
             ],
             "tiles":[
                {
-                  "id":2,
+                  "id":0,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":5,
+                  "id":0,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":7,
+                  "id":0,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":15,
+                  "id":2,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
@@ -55,7 +55,7 @@
                   "is_discardable":true
                },
                {
-                  "id":24,
+                  "id":25,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
@@ -102,23 +102,132 @@
       {
          "hand":{
             "melds":[
+               {
+                  "type":0,
+                  "rotated_index":0,
+                  "tiles":[
+                     {
+                        "id":9,
+                        "is_opaque":false,
+                        "is_reversed":false,
+                        "is_discardable":true
+                     },
+                     {
+                        "id":10,
+                        "is_opaque":false,
+                        "is_reversed":false,
+                        "is_discardable":true
+                     },
+                     {
+                        "id":11,
+                        "is_opaque":false,
+                        "is_reversed":false,
+                        "is_discardable":true
+                     }
+                  ]
+               }
+            ],
+            "tiles":[
+               {
+                  "id":1,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":1,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":6,
+                  "is_opaque":true,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":8,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":11,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":13,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":20,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":22,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":28,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               },
+               {
+                  "id":32,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               }
+            ]
+         },
+         "discards":{
+            "tiles":[
+               {
+                  "id":14,
+                  "is_opaque":false,
+                  "is_reversed":false,
+                  "is_discardable":true
+               }
+            ],
+            "riichi_index":-1
+         },
+         "direction":270,
+         "wind":0,
+         "score":2500,
+         "in_riichi":false,
+         "is_my_turn":false,
+         "is_ai":true
+      },
+      {
+         "hand":{
+            "melds":[
 
             ],
             "tiles":[
                {
-                  "id":3,
+                  "id":2,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":10,
+                  "id":2,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":12,
+                  "id":2,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
@@ -191,115 +300,6 @@
             ],
             "riichi_index":-1
          },
-         "direction":270,
-         "wind":0,
-         "score":2500,
-         "in_riichi":false,
-         "is_my_turn":false,
-         "is_ai":true
-      },
-      {
-         "hand":{
-            "melds":[
-               {
-                  "type":0,
-                  "rotated_index":0,
-                  "tiles":[
-                     {
-                        "id":9,
-                        "is_opaque":false,
-                        "is_reversed":false,
-                        "is_discardable":true
-                     },
-                     {
-                        "id":10,
-                        "is_opaque":false,
-                        "is_reversed":false,
-                        "is_discardable":true
-                     },
-                     {
-                        "id":11,
-                        "is_opaque":false,
-                        "is_reversed":false,
-                        "is_discardable":true
-                     }
-                  ]
-               }
-            ],
-            "tiles":[
-               {
-                  "id":0,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":0,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":6,
-                  "is_opaque":true,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":8,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":11,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":13,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":20,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":22,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":28,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               },
-               {
-                  "id":32,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               }
-            ]
-         },
-         "discards":{
-            "tiles":[
-               {
-                  "id":14,
-                  "is_opaque":false,
-                  "is_reversed":false,
-                  "is_discardable":true
-               }
-            ],
-            "riichi_index":-1
-         },
          "direction":180,
          "wind":0,
          "score":2500,
@@ -314,79 +314,79 @@
             ],
             "tiles":[
                {
-                  "id":1,
+                  "id":0,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":2,
+                  "id":0,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":6,
+                  "id":0,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":8,
+                  "id":0,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":15,
+                  "id":0,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":17,
+                  "id":0,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":18,
+                  "id":0,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":21,
+                  "id":0,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":24,
+                  "id":0,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":27,
+                  "id":0,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":27,
+                  "id":0,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":28,
+                  "id":0,
                   "is_opaque":false,
                   "is_reversed":false,
                   "is_discardable":true
                },
                {
-                  "id":31,
+                  "id":0,
                   "is_opaque":true,
                   "is_reversed":false,
                   "is_discardable":true
@@ -418,7 +418,7 @@
    "waiting_for_decision_on_call":false,
    "pool":[
       {
-         "id":13,
+         "id":0,
          "is_opaque":false,
          "is_reversed":false,
          "is_discardable":true

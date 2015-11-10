@@ -42,6 +42,17 @@ public class Meld {
         Log.d(TAG, "Meld made type " + type +  " rotated index " + rotatedIndex);
     }
 
+    public Meld(Tile a, Tile b, Tile c, Tile d, int rotatedIndex, int type){
+        if (type != MELD_TYPE_KAN && type != MELD_TYPE_SHOUMINKAN){
+            throw new IllegalArgumentException("Four tiles but not a kan");
+        }
+        else {
+            tiles = new Tile[] {a, b, c, d};
+            this.type = type;
+            this.rotatedIndex = rotatedIndex;
+        }
+    }
+
     public Meld(JSONObject json, Hand hand) throws JSONException{
         JSONArray jsonTiles = json.getJSONArray(KEY_TILES);
         tiles = new Tile[jsonTiles.length()];
@@ -51,16 +62,6 @@ public class Meld {
         rotatedIndex = json.getInt(KEY_ROTATED_INDEX);
         type = json.getInt(KEY_TYPE);
         this.hand = hand;
-    }
-
-    public Meld(Tile a, Tile b, Tile c, Tile d, int directionCalled, int type){
-        if (type != MELD_TYPE_KAN && type != MELD_TYPE_SHOUMINKAN){
-            throw new IllegalArgumentException("Four tiles but not a kan");
-        }
-        else {
-            tiles = new Tile[] {a, b, c, d};
-            this.type = type;
-        }
     }
 
     public Tile[] getTiles(){

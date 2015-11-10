@@ -17,7 +17,9 @@ import java.util.Random;
 import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
 import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_CHII;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_KAN;
 import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
+import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_SHOUMINKAN;
 import static com.example.jordanagreen.washizu.Constants.ROUND_EAST_1;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
@@ -205,11 +207,23 @@ public class Game {
 
         mWaitingForDecisionOnCall = false;
 
-        //check all other players for pon
+        //check all other players for pon and kan
         for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++){
             int i = j % players.length;
             if (players[i].canPon(discardedTile)){
-                if (players[i].shouldPon(discardedTile)){
+                if (players[i].canKanOnCall(discardedTile)){
+                    if (players[i].shouldKan(discardedTile)){
+                        if (players[i] instanceof AiPlayer) {
+                            onCallMade(i, MELD_TYPE_KAN);
+                        }
+                        else {
+                            mWaitingForDecisionOnCall = true;
+                            Log.d(TAG, "Waiting for touch on kan");
+                        }
+                    }
+                }
+                //TODO: when buttons are added, allow calling either kan or pon
+                else if (players[i].shouldPon(discardedTile)){
                     if (players[i] instanceof AiPlayer){
                         onCallMade(i, MELD_TYPE_PON);
                     }
@@ -268,11 +282,23 @@ public class Game {
                         " calling chii on " + discardedTile + " from " + mCurrentPlayerIndex);
                 players[playerIndex].callChii(discardedTile);
                 break;
+            case MELD_TYPE_KAN:
+                Log.d(TAG, "Player " + playerIndex + " calling kan on " + discardedTile + " from "
+                        + mCurrentPlayerIndex);
+                players[playerIndex].callKan(discardedTile, mCurrentPlayerIndex * 90);
+
+                //TODO: when dora are added, flip another one here
+                break;
+            case MELD_TYPE_SHOUMINKAN:
+                break;
             default:
                 throw new IllegalArgumentException("Illegal call type");
         }
         players[mCurrentPlayerIndex].removeLastDiscardedTile();
-        mCallMade = true;
+        //kan lets you draw another tile
+        if (callType != MELD_TYPE_KAN && callType != MELD_TYPE_SHOUMINKAN){
+            mCallMade = true;
+        }
         Log.d(TAG, "call finished");
         onTurnFinished(playerIndex);
     }
@@ -323,7 +349,13 @@ public class Game {
                 if (players[0] instanceof HumanPlayer){
                     if (getLastDiscardedTile() != null){
                         if (players[0].canPon(getLastDiscardedTile())){
-                            onCallMade(0, MELD_TYPE_PON);
+                            //TODO: allow picking which to make
+                            if (players[0].canKanOnCall(getLastDiscardedTile())){
+                                onCallMade(0, MELD_TYPE_KAN);
+                            }
+                            else {
+                                onCallMade(0, MELD_TYPE_PON);
+                            }
                         }
                         else if ((players[0].canChii(getLastDiscardedTile()))){
                             onCallMade(0, MELD_TYPE_CHII);

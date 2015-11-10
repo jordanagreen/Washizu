@@ -40,6 +40,10 @@ public class HumanPlayer extends Player {
     }
 
     @Override
+    public boolean shouldKan(Tile tile){
+        return true;
+    }
+    @Override
     protected Tile[] getTilesForChii(Tile tile){
         //TODO: get some better logic for this, for now it's just picking an option randomly
         int id = tile.getId();

@@ -199,7 +199,7 @@ public class Hand {
         if (calledDirection == (mPlayer.getDirection() + 180) % 360){
            rotatedIndex = 1;
         }
-        else if (calledDirection == (mPlayer.getDirection() + 270) % 360){
+        else if (calledDirection == (mPlayer.getDirection() + 90) % 360){
            rotatedIndex = 2;
         }
         Meld meld = new Meld(a, b, c, rotatedIndex, MELD_TYPE_PON, this);
@@ -207,18 +207,27 @@ public class Hand {
 
     }
 
-    public void makeKan(Tile a, Tile b, Tile c, Tile d, int direction, boolean isClosed){
+    //TODO: maybe split open and closed kans into their own methods
+    public void makeKan(Tile a, Tile b, Tile c, Tile d, int calledDirection, boolean isClosed){
         if (a.compareTo(b) != 0 || b.compareTo(c) != 0 || c.compareTo(d) != 0){
             throw new IllegalArgumentException("Illegal tiles for kan");
         }
         if (isClosed){
             Log.d(TAG, "Closed kan with " + a + " " + b + " " + c + " " + d);
-            Meld meld = new Meld(a, b, c, d, direction, MELD_TYPE_SHOUMINKAN);
+            Meld meld = new Meld(a, b, c, d, calledDirection, MELD_TYPE_SHOUMINKAN);
             addMeld(meld);
         }
         else {
             Log.d(TAG, "Kan with " + a + " " + b + " " + c + " " + d);
-            Meld meld = new Meld(a, b, c, d, direction, MELD_TYPE_KAN);
+            int rotatedIndex = 0;
+            if (calledDirection == (mPlayer.getDirection() + 180) % 360){
+                rotatedIndex = 1;
+            }
+            else if (calledDirection == (mPlayer.getDirection() + 90) % 360){
+                rotatedIndex = 3;
+            }
+            Log.d(TAG, "Kan rotated index is " + rotatedIndex);
+            Meld meld = new Meld(a, b, c, d, rotatedIndex, MELD_TYPE_KAN);
             addMeld(meld);
         }
     }

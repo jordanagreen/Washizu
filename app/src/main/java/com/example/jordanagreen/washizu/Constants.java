@@ -7,7 +7,7 @@ import android.content.res.Resources;
  */
 public class Constants {
 
-//    helps for rotating tiles
+//    helps for rotating tiles - note that this is the reverse of turn order (i.e. clockwise)
     public static final int SEAT_DOWN = 0;
     public static final int SEAT_LEFT = 90;
     public static final int SEAT_UP = 180;

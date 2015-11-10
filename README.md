@@ -8,8 +8,9 @@ Right now there isn't much to play, since the AI just discards randomly and all 
 1. Implement kan
 2. Write a class to check if a hand has won and score it
 3. Implement ron/tsumo
-4. Make some test games for each yaku to make sure they win right
-5. Modify a pre-existing AI to work with my logic
-6. Improve the UI
-7. Add regular/Washizu option
-8. Possible multiplayer in the future
+4. Add buttons to decide whether to call or not
+5. Make some test games for each yaku to make sure they win right
+6. Modify a pre-existing AI to work with my logic
+7. Improve the UI
+8. Add regular/Washizu option
+9. Possible multiplayer in the future

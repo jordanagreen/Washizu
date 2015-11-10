@@ -132,9 +132,12 @@ public abstract class Player {
         return inHand >= 2;
     }
 
+    //might be better to take out the abstractness eventually
     public abstract boolean shouldPon(Tile tile);
     public abstract boolean shouldChii(Tile tile);
+    public abstract boolean shouldKan(Tile tile);
 
+    //calledDirection is the player called from * 90 so we know which tile to rotate
     public void callPon(Tile tile, int calledDirection){
         //get the two other tiles from the hand
         int ia = 0;
