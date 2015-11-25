@@ -136,9 +136,9 @@ public class Game {
         Random rand = new Random();
         int firstEast = rand.nextInt(4);
         players[firstEast].setWind(WIND_EAST);
-        players[(firstEast+1)%4].setWind(WIND_NORTH);
+        players[(firstEast+1)%4].setWind(WIND_SOUTH);
         players[(firstEast+2)%4].setWind(WIND_WEST);
-        players[(firstEast +3)%4].setWind(WIND_SOUTH);
+        players[(firstEast +3)%4].setWind(WIND_NORTH);
         startRound(ROUND_EAST_1);
 
         mCurrentPlayerIndex = firstEast;
