@@ -51,6 +51,7 @@ public class Game {
     private ArrayDeque<Tile> pool;
     private int mCurrentPlayerIndex;
     private boolean mCallMade;
+    private boolean mKanMade; //needs to be separate for drawing
     private boolean mWaitingForDecisionOnCall;
 
     public Game(){
@@ -58,6 +59,7 @@ public class Game {
         players = new Player[4];
         pool = new ArrayDeque<>();
         mCallMade = false;
+        mKanMade = false;
         mWaitingForDecisionOnCall = false;
     }
 
@@ -157,11 +159,12 @@ public class Game {
         void callback();
     }
 
+    //TODO: fix this being called twice for some reason
     private void takeNextTurn(){
         players[mCurrentPlayerIndex].setIsMyTurn(true);
-
-        //if they're getting their turn from calling a tile, they don't get to draw
-        if (!mCallMade){
+        Log.d(TAG, "Starting turn for player " + mCurrentPlayerIndex);
+        //if they're getting their turn from calling a tile, they don't get to draw, unless it's kan
+        if (!mCallMade || mKanMade){
             Log.d(TAG, "player " + mCurrentPlayerIndex + " drawing a tile");
             players[mCurrentPlayerIndex].drawTile();
         }
@@ -169,6 +172,7 @@ public class Game {
             Log.d(TAG, "tile called, no draw");
         }
         mCallMade = false;
+        mKanMade = false;
         //if the player is an AI, go to the next step (calls) without waiting for input
         if (players[mCurrentPlayerIndex] instanceof AiPlayer){
             players[mCurrentPlayerIndex].takeTurn(new GameCallback() {
@@ -192,6 +196,7 @@ public class Game {
 
     private void onTurnFinished(int nextPlayerIndex){
         players[mCurrentPlayerIndex].setIsMyTurn(false);
+        Log.d(TAG, "player " + mCurrentPlayerIndex + " finished, next is " + nextPlayerIndex);
         mCurrentPlayerIndex = nextPlayerIndex;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -206,7 +211,7 @@ public class Game {
         //TODO: check for kan and ron
 
         mWaitingForDecisionOnCall = false;
-
+        Log.d(TAG, "Checking tile " + discardedTile + " for calls");
         //check all other players for pon and kan
         for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++){
             int i = j % players.length;
@@ -250,8 +255,10 @@ public class Game {
                 }
             }
         }
+        //TODO: this might mess up kans
         //if no calls were made, just go to the player on the right
         if (!mCallMade && !mWaitingForDecisionOnCall){
+            Log.d(TAG, "No calls made, going to next turn");
             onTurnFinished((mCurrentPlayerIndex + 1) % players.length);
         }
         //otherwise, wait for onCallMade to be triggered when the user presses a button
@@ -286,7 +293,7 @@ public class Game {
                 Log.d(TAG, "Player " + playerIndex + " calling kan on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
                 players[playerIndex].callKan(discardedTile, mCurrentPlayerIndex * 90);
-
+                mKanMade = true;
                 //TODO: when dora are added, flip another one here
                 break;
             case MELD_TYPE_SHOUMINKAN:
@@ -296,9 +303,9 @@ public class Game {
         }
         players[mCurrentPlayerIndex].removeLastDiscardedTile();
         //kan lets you draw another tile
-        if (callType != MELD_TYPE_KAN && callType != MELD_TYPE_SHOUMINKAN){
+//        if (callType != MELD_TYPE_KAN && callType != MELD_TYPE_SHOUMINKAN){
             mCallMade = true;
-        }
+//        }
         Log.d(TAG, "call finished");
         onTurnFinished(playerIndex);
     }
