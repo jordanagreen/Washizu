@@ -15,8 +15,10 @@ import static com.example.jordanagreen.washizu.Constants.PIN_1;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
 import static com.example.jordanagreen.washizu.Constants.SOU_9;
+import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static com.example.jordanagreen.washizu.Constants.XIA;
+import static com.example.jordanagreen.washizu.Constants.YAKU_CHII_TOITSU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_IPPATSU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_KOKUSHI_MUSOU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_RIICHI;
@@ -37,7 +39,7 @@ public class Scorer {
     }
 
     //all the tiles including the winning one for when which one was drawn doesn't matter
-    //we only need the tile IDs so don't bother returning the whole tiles
+    //we only need the tile IDs so don't bother returning the whole tiles to simplify things
     private List<Integer> getFullHand(){
         List<Integer> ids = new ArrayList<>();
         for (Tile tile: hand.getTiles()){
@@ -72,11 +74,17 @@ public class Scorer {
     }
 
    Score scoreHand(){
+       //do the two easy ones to check first
        if (isKokushiMusou()){
            addYaku(YAKU_KOKUSHI_MUSOU);
            if (isDoubleKokushiMusou()){
                addYaku(YAKU_KOKUSHI_MUSOU);
            }
+           //don't even bother checking anything else
+           return score;
+       }
+       if (isChiiToitsu()){
+           addYaku(YAKU_CHII_TOITSU);
        }
 
        return score;
@@ -104,6 +112,25 @@ public class Scorer {
         //check if it's equal to the actual double kokushi
         for (int i = 0; i < handTiles.length; i++){
             if (handTiles[i] != kokushiTiles[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isChiiToitsu(){
+        //seven pairs
+        List<Integer> tiles = getFullHand();
+        int[] tilesInHand = new int[TILE_MAX_ID];
+        for (int tile: tiles){
+            tilesInHand[tile]++;
+            //four of a kind doesn't count as two pairs
+            if (tilesInHand[tile] >= 3){
+                return false;
+            }
+        }
+        for (int i = 0; i < tilesInHand.length; i++){
+            if (tilesInHand[i] != 0 && tilesInHand[i] != 2){
                 return false;
             }
         }
