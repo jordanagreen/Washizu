@@ -51,7 +51,7 @@ public class Game {
     private ArrayDeque<Tile> pool;
     private int mCurrentPlayerIndex;
     private boolean mCallMade;
-    private boolean mKanMade; //needs to be separate for drawing
+    private boolean mKanMade; //needs to be separate so you can draw after kan
     private boolean mWaitingForDecisionOnCall;
 
     public Game(){
@@ -159,7 +159,6 @@ public class Game {
         void callback();
     }
 
-    //TODO: fix this being called twice for some reason
     private void takeNextTurn(){
         players[mCurrentPlayerIndex].setIsMyTurn(true);
         Log.d(TAG, "Starting turn for player " + mCurrentPlayerIndex);
@@ -255,7 +254,6 @@ public class Game {
                 }
             }
         }
-        //TODO: this might mess up kans
         //if no calls were made, just go to the player on the right
         if (!mCallMade && !mWaitingForDecisionOnCall){
             Log.d(TAG, "No calls made, going to next turn");
@@ -302,10 +300,7 @@ public class Game {
                 throw new IllegalArgumentException("Illegal call type");
         }
         players[mCurrentPlayerIndex].removeLastDiscardedTile();
-        //kan lets you draw another tile
-//        if (callType != MELD_TYPE_KAN && callType != MELD_TYPE_SHOUMINKAN){
-            mCallMade = true;
-//        }
+        mCallMade = true;
         Log.d(TAG, "call finished");
         onTurnFinished(playerIndex);
     }

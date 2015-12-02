@@ -39,11 +39,13 @@ public class Hand {
     private ArrayList<Meld> melds;
     private Tile mDrawnTile;
     private Player mPlayer;
+    private boolean isOpen;
 
     public Hand(Player player){
         tiles = new ArrayList<>(HAND_SIZE);
         melds = new ArrayList<>();
         mDrawnTile = null;
+        isOpen = false;
         this.mPlayer = player;
     }
 
@@ -100,6 +102,10 @@ public class Hand {
                 tile.isReversed = tile.isOpaque;
             }
         }
+    }
+
+    public boolean getIsOpen(){
+        return isOpen;
     }
 
     public Tile getTile(int i){

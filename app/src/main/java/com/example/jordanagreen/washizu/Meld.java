@@ -87,7 +87,6 @@ public class Meld {
         switch (seatDirection){
             case SEAT_UP:
             case SEAT_DOWN:
-                //TODO: draw kans too
                 if (tiles.length == 3){
                     int x = canvas.getWidth() - (2 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                     int y = canvas.getHeight() - (TILE_SMALL_HEIGHT * (meldNumber+1));
@@ -158,7 +157,7 @@ public class Meld {
                             }
                         }
                     }
-                    //shouminkan
+                    //TODO: shouminkan
                     else {
 
                     }
@@ -243,6 +242,48 @@ public class Meld {
                             }
                             y = y + TILE_SMALL_WIDTH;
                         }
+                    }
+                }
+                //TODO: side kan
+                else {
+                    if (type ==MELD_TYPE_KAN){
+                        int x = 0;
+                        int y = canvas.getHeight() - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT
+                                - (TILE_HEIGHT + TILE_WIDTH);
+                        for (int i = 0; i < tiles.length; i++){
+                            if (i == rotatedIndex){
+                                if (seatDirection == SEAT_LEFT){
+                                    tiles[i].drawSmall(canvas, x,
+                                            y + (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
+                                            (seatDirection + 90) % 360);
+                                }
+                                else {
+                                    tiles[i].drawSmall(canvas,
+                                            canvas.getWidth() - x - TILE_SMALL_HEIGHT,
+                                            canvas.getHeight() - y - TILE_SMALL_WIDTH -
+                                                    (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
+                                            (seatDirection + 90) % 360);
+                                }
+                                x = x + TILE_SMALL_HEIGHT;
+                            }
+                            else {
+                                if (seatDirection == SEAT_LEFT){
+                                    tiles[i].drawSmall(canvas, x, y, seatDirection);
+                                }
+                                else {
+                                    tiles[i].drawSmall(canvas,
+                                            canvas.getWidth() - x - TILE_SMALL_WIDTH,
+                                            canvas.getHeight() - y - TILE_SMALL_HEIGHT,
+                                            seatDirection);
+                                }
+
+                                x = x + TILE_SMALL_WIDTH;
+                            }
+                        }
+                    }
+                    //TODO: shouminkan
+                    else {
+
                     }
                 }
                 break;
