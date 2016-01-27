@@ -102,6 +102,16 @@ public class Score {
         }
     }
 
+    //TODO: actually do this
+    public int calculateScore(){
+        return 0;
+    }
+
+    public int[] getHan(){
+        return han;
+    }
+
+    //return the han values for open hands
     private int[] makeOpenHan(){
         return new int[]{
                 OPEN_HAN_RIICHI,
@@ -146,6 +156,7 @@ public class Score {
         };
     }
 
+    //return the han values for closed hands
     private int[] makeClosedHan(){
         return new int[]{
                 CLOSED_HAN_RIICHI,
@@ -191,10 +202,12 @@ public class Score {
     }
 
     void addClosedYaku(int yaku){
+//        System.out.println("added " + closedHan[yaku] + " to " + han[yaku]);
         han[yaku] += closedHan[yaku];
     }
 
     void addOpenYaku(int yaku){
+//        System.out.println("added " + openHan[yaku] + " to " + yaku);
         han[yaku] += openHan[yaku];
     }
 

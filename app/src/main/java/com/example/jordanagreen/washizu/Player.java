@@ -209,7 +209,7 @@ public abstract class Player {
     }
 
     public boolean canKanOnDraw(Tile tile){
-        for (Meld meld: hand.getMelds()){
+        for (Meld meld: hand.getmMelds()){
             if (meld.getType() == MELD_TYPE_PON){
                 if (meld.getTiles()[0].compareTo(tile) == 0){
                     return true;
@@ -226,7 +226,7 @@ public abstract class Player {
     }
 
     public void callKan(Tile tile, int calledDirection){
-        for (Meld meld: hand.getMelds()){
+        for (Meld meld: hand.getmMelds()){
             if (meld.getType() == MELD_TYPE_PON && meld.getTiles()[0].compareTo(tile) == 0){
                 hand.makeShouminkan(tile, meld);
                 return;

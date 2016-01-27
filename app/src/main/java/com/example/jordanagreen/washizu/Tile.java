@@ -46,6 +46,10 @@ public class Tile implements Comparable<Tile>{
         }
     }
 
+    public Tile(int id){
+        this(id, true);
+    }
+
     public Tile(JSONObject json) throws JSONException{
         this.id = json.getInt(KEY_ID);
         this.isOpaque = json.getBoolean(KEY_IS_OPAQUE);

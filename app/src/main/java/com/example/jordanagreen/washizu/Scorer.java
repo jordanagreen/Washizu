@@ -28,14 +28,31 @@ import static com.example.jordanagreen.washizu.Constants.YAKU_RIICHI;
  */
 public class Scorer {
 
-    Hand hand;
-    Tile winningTile;
-    Score score;
+    private Hand hand;
+    //might not be in the hand already if it's from ron
+    private Tile winningTile;
+    private Score score;
 
-    Scorer(Hand hand, Tile winningTile){
+    public Scorer(Hand hand, Tile winningTile){
         this.hand = hand;
         this.winningTile = winningTile;
         this.score = new Score();
+    }
+
+    public Scorer(){
+        this.score = new Score();
+    }
+
+    public Score getScore(){
+        return score;
+    }
+
+    public void setHand(Hand hand){
+        this.hand = hand;
+    }
+
+    public void setWinningTile(Tile tile){
+        this.winningTile = tile;
     }
 
     //all the tiles including the winning one for when which one was drawn doesn't matter
@@ -49,7 +66,7 @@ public class Scorer {
         return ids;
     }
 
-    private List<Integer> getHandWIthoutWinningTile(){
+    private List<Integer> getHandWithoutWinningTile(){
         List<Integer> ids = new ArrayList<>();
         for (Tile tile: hand.getTiles()){
             ids.add(tile.getId());
@@ -61,6 +78,7 @@ public class Scorer {
         if (hand.getIsOpen()){
             score.addOpenYaku(yaku);
         } else {
+//            System.out.println("added " + yaku);
             score.addClosedYaku(yaku);
         }
     }
@@ -73,7 +91,7 @@ public class Scorer {
         addYaku(YAKU_IPPATSU);
     }
 
-   Score scoreHand(){
+   public void scoreHand(){
        //do the two easy ones to check first
        if (isKokushiMusou()){
            addYaku(YAKU_KOKUSHI_MUSOU);
@@ -81,13 +99,12 @@ public class Scorer {
                addYaku(YAKU_KOKUSHI_MUSOU);
            }
            //don't even bother checking anything else
-           return score;
+           return;
        }
        if (isChiiToitsu()){
            addYaku(YAKU_CHII_TOITSU);
        }
 
-       return score;
    }
 
     private boolean isKokushiMusou(){
@@ -96,15 +113,18 @@ public class Scorer {
         List<Integer> tiles = getFullHand();
         for (int tile: tiles){
             if (!kokushiTiles.contains(tile)){
+//                System.out.println("doesn't contain " + tile);
                 return false;
             }
+//            System.out.println("contains " + tile);
         }
+//        System.out.println("kokushi");
         return true;
     }
 
     private boolean isDoubleKokushiMusou(){
         //one of each with 13-sided wait
-        List<Integer> tiles = getHandWIthoutWinningTile();
+        List<Integer> tiles = getHandWithoutWinningTile();
         int[] kokushiTiles = new int[]{MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, PEI, XIA, TON};
         Integer[] handTiles = tiles.toArray(new Integer[tiles.size()]);
@@ -115,6 +135,7 @@ public class Scorer {
                 return false;
             }
         }
+//        System.out.println("double kokushi");
         return true;
     }
 

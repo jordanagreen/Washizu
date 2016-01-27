@@ -209,7 +209,7 @@ public class Meld {
                         - (TILE_HEIGHT + TILE_WIDTH);
                     // add space for previous melds
                     for (int i = 0; i < meldNumber; i++){
-                        Meld meld = hand.getMelds().get(i);
+                        Meld meld = hand.getmMelds().get(i);
                         if (meld.getType() == MELD_TYPE_KAN){
                             y = y - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                         }

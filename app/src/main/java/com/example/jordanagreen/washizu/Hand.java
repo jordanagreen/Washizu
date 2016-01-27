@@ -31,34 +31,35 @@ public class Hand {
 
     public static final String TAG = "Hand";
 
-    public static final String KEY_MELDS = "melds";
-    public static final String KEY_TILES = "tiles";
+    public static final String KEY_MELDS = "mMelds";
+    public static final String KEY_TILES = "mTiles";
 //    public static final String KEY_DRAWN_TILE = "drawn_tile";
 
-    private ArrayList<Tile> tiles;
-    private ArrayList<Meld> melds;
+    private List<Tile> mTiles;
+    private List<Meld> mMelds;
+    //TODO: make sure this is null when it's not the player's turn
     private Tile mDrawnTile;
     private Player mPlayer;
-    private boolean isOpen;
+    private boolean mIsOpen;
 
     public Hand(Player player){
-        tiles = new ArrayList<>(HAND_SIZE);
-        melds = new ArrayList<>();
+        mTiles = new ArrayList<>(HAND_SIZE);
+        mMelds = new ArrayList<>();
         mDrawnTile = null;
-        isOpen = false;
+        mIsOpen = false;
         this.mPlayer = player;
     }
 
     public Hand(JSONObject json, Player player) throws JSONException{
         JSONArray jsonMelds = json.getJSONArray(KEY_MELDS);
-        melds = new ArrayList<>();
+        mMelds = new ArrayList<>();
         for (int i = 0; i < jsonMelds.length(); i++){
-            melds.add(new Meld(jsonMelds.getJSONObject(i), this));
+            mMelds.add(new Meld(jsonMelds.getJSONObject(i), this));
         }
         JSONArray jsonTiles = json.getJSONArray(KEY_TILES);
-        tiles = new ArrayList<>();
+        mTiles = new ArrayList<>();
         for (int i = 0; i < jsonTiles.length(); i++){
-            tiles.add(new Tile(jsonTiles.getJSONObject(i)));
+            mTiles.add(new Tile(jsonTiles.getJSONObject(i)));
         }
 //        if (!json.isNull(KEY_DRAWN_TILE)){
 //            mDrawnTile = new Tile(json.getJSONObject(KEY_DRAWN_TILE));
@@ -69,16 +70,31 @@ public class Hand {
         this.mPlayer = player;
     }
 
+    public Hand(List<Integer> ids, Tile drawnTile, Player player){
+        if (ids.size() != 13){
+            throw new IllegalArgumentException("Trying to make a hand with " + ids.size() + " mTiles");
+        }
+        List<Tile> tiles = new ArrayList<>();
+        for (Integer id: ids){
+            tiles.add(new Tile(id));
+        }
+        this.mTiles = tiles;
+        mDrawnTile = drawnTile;
+        mPlayer = player;
+        mMelds = new ArrayList<>();
+        mIsOpen = false;
+    }
+
     public JSONObject toJson() throws JSONException{
         JSONObject json = new JSONObject();
         JSONArray jsonMelds = new JSONArray();
-        for (int i = 0; i < melds.size(); i++){
-            jsonMelds.put(melds.get(i).toJson());
+        for (int i = 0; i < mMelds.size(); i++){
+            jsonMelds.put(mMelds.get(i).toJson());
         }
         json.put(KEY_MELDS, jsonMelds);
         JSONArray jsonTiles = new JSONArray();
-        for (int i = 0; i < tiles.size(); i++){
-            jsonTiles.put(tiles.get(i).toJson());
+        for (int i = 0; i < mTiles.size(); i++){
+            jsonTiles.put(mTiles.get(i).toJson());
         }
         json.put(KEY_TILES, jsonTiles);
 //        json.put(KEY_DRAWN_TILE, mDrawnTile == null ? null : mDrawnTile.toJson());
@@ -86,9 +102,9 @@ public class Hand {
     }
 
     public void addTile(Tile tile){
-        if (tiles.size() < HAND_SIZE){
+        if (mTiles.size() < HAND_SIZE){
             Log.d(TAG, "Tile " + tile + " added");
-            tiles.add(tile);
+            mTiles.add(tile);
             sortHand();
         }
         else {
@@ -98,22 +114,22 @@ public class Hand {
 
     public void setTilesVisibility(){
         if (mPlayer instanceof AiPlayer){
-            for (Tile tile: tiles){
+            for (Tile tile: mTiles){
                 tile.isReversed = tile.isOpaque;
             }
         }
     }
 
     public boolean getIsOpen(){
-        return isOpen;
+        return mIsOpen;
     }
 
     public Tile getTile(int i){
-        return tiles.get(i);
+        return mTiles.get(i);
     }
 
     public Tile getTileById(int id){
-        for (Tile tile: tiles){
+        for (Tile tile: mTiles){
             if (tile.getId() == id){
                 return tile;
             }
@@ -123,7 +139,7 @@ public class Hand {
 
     public ArrayList<Tile> getAllTilesById(int id){
         ArrayList<Tile> t = new ArrayList<>();
-        for (Tile tile: tiles){
+        for (Tile tile: mTiles){
             if (tile.getId() == id){
                 t.add(tile);
             }
@@ -132,7 +148,7 @@ public class Hand {
     }
 
     public boolean containsTileById(int id){
-        for (Tile tile: tiles){
+        for (Tile tile: mTiles){
             if (tile.getId() == id){
                 return true;
             }
@@ -141,8 +157,8 @@ public class Hand {
     }
 
     public void discardTile(Tile tile){
-        if (tiles.contains(tile)){
-            tiles.remove(tile);
+        if (mTiles.contains(tile)){
+            mTiles.remove(tile);
             if (mDrawnTile != null){
                 addTile(mDrawnTile);
             }
@@ -156,12 +172,12 @@ public class Hand {
         mDrawnTile = null;
     }
 
-    public ArrayList<Tile> getTiles() {
-        return tiles;
+    public List<Tile> getTiles() {
+        return mTiles;
     }
 
-    public ArrayList<Meld> getMelds(){
-        return melds;
+    public List<Meld> getmMelds(){
+        return mMelds;
     }
 
     public void setDrawnTile(Tile tile){
@@ -174,12 +190,12 @@ public class Hand {
     }
 
     public void sortHand(){
-        Collections.sort(tiles);
+        Collections.sort(mTiles);
     }
 
     public void makeChii(Tile a, Tile b, Tile c){
         if (a.getSuit() != b.getSuit() || b.getSuit() != c.getSuit()){
-            throw new IllegalArgumentException("Making chii with tiles of different suits");
+            throw new IllegalArgumentException("Making chii with mTiles of different suits");
         }
         List<Tile> tiles = Arrays.asList(a, b, c);
         Collections.sort(tiles);
@@ -191,13 +207,13 @@ public class Hand {
             addMeld(meld);
         }
         else {
-            throw new IllegalArgumentException("Illegal tiles for chii");
+            throw new IllegalArgumentException("Illegal mTiles for chii");
         }
     }
 
     public void makePon(Tile a, Tile b, Tile c, int calledDirection){
         if (a.compareTo(b) != 0 || b.compareTo(c) != 0){
-            throw new IllegalArgumentException("Illegal tiles for pon");
+            throw new IllegalArgumentException("Illegal mTiles for pon");
         }
         Log.d(TAG, "Pon with " + a + " " + b + " " + c + " by " + mPlayer.getDirection()
                 + " from " + calledDirection);
@@ -216,7 +232,7 @@ public class Hand {
     //TODO: maybe split open and closed kans into their own methods
     public void makeKan(Tile a, Tile b, Tile c, Tile d, int calledDirection, boolean isClosed){
         if (a.compareTo(b) != 0 || b.compareTo(c) != 0 || c.compareTo(d) != 0){
-            throw new IllegalArgumentException("Illegal tiles for kan");
+            throw new IllegalArgumentException("Illegal mTiles for kan");
         }
         if (isClosed){
             Log.d(TAG, "Closed kan with " + a + " " + b + " " + c + " " + d);
@@ -245,7 +261,7 @@ public class Hand {
     public void makeClosedKan(Tile tile){
         ArrayList<Tile> kanTiles = getAllTilesById(tile.getId());
         if (kanTiles.size() != 3){
-            throw new IllegalArgumentException("Trying to call closed kan without three tiles");
+            throw new IllegalArgumentException("Trying to call closed kan without three mTiles");
         }
         kanTiles.add(tile);
         for (Tile t: kanTiles){
@@ -256,15 +272,15 @@ public class Hand {
     }
 
     private void addMeld(Meld meld){
-        if (melds.size() < 4){
-            melds.add(meld);
+        if (mMelds.size() < 4){
+            mMelds.add(meld);
             for (Tile tile: meld.getTiles()){
-                tiles.remove(tile);
+                mTiles.remove(tile);
             }
             Log.d(TAG, "Meld added");
         }
         else {
-            throw new IllegalStateException("Already have four melds");
+            throw new IllegalStateException("Already have four mMelds");
         }
     }
 
@@ -281,11 +297,11 @@ public class Hand {
                 //this code draws it in two rows - didn't work that well but might be worth keeping
 
 //                int horCenterPadding = (canvas.getWidth() - (TILE_WIDTH * HAND_BOTTOM_ROW_TILES))/2;
-//                if (tiles.size() > HAND_BOTTOM_ROW_TILES) {
+//                if (mTiles.size() > HAND_BOTTOM_ROW_TILES) {
 //                    // draw the top row
-//                    int topRowTiles = Math.max(HAND_TOP_ROW_TILES - (HAND_SIZE - tiles.size()), 0);
+//                    int topRowTiles = Math.max(HAND_TOP_ROW_TILES - (HAND_SIZE - mTiles.size()), 0);
 //                    for (int i = 0; i < topRowTiles; i++) {
-//                        if (tiles.get(i) != null) {
+//                        if (mTiles.get(i) != null) {
 //                            int x = TILE_WIDTH * i + (TILE_WIDTH / 2)
 //                                    + horCenterPadding;
 //                            int y = canvas.getHeight() - (TILE_HEIGHT * 2);
@@ -293,14 +309,14 @@ public class Hand {
 //                                x = canvas.getWidth() - TILE_WIDTH - x;
 //                                y = TILE_HEIGHT;
 //                            }
-//                            Tile tile = tiles.get(i);
+//                            Tile tile = mTiles.get(i);
 //                            tile.setLocation(x, y);
 //                            tile.draw(canvas, x, y, seatDirection);
 //                        }
 //                    }
 //                    // draw the bottom row
-//                    for (int i = topRowTiles; i < tiles.size(); i++) {
-//                        if (tiles.get(i) != null) {
+//                    for (int i = topRowTiles; i < mTiles.size(); i++) {
+//                        if (mTiles.get(i) != null) {
 //                            int x = TILE_WIDTH * (i - topRowTiles)
 //                                    + horCenterPadding;
 //                            int y = canvas.getHeight() - TILE_HEIGHT;
@@ -308,7 +324,7 @@ public class Hand {
 //                                x = canvas.getWidth() - TILE_WIDTH - x;
 //                                y = 0;
 //                            }
-//                            Tile tile = tiles.get(i);
+//                            Tile tile = mTiles.get(i);
 //                            tile.setLocation(x, y);
 //                            tile.draw(canvas, x, y, seatDirection);
 //                        }
@@ -317,9 +333,9 @@ public class Hand {
 //                else {
                     // only draw the bottom row
                 int horCenterPadding = (canvas.getWidth() - (TILE_WIDTH * HAND_SIZE)) / 2;
-                //TODO: fix bottom and top rows overlapping the first call (shrink tiles?)
-                for (int i = 0; i < tiles.size(); i++) {
-                    if (tiles.get(i) != null) {
+                //TODO: fix bottom and top rows overlapping the first call (shrink mTiles?)
+                for (int i = 0; i < mTiles.size(); i++) {
+                    if (mTiles.get(i) != null) {
                         int x = TILE_WIDTH * i
                                 + horCenterPadding;
                         int y = canvas.getHeight() - TILE_HEIGHT;
@@ -327,7 +343,7 @@ public class Hand {
                             x = canvas.getWidth() - TILE_WIDTH - x;
                             y = 0;
                         }
-                        Tile tile = tiles.get(i);
+                        Tile tile = mTiles.get(i);
                         tile.setLocation(x, y);
                         tile.draw(canvas, x, y, seatDirection);
                     }
@@ -336,7 +352,7 @@ public class Hand {
 
                 if (drawDrawnTile && mDrawnTile != null){
 //                    int x = TILE_WIDTH * 4 + (TILE_WIDTH / 2)
-                    int x = TILE_WIDTH * Math.max((tiles.size() - 2), 0) + horCenterPadding;
+                    int x = TILE_WIDTH * Math.max((mTiles.size() - 2), 0) + horCenterPadding;
 //                    int y = canvas.getHeight() - (TILE_HEIGHT * 2  + TILE_WIDTH);
                     int y = canvas.getHeight() - (TILE_WIDTH + TILE_HEIGHT);
                     if (seatDirection == SEAT_UP){
@@ -350,15 +366,15 @@ public class Hand {
             case SEAT_LEFT:
             case SEAT_RIGHT:
                 int verCenterPadding = (canvas.getHeight() - (TILE_WIDTH * HAND_SIZE)) /2;
-                for (int i = 0; i < tiles.size(); i++){
-                    if (tiles.get(i) != null){
+                for (int i = 0; i < mTiles.size(); i++){
+                    if (mTiles.get(i) != null){
                         int x = 0;
                         int y = (TILE_WIDTH * i) + verCenterPadding;
                         if (seatDirection == SEAT_RIGHT){
                             x = canvas.getWidth() - TILE_HEIGHT;
                             y = canvas.getHeight() - TILE_WIDTH - y;
                         }
-                        Tile tile = tiles.get(i);
+                        Tile tile = mTiles.get(i);
                         tile.setLocation(x, y);
                         tile.draw(canvas, x, y, seatDirection);
                     }
@@ -380,8 +396,8 @@ public class Hand {
     }
 
     private void drawMelds(Canvas canvas, int seatDirection){
-        for (int i = 0; i < melds.size(); i++){
-            melds.get(i).draw(canvas, seatDirection, i);
+        for (int i = 0; i < mMelds.size(); i++){
+            mMelds.get(i).draw(canvas, seatDirection, i);
         }
     }
 
