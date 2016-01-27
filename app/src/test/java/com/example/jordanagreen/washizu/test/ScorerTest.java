@@ -15,8 +15,14 @@ import java.util.List;
 
 import static com.example.jordanagreen.washizu.Constants.CHUN;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHII_TOITSU;
+import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHINROUTOU;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHUUREN_POUTOU;
+import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_DAISANGEN;
+import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_DAISUUSHI;
+import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_HONROUTOU;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_KOKUSHI_MUSOU;
+import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_TAN_YAO;
+import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_TSUUIISOU;
 import static com.example.jordanagreen.washizu.Constants.HAKU;
 import static com.example.jordanagreen.washizu.Constants.HATSU;
 import static com.example.jordanagreen.washizu.Constants.MAN_1;
@@ -32,14 +38,27 @@ import static com.example.jordanagreen.washizu.Constants.NAN;
 import static com.example.jordanagreen.washizu.Constants.PEI;
 import static com.example.jordanagreen.washizu.Constants.PIN_1;
 import static com.example.jordanagreen.washizu.Constants.PIN_2;
+import static com.example.jordanagreen.washizu.Constants.PIN_4;
+import static com.example.jordanagreen.washizu.Constants.PIN_5;
+import static com.example.jordanagreen.washizu.Constants.PIN_6;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
+import static com.example.jordanagreen.washizu.Constants.SOU_3;
+import static com.example.jordanagreen.washizu.Constants.SOU_6;
+import static com.example.jordanagreen.washizu.Constants.SOU_7;
+import static com.example.jordanagreen.washizu.Constants.SOU_8;
 import static com.example.jordanagreen.washizu.Constants.SOU_9;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static com.example.jordanagreen.washizu.Constants.XIA;
 import static com.example.jordanagreen.washizu.Constants.YAKU_CHII_TOITSU;
+import static com.example.jordanagreen.washizu.Constants.YAKU_CHINROUTOU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_CHUUREN_POUTOU;
+import static com.example.jordanagreen.washizu.Constants.YAKU_DAISANGEN;
+import static com.example.jordanagreen.washizu.Constants.YAKU_DAISUUSHI;
+import static com.example.jordanagreen.washizu.Constants.YAKU_HONROUTOU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_KOKUSHI_MUSOU;
+import static com.example.jordanagreen.washizu.Constants.YAKU_TAN_YAO;
+import static com.example.jordanagreen.washizu.Constants.YAKU_TSUUIISOU;
 import static org.junit.Assert.assertEquals;
 
 
@@ -137,6 +156,54 @@ public class ScorerTest {
                 MAN_5, MAN_6, MAN_7, MAN_8, MAN_9, MAN_9, MAN_9);
         score = scoreHand(chuurenPoutouTiles, MAN_5);
         assertEquals(score.getHan()[YAKU_CHUUREN_POUTOU], 0);
+    }
+
+    @Test
+    public void testTanYao(){
+        List<Integer> tiles = Arrays.asList(MAN_2, MAN_3, MAN_4, PIN_4, PIN_5, PIN_6, SOU_6,
+                SOU_7, SOU_8, MAN_5, MAN_6, MAN_7, MAN_8);
+        Score score = scoreHand(tiles, MAN_8);
+        assertEquals(score.getHan()[YAKU_TAN_YAO], CLOSED_HAN_TAN_YAO);
+    }
+
+    @Test
+    public void testChinRouTou(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, PIN_1, PIN_1, PIN_1, SOU_9,
+                SOU_9, SOU_9, MAN_9, MAN_9, MAN_9, SOU_1);
+        Score score = scoreHand(tiles, SOU_1);
+        assertEquals(score.getHan()[YAKU_CHINROUTOU], CLOSED_HAN_CHINROUTOU);
+    }
+
+    @Test
+    public void testTsuuIiSou(){
+        List<Integer> tiles = Arrays.asList(CHUN, CHUN, CHUN, NAN, NAN, NAN, PEI,
+                PEI, PEI, HAKU, HAKU, HAKU, HATSU);
+        Score score = scoreHand(tiles, HATSU);
+        assertEquals(score.getHan()[YAKU_TSUUIISOU], CLOSED_HAN_TSUUIISOU);
+    }
+
+    @Test
+    public void testDaiSanGen(){
+        List<Integer> tiles = Arrays.asList(CHUN, CHUN, CHUN, HATSU, HATSU, HATSU, MAN_2,
+                MAN_3, MAN_4, HAKU, HAKU, HAKU, SOU_3);
+        Score score = scoreHand(tiles, SOU_3);
+        assertEquals(score.getHan()[YAKU_DAISANGEN], CLOSED_HAN_DAISANGEN);
+    }
+
+    @Test
+    public void testHonRouTou(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, PIN_1, PIN_1, PIN_1, SOU_9,
+                SOU_9, SOU_9, PEI, PEI, PEI, SOU_1);
+        Score score = scoreHand(tiles, SOU_1);
+        assertEquals(score.getHan()[YAKU_HONROUTOU], CLOSED_HAN_HONROUTOU);
+    }
+
+    @Test
+    public void testDaiSuuShii(){
+        List<Integer> tiles = Arrays.asList(PEI, PEI, PEI, NAN, NAN, NAN, TON,
+                TON, TON, XIA, XIA, XIA, SOU_3);
+        Score score = scoreHand(tiles, SOU_3);
+        assertEquals(score.getHan()[YAKU_DAISUUSHI], CLOSED_HAN_DAISUUSHI);
     }
 
 }

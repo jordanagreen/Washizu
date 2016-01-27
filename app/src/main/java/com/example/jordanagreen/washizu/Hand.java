@@ -22,6 +22,7 @@ import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_UP;
 import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
+import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TILE_WIDTH;
 
 /**
@@ -100,6 +101,10 @@ public class Hand {
         return json;
     }
 
+    public List<Tile> getTiles() {
+        return mTiles;
+    }
+
     public void addTile(Tile tile){
         if (mTiles.size() < HAND_SIZE){
             Log.d(TAG, "Tile " + tile + " added");
@@ -119,6 +124,7 @@ public class Hand {
         }
     }
 
+    //TODO: should probably add some better checks for if it's open or not instead of a variable
     public boolean getIsOpen(){
         return mIsOpen;
     }
@@ -171,8 +177,15 @@ public class Hand {
         mDrawnTile = null;
     }
 
-    public List<Tile> getTiles() {
-        return mTiles;
+    public int[] getTileCounts(){
+        int[] counts = new int[TILE_MAX_ID + 1];
+        for (Tile tile: mTiles){
+            counts[tile.getId()]++;
+        }
+        if (mDrawnTile != null){
+            counts[mDrawnTile.getId()]++;
+        }
+        return counts;
     }
 
     public List<Meld> getmMelds(){

@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
 import static com.example.jordanagreen.washizu.Constants.UNKNOWN;
 
 /**
@@ -79,7 +80,7 @@ public class Tile implements Comparable<Tile>{
     }
 
     public int getNumericalValue(){
-        return (id % 9) + 1;
+        return getSuit() == SUIT_HONOR ? -1 : (id % 9) + 1;
     }
 
     public static boolean areSameSuit(int a, int b){
@@ -88,6 +89,10 @@ public class Tile implements Comparable<Tile>{
 
     public static boolean areSameSuit(int a, int b, int c){
         return (a/9) == (b/9) && (b/9) == (c/9);
+    }
+
+    public boolean isTerminal(){
+        return getNumericalValue() == 1 || getNumericalValue() == 9;
     }
 
     public void draw(Canvas canvas, int x, int y, int seatDirection){

@@ -208,6 +208,9 @@ public class Score {
 
     void addOpenYaku(int yaku){
 //        System.out.println("added " + openHan[yaku] + " to " + yaku);
+        if (openHan[yaku] == -1){
+            throw new IllegalArgumentException("Trying to make an open yaku that can't be open");
+        }
         han[yaku] += openHan[yaku];
     }
 

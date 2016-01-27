@@ -27,10 +27,16 @@ import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static com.example.jordanagreen.washizu.Constants.XIA;
 import static com.example.jordanagreen.washizu.Constants.YAKU_CHII_TOITSU;
+import static com.example.jordanagreen.washizu.Constants.YAKU_CHINROUTOU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_CHUUREN_POUTOU;
+import static com.example.jordanagreen.washizu.Constants.YAKU_DAISANGEN;
+import static com.example.jordanagreen.washizu.Constants.YAKU_DAISUUSHI;
+import static com.example.jordanagreen.washizu.Constants.YAKU_HONROUTOU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_IPPATSU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_KOKUSHI_MUSOU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_RIICHI;
+import static com.example.jordanagreen.washizu.Constants.YAKU_TAN_YAO;
+import static com.example.jordanagreen.washizu.Constants.YAKU_TSUUIISOU;
 
 /**
  * Created by Jordan on 12/1/2015.
@@ -86,7 +92,6 @@ public class Scorer {
         if (mHand.getIsOpen()){
             mScore.addOpenYaku(yaku);
         } else {
-//            System.out.println("added " + yaku);
             mScore.addClosedYaku(yaku);
         }
     }
@@ -112,13 +117,36 @@ public class Scorer {
        if (isChiiToitsu()){
            addYaku(YAKU_CHII_TOITSU);
        }
-       //TODO: figure out how to actually split it into four melds and a pair before scoring
-
+       //TODO: figure out how to actually make sure it's four melds and a pair, and split it
+        //yakuman, can stop after we get one of them for obvious reasons
        if (isChuurenPoutou()){
            addYaku(YAKU_CHUUREN_POUTOU);
            if (isDoubleChuurenPoutou()){
                addYaku(YAKU_CHUUREN_POUTOU);
            }
+           return;
+       }
+       if (isDaiSanGen()){
+           addYaku(YAKU_DAISANGEN);
+           return;
+       }
+       if (isDaiSuuShii()){
+           addYaku(YAKU_DAISUUSHI);
+           return;
+       }
+       if (isTsuuIiSou()){
+           addYaku(YAKU_TSUUIISOU);
+           return;
+       }
+       if (isChinRouTou()){
+           addYaku(YAKU_CHINROUTOU);
+           return;
+       }
+       if (isHonRouTou()){
+           addYaku(YAKU_HONROUTOU);
+       }
+       if (isTanYao()){
+           addYaku(YAKU_TAN_YAO);
        }
 
    }
@@ -197,6 +225,7 @@ public class Scorer {
         List<Tile> tiles = getFullHand();
         //make sure they're all the same suit and count them up
         int suit = tiles.get(0).getSuit();
+        if (suit == SUIT_HONOR) return false;
         int[] tileCount = new int[9];
         for (Tile tile: tiles){
             if (tile.getSuit() != suit) return false;
@@ -236,6 +265,51 @@ public class Scorer {
         Arrays.sort(handIDs);
         for (int i = 0; i < handIDs.length; i++){
             if (handIDs[i] != expectedIDs[i]) return false;
+        }
+        return true;
+    }
+
+    //3 triples of dragons
+    private boolean isDaiSanGen(){
+        int[] tileCounts = mHand.getTileCounts();
+        return (tileCounts[CHUN] >= 3 && tileCounts[HAKU] >= 3 && tileCounts[HATSU] >= 3);
+    }
+
+    //4 triples of winds
+    private boolean isDaiSuuShii(){
+        int[] tileCounts = mHand.getTileCounts();
+        return (tileCounts[XIA] >= 3 && tileCounts[TON] >= 3 && tileCounts[PEI] >= 3
+            && tileCounts[NAN] >= 3);
+    }
+
+    //all honors
+    private boolean isTsuuIiSou(){
+        for (Tile tile: getFullHand()){
+            if (tile.getSuit() != SUIT_HONOR) return false;
+        }
+        return true;
+    }
+
+    //all terminals
+    private boolean isChinRouTou(){
+        for (Tile tile: getFullHand()){
+            if (!tile.isTerminal()) return false;
+        }
+        return true;
+    }
+
+    //all terminals or honors
+    private boolean isHonRouTou(){
+        for (Tile tile: getFullHand()){
+            if (!tile.isTerminal() && tile.getSuit() != SUIT_HONOR) return false;
+        }
+        return true;
+    }
+
+    //no terminals or honors
+    private boolean isTanYao(){
+        for (Tile tile: getFullHand()){
+            if (tile.isTerminal() || tile.getSuit() == SUIT_HONOR) return false;
         }
         return true;
     }
