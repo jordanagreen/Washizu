@@ -108,18 +108,33 @@ public class Scorer {
    }
 
     private boolean isKokushiMusou(){
-        List<Integer> kokushiTiles = Arrays.asList(MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
-                CHUN, HAKU, HATSU, NAN, PEI, XIA, TON);
+        int[] kokushiTiles = new int[]{MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
+                CHUN, HAKU, HATSU, NAN, PEI, XIA, TON};
+        int[] numberInHand = new int[kokushiTiles.length];
         List<Integer> tiles = getFullHand();
         for (int tile: tiles){
-            if (!kokushiTiles.contains(tile)){
-//                System.out.println("doesn't contain " + tile);
-                return false;
+            for (int i = 0; i < kokushiTiles.length; i++){
+                if (tile == kokushiTiles[i]){
+                    numberInHand[i]++;
+                    break;
+                }
             }
-//            System.out.println("contains " + tile);
         }
-//        System.out.println("kokushi");
-        return true;
+        // need to have 1 of all, except one which has 2
+        boolean foundPair = false;
+        for (int num: numberInHand){
+            //missing a tile or three or more of it
+            if (num == 0 || num > 2) return false;
+            //two of a tile, need one pair
+            if (num == 2){
+                //two pairs
+                if (foundPair) return false;
+                foundPair = true;
+            }
+            //otherwise it's 1
+        }
+        //if all are 1 and there's a pair, return true
+        return foundPair;
     }
 
     private boolean isDoubleKokushiMusou(){
@@ -135,7 +150,6 @@ public class Scorer {
                 return false;
             }
         }
-//        System.out.println("double kokushi");
         return true;
     }
 
