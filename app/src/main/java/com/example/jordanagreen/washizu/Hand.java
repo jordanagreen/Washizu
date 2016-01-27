@@ -74,11 +74,10 @@ public class Hand {
         if (ids.size() != 13){
             throw new IllegalArgumentException("Trying to make a hand with " + ids.size() + " mTiles");
         }
-        List<Tile> tiles = new ArrayList<>();
+        mTiles = new ArrayList<>();
         for (Integer id: ids){
-            tiles.add(new Tile(id));
+            mTiles.add(new Tile(id));
         }
-        this.mTiles = tiles;
         mDrawnTile = drawnTile;
         mPlayer = player;
         mMelds = new ArrayList<>();

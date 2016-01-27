@@ -78,6 +78,10 @@ public class Tile implements Comparable<Tile>{
         return id / 9;
     }
 
+    public int getNumericalValue(){
+        return (id % 9) + 1;
+    }
+
     public static boolean areSameSuit(int a, int b){
         return (a/9) == (b/9);
     }

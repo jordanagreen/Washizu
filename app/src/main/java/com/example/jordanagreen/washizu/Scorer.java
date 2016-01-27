@@ -8,6 +8,13 @@ import static com.example.jordanagreen.washizu.Constants.CHUN;
 import static com.example.jordanagreen.washizu.Constants.HAKU;
 import static com.example.jordanagreen.washizu.Constants.HATSU;
 import static com.example.jordanagreen.washizu.Constants.MAN_1;
+import static com.example.jordanagreen.washizu.Constants.MAN_2;
+import static com.example.jordanagreen.washizu.Constants.MAN_3;
+import static com.example.jordanagreen.washizu.Constants.MAN_4;
+import static com.example.jordanagreen.washizu.Constants.MAN_5;
+import static com.example.jordanagreen.washizu.Constants.MAN_6;
+import static com.example.jordanagreen.washizu.Constants.MAN_7;
+import static com.example.jordanagreen.washizu.Constants.MAN_8;
 import static com.example.jordanagreen.washizu.Constants.MAN_9;
 import static com.example.jordanagreen.washizu.Constants.NAN;
 import static com.example.jordanagreen.washizu.Constants.PEI;
@@ -15,10 +22,12 @@ import static com.example.jordanagreen.washizu.Constants.PIN_1;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
 import static com.example.jordanagreen.washizu.Constants.SOU_9;
+import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
 import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static com.example.jordanagreen.washizu.Constants.XIA;
 import static com.example.jordanagreen.washizu.Constants.YAKU_CHII_TOITSU;
+import static com.example.jordanagreen.washizu.Constants.YAKU_CHUUREN_POUTOU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_IPPATSU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_KOKUSHI_MUSOU;
 import static com.example.jordanagreen.washizu.Constants.YAKU_RIICHI;
@@ -28,58 +37,57 @@ import static com.example.jordanagreen.washizu.Constants.YAKU_RIICHI;
  */
 public class Scorer {
 
-    private Hand hand;
+    private Hand mHand;
     //might not be in the hand already if it's from ron
-    private Tile winningTile;
-    private Score score;
+    private Tile mWinningTile;
+    private Score mScore;
 
     public Scorer(Hand hand, Tile winningTile){
-        this.hand = hand;
-        this.winningTile = winningTile;
-        this.score = new Score();
+        this.mHand = hand;
+        this.mWinningTile = winningTile;
+        this.mScore = new Score();
     }
 
     public Scorer(){
-        this.score = new Score();
+        this.mScore = new Score();
     }
 
     public Score getScore(){
-        return score;
+        return mScore;
     }
 
     public void setHand(Hand hand){
-        this.hand = hand;
+        this.mHand = hand;
     }
 
     public void setWinningTile(Tile tile){
-        this.winningTile = tile;
+        this.mWinningTile = tile;
     }
 
     //all the tiles including the winning one for when which one was drawn doesn't matter
-    //we only need the tile IDs so don't bother returning the whole tiles to simplify things
-    private List<Integer> getFullHand(){
-        List<Integer> ids = new ArrayList<>();
-        for (Tile tile: hand.getTiles()){
-            ids.add(tile.getId());
+    private List<Tile> getFullHand(){
+        List<Tile> tiles = new ArrayList<>();
+        for (Tile tile: mHand.getTiles()){
+            tiles.add(tile);
         }
-        ids.add(winningTile.getId());
-        return ids;
+        tiles.add(mWinningTile);
+        return tiles;
     }
 
-    private List<Integer> getHandWithoutWinningTile(){
-        List<Integer> ids = new ArrayList<>();
-        for (Tile tile: hand.getTiles()){
-            ids.add(tile.getId());
+    private List<Tile> getHandWithoutWinningTile(){
+        List<Tile> tiles = new ArrayList<>();
+        for (Tile tile: mHand.getTiles()){
+            tiles.add(tile);
         }
-        return ids;
+        return tiles;
     }
 
     private void addYaku(int yaku){
-        if (hand.getIsOpen()){
-            score.addOpenYaku(yaku);
+        if (mHand.getIsOpen()){
+            mScore.addOpenYaku(yaku);
         } else {
 //            System.out.println("added " + yaku);
-            score.addClosedYaku(yaku);
+            mScore.addClosedYaku(yaku);
         }
     }
 
@@ -104,6 +112,14 @@ public class Scorer {
        if (isChiiToitsu()){
            addYaku(YAKU_CHII_TOITSU);
        }
+       //TODO: figure out how to actually split it into four melds and a pair before scoring
+
+       if (isChuurenPoutou()){
+           addYaku(YAKU_CHUUREN_POUTOU);
+           if (isDoubleChuurenPoutou()){
+               addYaku(YAKU_CHUUREN_POUTOU);
+           }
+       }
 
    }
 
@@ -111,10 +127,10 @@ public class Scorer {
         int[] kokushiTiles = new int[]{MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, PEI, XIA, TON};
         int[] numberInHand = new int[kokushiTiles.length];
-        List<Integer> tiles = getFullHand();
-        for (int tile: tiles){
+        List<Tile> tiles = getFullHand();
+        for (Tile tile: tiles){
             for (int i = 0; i < kokushiTiles.length; i++){
-                if (tile == kokushiTiles[i]){
+                if (tile.getId() == kokushiTiles[i]){
                     numberInHand[i]++;
                     break;
                 }
@@ -139,10 +155,14 @@ public class Scorer {
 
     private boolean isDoubleKokushiMusou(){
         //one of each with 13-sided wait
-        List<Integer> tiles = getHandWithoutWinningTile();
+        List<Tile> tiles = getHandWithoutWinningTile();
         int[] kokushiTiles = new int[]{MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, PEI, XIA, TON};
-        Integer[] handTiles = tiles.toArray(new Integer[tiles.size()]);
+        List<Integer> tileIDs = new ArrayList<>();
+        for (Tile tile: tiles){
+            tileIDs.add(tile.getId());
+        }
+        Integer[] handTiles = tileIDs.toArray(new Integer[tiles.size()]);
         Arrays.sort(handTiles);
         //check if it's equal to the actual double kokushi
         for (int i = 0; i < handTiles.length; i++){
@@ -155,12 +175,12 @@ public class Scorer {
 
     private boolean isChiiToitsu(){
         //seven pairs
-        List<Integer> tiles = getFullHand();
+        List<Tile> tiles = getFullHand();
         int[] tilesInHand = new int[TILE_MAX_ID];
-        for (int tile: tiles){
-            tilesInHand[tile]++;
+        for (Tile tile: tiles){
+            tilesInHand[tile.getId()]++;
             //four of a kind doesn't count as two pairs
-            if (tilesInHand[tile] >= 3){
+            if (tilesInHand[tile.getId()] >= 3){
                 return false;
             }
         }
@@ -172,6 +192,52 @@ public class Scorer {
         return true;
     }
 
+    private boolean isChuurenPoutou(){
+        // 1-1-1-2-3-4-5-6-7-8-9-9-9 and one more in the same suit
+        List<Tile> tiles = getFullHand();
+        //make sure they're all the same suit and count them up
+        int suit = tiles.get(0).getSuit();
+        int[] tileCount = new int[9];
+        for (Tile tile: tiles){
+            if (tile.getSuit() != suit) return false;
+            int val = tile.getNumericalValue();
+            tileCount[val-1]++;
+        }
+        //make sure we have the right amount of each one, with one pair allowed
+        if (tileCount[0] != 3 || tileCount[8] != 3) return false;
+        boolean pairFound = false;
+        for (int i = 1; i < tileCount.length-1; i++){
+            if (tileCount[i] == 2){
+                if (pairFound) return false;
+                pairFound = true;
+                continue;
+            }
+            if (tileCount[i] != 1) return false;
+        }
+        return true;
+    }
 
+    private boolean isDoubleChuurenPoutou(){
+        List<Tile> tiles = getHandWithoutWinningTile();
+        int[] expectedIDs = new int[]{MAN_1, MAN_1, MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, MAN_6, MAN_7,
+            MAN_8, MAN_9, MAN_9, MAN_9};
+        //change to the right suit
+        final int suit = tiles.get(0).getSuit();
+        if (suit == SUIT_HONOR) return false;
+        if (mWinningTile.getSuit() != suit) return false;
+        for (int i = 0; i < expectedIDs.length; i++){
+            expectedIDs[i] = expectedIDs[i] + (suit * 9);
+        }
+        int[] handIDs = new int[tiles.size()];
+        for (int i = 0; i < tiles.size(); i++){
+            if (tiles.get(i).getSuit() != suit) return false;
+            handIDs[i] = tiles.get(i).getId();
+        }
+        Arrays.sort(handIDs);
+        for (int i = 0; i < handIDs.length; i++){
+            if (handIDs[i] != expectedIDs[i]) return false;
+        }
+        return true;
+    }
 
 }
