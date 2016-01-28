@@ -16,10 +16,6 @@ import java.util.Random;
 
 import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_CHII;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_KAN;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_SHOUMINKAN;
 import static com.example.jordanagreen.washizu.Constants.ROUND_EAST_1;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
@@ -218,7 +214,7 @@ public class Game {
                 if (players[i].canKanOnCall(discardedTile)){
                     if (players[i].shouldKan(discardedTile)){
                         if (players[i] instanceof AiPlayer) {
-                            onCallMade(i, MELD_TYPE_KAN);
+                            onCallMade(i, MeldType.KAN);
                         }
                         else {
                             mWaitingForDecisionOnCall = true;
@@ -229,7 +225,7 @@ public class Game {
                 //TODO: when buttons are added, allow calling either kan or pon
                 else if (players[i].shouldPon(discardedTile)){
                     if (players[i] instanceof AiPlayer){
-                        onCallMade(i, MELD_TYPE_PON);
+                        onCallMade(i, MeldType.PON);
                     }
                     else {
                         mWaitingForDecisionOnCall = true;
@@ -244,7 +240,7 @@ public class Game {
                 if (players[(mCurrentPlayerIndex + 1) % players.length].shouldChii(discardedTile)) {
 
                     if (players[(mCurrentPlayerIndex + 1) % players.length] instanceof AiPlayer){
-                        onCallMade((mCurrentPlayerIndex + 1) % players.length, MELD_TYPE_CHII);
+                        onCallMade((mCurrentPlayerIndex + 1) % players.length, MeldType.CHII);
                     }
                     else {
                         mWaitingForDecisionOnCall = true;
@@ -272,29 +268,29 @@ public class Game {
 
     }
 
-    private void onCallMade(int playerIndex, int callType){
+    private void onCallMade(int playerIndex, MeldType callType){
         //call the tile, remove it from the discard, and that player gets the next turn
         Log.d(TAG, "Player " + playerIndex + " making a call from player " + mCurrentPlayerIndex);
         Tile discardedTile = getLastDiscardedTile();
         switch (callType){
-            case MELD_TYPE_PON:
+            case PON:
                 Log.d(TAG, "Player " + playerIndex + " calling pon on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
                 players[playerIndex].callPon(discardedTile, mCurrentPlayerIndex * 90);
                 break;
-            case MELD_TYPE_CHII:
+            case CHII:
                 Log.d(TAG, "Player " + (mCurrentPlayerIndex + 1) % players.length +
                         " calling chii on " + discardedTile + " from " + mCurrentPlayerIndex);
                 players[playerIndex].callChii(discardedTile);
                 break;
-            case MELD_TYPE_KAN:
+            case KAN:
                 Log.d(TAG, "Player " + playerIndex + " calling kan on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
                 players[playerIndex].callKan(discardedTile, mCurrentPlayerIndex * 90);
                 mKanMade = true;
                 //TODO: when dora are added, flip another one here
                 break;
-            case MELD_TYPE_SHOUMINKAN:
+            case SHOUMINKAN:
                 break;
             default:
                 throw new IllegalArgumentException("Illegal call type");
@@ -353,14 +349,14 @@ public class Game {
                         if (players[0].canPon(getLastDiscardedTile())){
                             //TODO: allow picking which to make
                             if (players[0].canKanOnCall(getLastDiscardedTile())){
-                                onCallMade(0, MELD_TYPE_KAN);
+                                onCallMade(0, MeldType.KAN);
                             }
                             else {
-                                onCallMade(0, MELD_TYPE_PON);
+                                onCallMade(0, MeldType.PON);
                             }
                         }
                         else if ((players[0].canChii(getLastDiscardedTile()))){
-                            onCallMade(0, MELD_TYPE_CHII);
+                            onCallMade(0, MeldType.CHII);
                         }
                     }
 

@@ -7,9 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_KAN;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_SHOUMINKAN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
@@ -29,12 +26,12 @@ public class Meld {
     public static final String KEY_ROTATED_INDEX = "rotated_index";
     public static final String KEY_TILES = "tiles";
 
-    private int type;
+    private MeldType type;
     private Tile[] tiles;
     private int rotatedIndex;
     private Hand hand; // for drawing horizontally - need to know about the other melds
 
-    public Meld(Tile a, Tile b, Tile c, int rotatedIndex, int type, Hand hand){
+    public Meld(Tile a, Tile b, Tile c, int rotatedIndex, MeldType type, Hand hand){
         tiles = new Tile[] {a, b, c};
         this.type = type;
         this.rotatedIndex = rotatedIndex;
@@ -42,8 +39,8 @@ public class Meld {
         Log.d(TAG, "Meld made type " + type +  " rotated index " + rotatedIndex);
     }
 
-    public Meld(Tile a, Tile b, Tile c, Tile d, int rotatedIndex, int type){
-        if (type != MELD_TYPE_KAN && type != MELD_TYPE_SHOUMINKAN){
+    public Meld(Tile a, Tile b, Tile c, Tile d, int rotatedIndex, MeldType type){
+        if (type != MeldType.KAN && type != MeldType.SHOUMINKAN){
             throw new IllegalArgumentException("Four tiles but not a kan");
         }
         else {
@@ -60,7 +57,7 @@ public class Meld {
             tiles[i] = new Tile(jsonTiles.getJSONObject(i));
         }
         rotatedIndex = json.getInt(KEY_ROTATED_INDEX);
-        type = json.getInt(KEY_TYPE);
+        type = Enum.valueOf(MeldType.class, json.getString(KEY_TYPE));
         this.hand = hand;
     }
 
@@ -68,18 +65,18 @@ public class Meld {
         return tiles;
     }
 
-    public int getType(){
+    public MeldType getType(){
         return type;
     }
 
     public void ponToKan(Tile tile){
-        if (type != MELD_TYPE_PON || tile.compareTo(tiles[0]) != 0 ||
+        if (type != MeldType.PON || tile.compareTo(tiles[0]) != 0 ||
                 tile.compareTo(tiles[1]) != 0 || tile.compareTo(tiles[2]) != 0){
             throw new IllegalArgumentException("Illegal kan");
         }
         else {
             tiles = new Tile[] {tiles[0], tiles[1], tiles[2], tile};
-            type = MELD_TYPE_SHOUMINKAN;
+            type = MeldType.SHOUMINKAN;
         }
     }
 
@@ -123,7 +120,7 @@ public class Meld {
                 }
                 //kan
                 else {
-                    if (type ==MELD_TYPE_KAN){
+                    if (type == MeldType.KAN){
                         int x = canvas.getWidth() - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                         int y = canvas.getHeight() - (TILE_SMALL_HEIGHT * (meldNumber+1));
                         for (int i = 0; i < tiles.length; i++){
@@ -209,8 +206,8 @@ public class Meld {
                         - (TILE_HEIGHT + TILE_WIDTH);
                     // add space for previous melds
                     for (int i = 0; i < meldNumber; i++){
-                        Meld meld = hand.getmMelds().get(i);
-                        if (meld.getType() == MELD_TYPE_KAN){
+                        Meld meld = hand.getMelds().get(i);
+                        if (meld.getType() == MeldType.KAN){
                             y = y - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                         }
                         else {
@@ -246,7 +243,7 @@ public class Meld {
                 }
                 //TODO: side kan
                 else {
-                    if (type ==MELD_TYPE_KAN){
+                    if (type == MeldType.KAN){
                         int x = 0;
                         int y = canvas.getHeight() - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT
                                 - (TILE_HEIGHT + TILE_WIDTH);
@@ -295,7 +292,7 @@ public class Meld {
 
     public JSONObject toJson() throws JSONException{
         JSONObject json = new JSONObject();
-        json.put(KEY_TYPE, type);
+        json.put(KEY_TYPE, type.toString());
         json.put(KEY_ROTATED_INDEX, rotatedIndex);
         JSONArray jsonTiles = new JSONArray();
         for (int i = 0; i < tiles.length; i++){
@@ -303,5 +300,14 @@ public class Meld {
         }
         json.put(KEY_TILES, jsonTiles);
         return json;
+    }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(type).append(":");
+        for (Tile tile: tiles){
+            sb.append(" ").append(tile);
+        }
+        return sb.toString();
     }
 }

@@ -43,12 +43,12 @@ public class HandTest {
     @Test
     public void testMakePon(){
         Hand hand = new Hand(new AiPlayer(Constants.SEAT_DOWN));
-        assertEquals(hand.getmMelds().size(), 0);
+        assertEquals(hand.getMelds().size(), 0);
         Tile a = new Tile(Constants.CHUN, false);
         Tile b = new Tile(Constants.CHUN, false);
         Tile c = new Tile(Constants.CHUN, false);
         hand.makePon(a, b, c, Constants.SEAT_DOWN);
-        assertEquals(hand.getmMelds().size(), 1);
+        assertEquals(hand.getMelds().size(), 1);
     }
 
     @Test
@@ -64,24 +64,24 @@ public class HandTest {
     @Test
     public void testMakeChii(){
         Hand hand = new Hand(new AiPlayer(Constants.SEAT_DOWN));
-        assertEquals(hand.getmMelds().size(), 0);
+        assertEquals(hand.getMelds().size(), 0);
         Tile a = new Tile(Constants.MAN_1, false);
         Tile b = new Tile(Constants.MAN_2, false);
         Tile c = new Tile(Constants.MAN_3, false);
         hand.makeChii(a, b, c);
-        assertEquals(hand.getmMelds().size(), 1);
+        assertEquals(hand.getMelds().size(), 1);
     }
 
     @Test
     public void testMakeKan(){
         Hand hand = new Hand(new AiPlayer(Constants.SEAT_DOWN));
-        assertEquals(hand.getmMelds().size(), 0);
+        assertEquals(hand.getMelds().size(), 0);
         Tile a = new Tile(Constants.CHUN, false);
         Tile b = new Tile(Constants.CHUN, false);
         Tile c = new Tile(Constants.CHUN, false);
         Tile d = new Tile(Constants.CHUN, false);
         hand.makeKan(a, b, c, d, Constants.SEAT_DOWN, false);
-        assertEquals(hand.getmMelds().size(), 1);
+        assertEquals(hand.getMelds().size(), 1);
     }
 
     @Test

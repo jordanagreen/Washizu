@@ -8,8 +8,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
-
 /**
  * Created by Jordan on 9/13/2015.
  */
@@ -208,8 +206,8 @@ public abstract class Player {
     }
 
     public boolean canKanOnDraw(Tile tile){
-        for (Meld meld: hand.getmMelds()){
-            if (meld.getType() == MELD_TYPE_PON){
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == MeldType.PON){
                 if (meld.getTiles()[0].compareTo(tile) == 0){
                     return true;
                 }
@@ -225,8 +223,8 @@ public abstract class Player {
     }
 
     public void callKan(Tile tile, int calledDirection){
-        for (Meld meld: hand.getmMelds()){
-            if (meld.getType() == MELD_TYPE_PON && meld.getTiles()[0].compareTo(tile) == 0){
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == MeldType.PON && meld.getTiles()[0].compareTo(tile) == 0){
                 hand.makeShouminkan(tile, meld);
                 return;
             }

@@ -13,10 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_CHII;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_KAN;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
-import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_SHOUMINKAN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
@@ -188,7 +184,7 @@ public class Hand {
         return counts;
     }
 
-    public List<Meld> getmMelds(){
+    public List<Meld> getMelds(){
         return mMelds;
     }
 
@@ -215,7 +211,7 @@ public class Hand {
                 tiles.get(1).getId() == tiles.get(2).getId() - 1){
             Log.d(TAG, "Chii with " + tiles.get(0) + " " + tiles.get(1) + " " + tiles.get(2));
             Meld meld = new Meld(tiles.get(0), tiles.get(1), tiles.get(2), 0,
-                    MELD_TYPE_CHII, this);
+                    MeldType.CHII, this);
             addMeld(meld);
         }
         else {
@@ -236,7 +232,7 @@ public class Hand {
         else if (calledDirection == (mPlayer.getDirection() + 90) % 360){
            rotatedIndex = 2;
         }
-        Meld meld = new Meld(a, b, c, rotatedIndex, MELD_TYPE_PON, this);
+        Meld meld = new Meld(a, b, c, rotatedIndex, MeldType.PON, this);
         addMeld(meld);
 
     }
@@ -248,7 +244,7 @@ public class Hand {
         }
         if (isClosed){
             Log.d(TAG, "Closed kan with " + a + " " + b + " " + c + " " + d);
-            Meld meld = new Meld(a, b, c, d, calledDirection, MELD_TYPE_SHOUMINKAN);
+            Meld meld = new Meld(a, b, c, d, calledDirection, MeldType.SHOUMINKAN);
             addMeld(meld);
         }
         else {
@@ -261,7 +257,7 @@ public class Hand {
                 rotatedIndex = 3;
             }
             Log.d(TAG, "Kan rotated index is " + rotatedIndex);
-            Meld meld = new Meld(a, b, c, d, rotatedIndex, MELD_TYPE_KAN);
+            Meld meld = new Meld(a, b, c, d, rotatedIndex, MeldType.KAN);
             addMeld(meld);
         }
     }

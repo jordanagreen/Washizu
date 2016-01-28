@@ -110,11 +110,10 @@ public class Constants {
 
     public static final int DELAY_BETWEEN_TURNS_MS = 300;
 
-    //would be nice to use an emun for this but json makes that a pain
-    public static final int MELD_TYPE_CHII = 0;
-    public static final int MELD_TYPE_PON = 1;
-    public static final int MELD_TYPE_KAN = 2;
-    public static final int MELD_TYPE_SHOUMINKAN = 3;
+//    public static final int MELD_TYPE_CHII = 0;
+//    public static final int MELD_TYPE_PON = 1;
+//    public static final int MELD_TYPE_KAN = 2;
+//    public static final int MELD_TYPE_SHOUMINKAN = 3;
 
     public static final int YAKU_RIICHI = 0;
     public static final int YAKU_IPPATSU = 1;

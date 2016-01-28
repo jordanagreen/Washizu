@@ -137,8 +137,10 @@ public class Tile implements Comparable<Tile>{
     }
 
     public String toString(){
-        return id + " (" + x + ", " + y + ")";
+//        return id + " (" + x + ", " + y + ")";
+        return "" + id;
     }
+
 
     @Override
     public int compareTo(Tile another) {
