@@ -186,15 +186,14 @@ public class Scorer {
         List<Tile> tiles = getHandWithoutWinningTile();
         int[] kokushiTiles = new int[]{MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, PEI, XIA, TON};
-        List<Integer> tileIDs = new ArrayList<>();
-        for (Tile tile: tiles){
-            tileIDs.add(tile.getId());
+        int[] tileIDs = new int[tiles.size()];
+        for (int i = 0; i < tiles.size(); i++){
+            tileIDs[i] = tiles.get(i).getId();
         }
-        Integer[] handTiles = tileIDs.toArray(new Integer[tiles.size()]);
-        Arrays.sort(handTiles);
+        Arrays.sort(tileIDs);
         //check if it's equal to the actual double kokushi
-        for (int i = 0; i < handTiles.length; i++){
-            if (handTiles[i] != kokushiTiles[i]){
+        for (int i = 0; i < tileIDs.length; i++){
+            if (tileIDs[i] != kokushiTiles[i]){
                 return false;
             }
         }
