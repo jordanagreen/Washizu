@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static com.example.jordanagreen.washizu.Constants.MELD_TYPE_PON;
-import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
 
 /**
  * Created by Jordan on 9/13/2015.
@@ -163,7 +162,7 @@ public abstract class Player {
     }
 
     public boolean canChii(Tile tile){
-        if (tile.getSuit() == SUIT_HONOR){
+        if (tile.getSuit() == Suit.HONOR){
             return false;
         }
         int id = tile.getId();

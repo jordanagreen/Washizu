@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
 import static com.example.jordanagreen.washizu.Constants.UNKNOWN;
 
 /**
@@ -75,12 +74,16 @@ public class Tile implements Comparable<Tile>{
         smallTileImages = images;
     }
 
-    public int getSuit(){
-        return id / 9;
+//    public int getSuit(){
+//        return id / 9;
+//    }
+
+    public Suit getSuit(){
+        return Suit.values()[id / 9];
     }
 
     public int getNumericalValue(){
-        return getSuit() == SUIT_HONOR ? -1 : (id % 9) + 1;
+        return getSuit() == Suit.HONOR ? -1 : (id % 9) + 1;
     }
 
     public static boolean areSameSuit(int a, int b){

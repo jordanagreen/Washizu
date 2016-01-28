@@ -51,10 +51,10 @@ public class Constants {
     public static final int DISCARD_SIDE_MAX_TILES = DISCARD_SIDE_ROW_TILES * DISCARD_SIDE_NUM_ROWS;
 
     //TODO: see if these can be moved to enums to simplify things - use ordinal() to get the number?
-    public static final int SUIT_MAN = 0;
-    public static final int SUIT_PIN = 1;
-    public static final int SUIT_SOU = 2;
-    public static final int SUIT_HONOR = 3;
+//    public static final int SUIT_MAN = 0;
+//    public static final int SUIT_PIN = 1;
+//    public static final int SUIT_SOU = 2;
+//    public static final int SUIT_HONOR = 3;
 
     public static final int MAN_1 = 0;
     public static final int MAN_2 = 1;

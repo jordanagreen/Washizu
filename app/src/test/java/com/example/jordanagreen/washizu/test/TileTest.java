@@ -1,5 +1,6 @@
 package com.example.jordanagreen.washizu.test;
 
+import com.example.jordanagreen.washizu.Suit;
 import com.example.jordanagreen.washizu.Tile;
 
 import org.junit.Test;
@@ -13,10 +14,6 @@ import static com.example.jordanagreen.washizu.Constants.PIN_1;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
 import static com.example.jordanagreen.washizu.Constants.SOU_2;
 import static com.example.jordanagreen.washizu.Constants.SOU_3;
-import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
-import static com.example.jordanagreen.washizu.Constants.SUIT_MAN;
-import static com.example.jordanagreen.washizu.Constants.SUIT_PIN;
-import static com.example.jordanagreen.washizu.Constants.SUIT_SOU;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -35,10 +32,10 @@ public class TileTest  {
         Tile tileb = new Tile(PIN_1, false);
         Tile tilec = new Tile(SOU_1, false);
         Tile tiled = new Tile(CHUN, false);
-        assertEquals(tilea.getSuit(), SUIT_MAN);
-        assertEquals(tileb.getSuit(), SUIT_PIN);
-        assertEquals(tilec.getSuit(), SUIT_SOU);
-        assertEquals(tiled.getSuit(), SUIT_HONOR);
+        assertEquals(tilea.getSuit(), Suit.MAN);
+        assertEquals(tileb.getSuit(), Suit.PIN);
+        assertEquals(tilec.getSuit(), Suit.SOU);
+        assertEquals(tiled.getSuit(), Suit.HONOR);
     }
 
     @Test

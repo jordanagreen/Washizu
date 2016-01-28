@@ -22,7 +22,6 @@ import static com.example.jordanagreen.washizu.Constants.PIN_1;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
 import static com.example.jordanagreen.washizu.Constants.SOU_9;
-import static com.example.jordanagreen.washizu.Constants.SUIT_HONOR;
 import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static com.example.jordanagreen.washizu.Constants.XIA;
@@ -223,8 +222,8 @@ public class Scorer {
         // 1-1-1-2-3-4-5-6-7-8-9-9-9 and one more in the same suit
         List<Tile> tiles = getFullHand();
         //make sure they're all the same suit and count them up
-        int suit = tiles.get(0).getSuit();
-        if (suit == SUIT_HONOR) return false;
+        Suit suit = tiles.get(0).getSuit();
+        if (suit == Suit.HONOR) return false;
         int[] tileCount = new int[9];
         for (Tile tile: tiles){
             if (tile.getSuit() != suit) return false;
@@ -249,12 +248,12 @@ public class Scorer {
         List<Tile> tiles = getHandWithoutWinningTile();
         int[] expectedIDs = new int[]{MAN_1, MAN_1, MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, MAN_6, MAN_7,
             MAN_8, MAN_9, MAN_9, MAN_9};
-        //change to the right suit
-        final int suit = tiles.get(0).getSuit();
-        if (suit == SUIT_HONOR) return false;
+        //change to the right suit by adding 9 to get from man -> pin -> sou
+        final Suit suit = tiles.get(0).getSuit();
+        if (suit == Suit.HONOR) return false;
         if (mWinningTile.getSuit() != suit) return false;
         for (int i = 0; i < expectedIDs.length; i++){
-            expectedIDs[i] = expectedIDs[i] + (suit * 9);
+            expectedIDs[i] = expectedIDs[i] + (suit.ordinal() * 9);
         }
         int[] handIDs = new int[tiles.size()];
         for (int i = 0; i < tiles.size(); i++){
@@ -284,7 +283,7 @@ public class Scorer {
     //all honors
     private boolean isTsuuIiSou(){
         for (Tile tile: getFullHand()){
-            if (tile.getSuit() != SUIT_HONOR) return false;
+            if (tile.getSuit() != Suit.HONOR) return false;
         }
         return true;
     }
@@ -300,7 +299,7 @@ public class Scorer {
     //all terminals or honors
     private boolean isHonRouTou(){
         for (Tile tile: getFullHand()){
-            if (!tile.isTerminal() && tile.getSuit() != SUIT_HONOR) return false;
+            if (!tile.isTerminal() && tile.getSuit() != Suit.HONOR) return false;
         }
         return true;
     }
@@ -308,7 +307,7 @@ public class Scorer {
     //no terminals or honors
     private boolean isTanYao(){
         for (Tile tile: getFullHand()){
-            if (tile.isTerminal() || tile.getSuit() == SUIT_HONOR) return false;
+            if (tile.isTerminal() || tile.getSuit() == Suit.HONOR) return false;
         }
         return true;
     }
