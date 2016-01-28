@@ -21,14 +21,23 @@ public class Tile implements Comparable<Tile>{
     public static final String KEY_ID = "id";
     public static final String KEY_IS_OPAQUE = "is_opaque";
     public static final String KEY_IS_REVERSED = "is_reversed";
+
+    //just for printing things out - using an emum makes using id as an index too long to write
+    public static final String[] NAMES = new String[]{
+            "MAN_1", "MAN_2", "MAN_3", "MAN_4", "MAN_5", "MAN_6", "MAN_7", "MAN_8", "MAN_9",
+            "PIN_1", "PIN_2", "PIN_3", "PIN_4", "PIN_5", "PIN_6", "PIN_7", "PIN_8", "PIN_9",
+            "SOU_1", "SOU_2", "SOU_3", "SOU_4", "SOU_5", "SOU_6", "SOU_7", "SOU_8", "SOU_9",
+            "CHUN", "HAKU", "HATSU",
+            "NAN", "PEI", "XIA", "TON" };
+
+    boolean isOpaque;
+
     public static final String KEY_IS_DISCARDABLE = "is_discardable";
 
     private int id;
-
     private static Bitmap[] tileImages;
-    private static Bitmap[] smallTileImages;
 
-    boolean isOpaque;
+    private static Bitmap[] smallTileImages;
     boolean isReversed;
     boolean isDiscardable;
 
@@ -138,7 +147,7 @@ public class Tile implements Comparable<Tile>{
 
     public String toString(){
 //        return id + " (" + x + ", " + y + ")";
-        return "" + id;
+        return NAMES[id];
     }
 
 

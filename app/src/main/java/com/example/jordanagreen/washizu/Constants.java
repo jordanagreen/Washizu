@@ -21,15 +21,8 @@ public class Constants {
     public static final int HAND_SIZE = 13;
     public static final int STARTING_SCORE = 2500;
 
-
-//    public static final int TILE_WIDTH_PX = 33;
-//    public static final int TILE_HEIGHT_PX = 40;
-
     public static final int TILE_WIDTH_PX = 27;
     public static final int TILE_HEIGHT_PX = 39;
-
-//    public static final int TILE_SMALL_WIDTH_PX = 25;
-//    public static final int TILE_SMALL_HEIGHT_PX = 30;
 
     public static final int TILE_SMALL_WIDTH_PX = 20;
     public static final int TILE_SMALL_HEIGHT_PX = 29;
@@ -38,7 +31,6 @@ public class Constants {
     public static final int TILE_HEIGHT = convertToDp(TILE_HEIGHT_PX);
     public static final int TILE_SMALL_WIDTH = convertToDp(TILE_SMALL_WIDTH_PX);
     public static final int TILE_SMALL_HEIGHT = convertToDp(TILE_SMALL_HEIGHT_PX);
-
 
     public static final int HAND_TOP_ROW_TILES = 6;
     public static final int HAND_BOTTOM_ROW_TILES = 7;
@@ -50,7 +42,6 @@ public class Constants {
     public static final int DISCARD_SIDE_NUM_ROWS = 2;
     public static final int DISCARD_SIDE_MAX_TILES = DISCARD_SIDE_ROW_TILES * DISCARD_SIDE_NUM_ROWS;
 
-    //TODO: see if these can be moved to enums to simplify things - use ordinal() to get the number?
 //    public static final int SUIT_MAN = 0;
 //    public static final int SUIT_PIN = 1;
 //    public static final int SUIT_SOU = 2;
