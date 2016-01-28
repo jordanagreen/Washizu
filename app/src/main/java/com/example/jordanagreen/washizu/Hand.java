@@ -32,8 +32,8 @@ public class Hand {
 
     public static final String TAG = "Hand";
 
-    public static final String KEY_MELDS = "mMelds";
-    public static final String KEY_TILES = "mTiles";
+    public static final String KEY_MELDS = "melds";
+    public static final String KEY_TILES = "tiles";
 //    public static final String KEY_DRAWN_TILE = "drawn_tile";
 
     private List<Tile> mTiles;

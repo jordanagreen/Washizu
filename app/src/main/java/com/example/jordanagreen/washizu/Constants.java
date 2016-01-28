@@ -56,6 +56,7 @@ public class Constants {
 //    public static final int SUIT_SOU = 2;
 //    public static final int SUIT_HONOR = 3;
 
+    //not worth putting in an enum, too many cases where the number is needed and ordinal is a pain
     public static final int MAN_1 = 0;
     public static final int MAN_2 = 1;
     public static final int MAN_3 = 2;
