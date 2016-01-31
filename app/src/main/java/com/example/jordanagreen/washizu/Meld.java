@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
 import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
 import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
@@ -26,16 +28,16 @@ public class Meld {
     public static final String KEY_ROTATED_INDEX = "rotated_index";
     public static final String KEY_TILES = "tiles";
 
-    private MeldType type;
-    private Tile[] tiles;
-    private int rotatedIndex;
-    private Hand hand; // for drawing horizontally - need to know about the other melds
+    private MeldType mType;
+    private Tile[] mTiles;
+    private int mRotatedIndex;
+    private Hand mHand; // for drawing horizontally - need to know about the other melds
 
     public Meld(Tile a, Tile b, Tile c, int rotatedIndex, MeldType type, Hand hand){
-        tiles = new Tile[] {a, b, c};
-        this.type = type;
-        this.rotatedIndex = rotatedIndex;
-        this.hand = hand;
+        mTiles = new Tile[] {a, b, c};
+        this.mType = type;
+        this.mRotatedIndex = rotatedIndex;
+        this.mHand = hand;
         Log.d(TAG, "Meld made type " + type +  " rotated index " + rotatedIndex);
     }
 
@@ -44,39 +46,52 @@ public class Meld {
             throw new IllegalArgumentException("Four tiles but not a kan");
         }
         else {
-            tiles = new Tile[] {a, b, c, d};
-            this.type = type;
-            this.rotatedIndex = rotatedIndex;
+            mTiles = new Tile[] {a, b, c, d};
+            this.mType = type;
+            this.mRotatedIndex = rotatedIndex;
         }
     }
 
     public Meld(JSONObject json, Hand hand) throws JSONException{
         JSONArray jsonTiles = json.getJSONArray(KEY_TILES);
-        tiles = new Tile[jsonTiles.length()];
+        mTiles = new Tile[jsonTiles.length()];
         for (int i = 0; i < jsonTiles.length(); i++){
-            tiles[i] = new Tile(jsonTiles.getJSONObject(i));
+            mTiles[i] = new Tile(jsonTiles.getJSONObject(i));
         }
-        rotatedIndex = json.getInt(KEY_ROTATED_INDEX);
-        type = Enum.valueOf(MeldType.class, json.getString(KEY_TYPE));
-        this.hand = hand;
+        mRotatedIndex = json.getInt(KEY_ROTATED_INDEX);
+        mType = Enum.valueOf(MeldType.class, json.getString(KEY_TYPE));
+        this.mHand = hand;
+    }
+
+    //for when we don't need to draw anything, i.e. when making melds for scoring
+    public Meld(Tile a, Tile b, Tile c, MeldType type){
+        mTiles = new Tile[] {a, b, c};
+        this.mType = type;
+        Log.d(TAG, "Meld made type " + type);
+    }
+
+    //also for making things a bit easier when scoring
+    public Meld(List<Tile> tiles){
+       this(tiles.get(0), tiles.get(1), tiles.get(2), tiles.get(0).getId() == tiles.get(2).getId() ?
+               MeldType.PON : MeldType.CHII);
     }
 
     public Tile[] getTiles(){
-        return tiles;
+        return mTiles;
     }
 
     public MeldType getType(){
-        return type;
+        return mType;
     }
 
     public void ponToKan(Tile tile){
-        if (type != MeldType.PON || tile.compareTo(tiles[0]) != 0 ||
-                tile.compareTo(tiles[1]) != 0 || tile.compareTo(tiles[2]) != 0){
+        if (mType != MeldType.PON || tile.compareTo(mTiles[0]) != 0 ||
+                tile.compareTo(mTiles[1]) != 0 || tile.compareTo(mTiles[2]) != 0){
             throw new IllegalArgumentException("Illegal kan");
         }
         else {
-            tiles = new Tile[] {tiles[0], tiles[1], tiles[2], tile};
-            type = MeldType.SHOUMINKAN;
+            mTiles = new Tile[] {mTiles[0], mTiles[1], mTiles[2], tile};
+            mType = MeldType.SHOUMINKAN;
         }
     }
 
@@ -84,18 +99,18 @@ public class Meld {
         switch (seatDirection){
             case SEAT_UP:
             case SEAT_DOWN:
-                if (tiles.length == 3){
+                if (mTiles.length == 3){
                     int x = canvas.getWidth() - (2 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                     int y = canvas.getHeight() - (TILE_SMALL_HEIGHT * (meldNumber+1));
-                    for (int i = 0; i < tiles.length; i++){
-                        if (i == rotatedIndex){
+                    for (int i = 0; i < mTiles.length; i++){
+                        if (i == mRotatedIndex){
                             if (seatDirection == SEAT_DOWN){
-                                tiles[i].drawSmall(canvas, x,
+                                mTiles[i].drawSmall(canvas, x,
                                         y + (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
                                         (seatDirection + 90) % 360);
                             }
                             else {
-                                tiles[i].drawSmall(canvas,
+                                mTiles[i].drawSmall(canvas,
                                         canvas.getWidth() - x - TILE_SMALL_HEIGHT,
                                         canvas.getHeight() - y - TILE_SMALL_WIDTH -
                                                 (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
@@ -105,10 +120,10 @@ public class Meld {
                         }
                         else {
                         if (seatDirection == SEAT_DOWN){
-                            tiles[i].drawSmall(canvas, x, y, seatDirection);
+                            mTiles[i].drawSmall(canvas, x, y, seatDirection);
                         }
                         else {
-                            tiles[i].drawSmall(canvas,
+                            mTiles[i].drawSmall(canvas,
                                     canvas.getWidth() - x - TILE_SMALL_WIDTH,
                                     canvas.getHeight() - y - TILE_SMALL_HEIGHT,
                                     seatDirection);
@@ -120,18 +135,18 @@ public class Meld {
                 }
                 //kan
                 else {
-                    if (type == MeldType.KAN){
+                    if (mType == MeldType.KAN){
                         int x = canvas.getWidth() - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                         int y = canvas.getHeight() - (TILE_SMALL_HEIGHT * (meldNumber+1));
-                        for (int i = 0; i < tiles.length; i++){
-                            if (i == rotatedIndex){
+                        for (int i = 0; i < mTiles.length; i++){
+                            if (i == mRotatedIndex){
                                 if (seatDirection == SEAT_DOWN){
-                                    tiles[i].drawSmall(canvas, x,
+                                    mTiles[i].drawSmall(canvas, x,
                                             y + (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
                                             (seatDirection + 90) % 360);
                                 }
                                 else {
-                                    tiles[i].drawSmall(canvas,
+                                    mTiles[i].drawSmall(canvas,
                                             canvas.getWidth() - x - TILE_SMALL_HEIGHT,
                                             canvas.getHeight() - y - TILE_SMALL_WIDTH -
                                                     (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
@@ -141,10 +156,10 @@ public class Meld {
                             }
                             else {
                                 if (seatDirection == SEAT_DOWN){
-                                    tiles[i].drawSmall(canvas, x, y, seatDirection);
+                                    mTiles[i].drawSmall(canvas, x, y, seatDirection);
                                 }
                                 else {
-                                    tiles[i].drawSmall(canvas,
+                                    mTiles[i].drawSmall(canvas,
                                             canvas.getWidth() - x - TILE_SMALL_WIDTH,
                                             canvas.getHeight() - y - TILE_SMALL_HEIGHT,
                                             seatDirection);
@@ -162,7 +177,7 @@ public class Meld {
                 break;
             case SEAT_LEFT:
             case SEAT_RIGHT:
-                if (tiles.length == 3){
+                if (mTiles.length == 3){
                     //not enough screen space for this, but would probably work on a tablet
                     /*
                     int x = TILE_SMALL_HEIGHT * meldNumber;
@@ -206,7 +221,7 @@ public class Meld {
                         - (TILE_HEIGHT + TILE_WIDTH);
                     // add space for previous melds
                     for (int i = 0; i < meldNumber; i++){
-                        Meld meld = hand.getMelds().get(i);
+                        Meld meld = mHand.getMelds().get(i);
                         if (meld.getType() == MeldType.KAN){
                             y = y - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                         }
@@ -214,13 +229,13 @@ public class Meld {
                             y = y - (2 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT;
                         }
                     }
-                    for (int i = 0; i < tiles.length; i++){
-                        if (i == rotatedIndex){
+                    for (int i = 0; i < mTiles.length; i++){
+                        if (i == mRotatedIndex){
                             if (seatDirection == SEAT_LEFT){
-                                tiles[i].drawSmall(canvas, x, y, (seatDirection + 90) % 360);
+                                mTiles[i].drawSmall(canvas, x, y, (seatDirection + 90) % 360);
                             }
                             else {
-                                tiles[i].drawSmall(canvas,
+                                mTiles[i].drawSmall(canvas,
                                         canvas.getWidth() - x - TILE_SMALL_WIDTH,
                                         canvas.getHeight() - y - TILE_SMALL_HEIGHT,
                                         (seatDirection + 90) % 360);
@@ -229,10 +244,10 @@ public class Meld {
                         }
                         else {
                             if (seatDirection == SEAT_LEFT){
-                                tiles[i].drawSmall(canvas, x, y, seatDirection);
+                                mTiles[i].drawSmall(canvas, x, y, seatDirection);
                             }
                             else {
-                                tiles[i].drawSmall(canvas,
+                                mTiles[i].drawSmall(canvas,
                                         canvas.getWidth() - x - TILE_SMALL_HEIGHT,
                                         canvas.getHeight() - y - TILE_SMALL_WIDTH,
                                         seatDirection);
@@ -243,19 +258,19 @@ public class Meld {
                 }
                 //TODO: side kan
                 else {
-                    if (type == MeldType.KAN){
+                    if (mType == MeldType.KAN){
                         int x = 0;
                         int y = canvas.getHeight() - (3 * TILE_SMALL_WIDTH) - TILE_SMALL_HEIGHT
                                 - (TILE_HEIGHT + TILE_WIDTH);
-                        for (int i = 0; i < tiles.length; i++){
-                            if (i == rotatedIndex){
+                        for (int i = 0; i < mTiles.length; i++){
+                            if (i == mRotatedIndex){
                                 if (seatDirection == SEAT_LEFT){
-                                    tiles[i].drawSmall(canvas, x,
+                                    mTiles[i].drawSmall(canvas, x,
                                             y + (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
                                             (seatDirection + 90) % 360);
                                 }
                                 else {
-                                    tiles[i].drawSmall(canvas,
+                                    mTiles[i].drawSmall(canvas,
                                             canvas.getWidth() - x - TILE_SMALL_HEIGHT,
                                             canvas.getHeight() - y - TILE_SMALL_WIDTH -
                                                     (TILE_SMALL_HEIGHT - TILE_SMALL_WIDTH),
@@ -265,10 +280,10 @@ public class Meld {
                             }
                             else {
                                 if (seatDirection == SEAT_LEFT){
-                                    tiles[i].drawSmall(canvas, x, y, seatDirection);
+                                    mTiles[i].drawSmall(canvas, x, y, seatDirection);
                                 }
                                 else {
-                                    tiles[i].drawSmall(canvas,
+                                    mTiles[i].drawSmall(canvas,
                                             canvas.getWidth() - x - TILE_SMALL_WIDTH,
                                             canvas.getHeight() - y - TILE_SMALL_HEIGHT,
                                             seatDirection);
@@ -292,11 +307,11 @@ public class Meld {
 
     public JSONObject toJson() throws JSONException{
         JSONObject json = new JSONObject();
-        json.put(KEY_TYPE, type.toString());
-        json.put(KEY_ROTATED_INDEX, rotatedIndex);
+        json.put(KEY_TYPE, mType.toString());
+        json.put(KEY_ROTATED_INDEX, mRotatedIndex);
         JSONArray jsonTiles = new JSONArray();
-        for (int i = 0; i < tiles.length; i++){
-            jsonTiles.put(tiles[i].toJson());
+        for (int i = 0; i < mTiles.length; i++){
+            jsonTiles.put(mTiles[i].toJson());
         }
         json.put(KEY_TILES, jsonTiles);
         return json;
@@ -304,8 +319,8 @@ public class Meld {
 
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append(type).append(":");
-        for (Tile tile: tiles){
+        sb.append(mType).append(":");
+        for (Tile tile: mTiles){
             sb.append(" ").append(tile);
         }
         return sb.toString();

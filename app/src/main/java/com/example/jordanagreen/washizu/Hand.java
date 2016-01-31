@@ -138,7 +138,7 @@ public class Hand {
         throw new IllegalArgumentException("Trying to get tile that isn't in hand");
     }
 
-    public ArrayList<Tile> getAllTilesById(int id){
+    public List<Tile> getAllTilesById(int id){
         ArrayList<Tile> t = new ArrayList<>();
         for (Tile tile: mTiles){
             if (tile.getId() == id){
@@ -267,7 +267,7 @@ public class Hand {
     }
 
     public void makeClosedKan(Tile tile){
-        ArrayList<Tile> kanTiles = getAllTilesById(tile.getId());
+        List<Tile> kanTiles = getAllTilesById(tile.getId());
         if (kanTiles.size() != 3){
             throw new IllegalArgumentException("Trying to call closed kan without three mTiles");
         }

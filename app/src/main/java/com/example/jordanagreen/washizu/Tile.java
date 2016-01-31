@@ -150,7 +150,6 @@ public class Tile implements Comparable<Tile>{
         return NAMES[id];
     }
 
-
     @Override
     public int compareTo(Tile another) {
         return this.id - another.id;

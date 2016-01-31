@@ -6,7 +6,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jordan on 9/13/2015.
@@ -229,7 +229,7 @@ public abstract class Player {
                 return;
             }
         }
-        ArrayList<Tile> tiles = hand.getAllTilesById(tile.getId());
+        List<Tile> tiles = hand.getAllTilesById(tile.getId());
         if (tiles.size() != 3){
             throw new IllegalArgumentException("Trying to call kan without three tiles in hand");
         }
@@ -237,7 +237,7 @@ public abstract class Player {
     }
 
     public void callKanOnDraw(Tile tile){
-        ArrayList<Tile> tiles = hand.getAllTilesById(tile.getId());
+        List<Tile> tiles = hand.getAllTilesById(tile.getId());
         if (tiles.size() != 3){
             throw new IllegalArgumentException("Trying to call kan without three tiles in hand");
         }
