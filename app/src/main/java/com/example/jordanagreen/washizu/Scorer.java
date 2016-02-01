@@ -25,17 +25,6 @@ import static com.example.jordanagreen.washizu.Constants.SOU_9;
 import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static com.example.jordanagreen.washizu.Constants.XIA;
-import static com.example.jordanagreen.washizu.Constants.YAKU_CHII_TOITSU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_CHINROUTOU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_CHUUREN_POUTOU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_DAISANGEN;
-import static com.example.jordanagreen.washizu.Constants.YAKU_DAISUUSHI;
-import static com.example.jordanagreen.washizu.Constants.YAKU_HONROUTOU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_IPPATSU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_KOKUSHI_MUSOU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_RIICHI;
-import static com.example.jordanagreen.washizu.Constants.YAKU_TAN_YAO;
-import static com.example.jordanagreen.washizu.Constants.YAKU_TSUUIISOU;
 
 /**
  * Created by Jordan on 12/1/2015.
@@ -87,7 +76,7 @@ public class Scorer {
         return tiles;
     }
 
-    private void addYaku(int yaku){
+    private void addYaku(Yaku yaku){
         if (mHand.getIsOpen()){
             mScore.addOpenYaku(yaku);
         } else {
@@ -96,56 +85,56 @@ public class Scorer {
     }
 
     void addRiichi(){
-        addYaku(YAKU_RIICHI);
+        addYaku(Yaku.RIICHI);
     }
 
     void addIppatsu(){
-        addYaku(YAKU_IPPATSU);
+        addYaku(Yaku.IPPATSU);
     }
 
    public void scoreHand(){
        //do the two easy ones to check first
        if (isKokushiMusou()){
-           addYaku(YAKU_KOKUSHI_MUSOU);
+           addYaku(Yaku.KOKUSHI_MUSOU);
            if (isDoubleKokushiMusou()){
-               addYaku(YAKU_KOKUSHI_MUSOU);
+               addYaku(Yaku.KOKUSHI_MUSOU);
            }
            //don't even bother checking anything else
            return;
        }
        if (isChiiToitsu()){
-           addYaku(YAKU_CHII_TOITSU);
+           addYaku(Yaku.CHII_TOITSU);
        }
        //TODO: figure out how to actually make sure it's four melds and a pair, and split it
         //yakuman, can stop after we get one of them for obvious reasons
        if (isChuurenPoutou()){
-           addYaku(YAKU_CHUUREN_POUTOU);
+           addYaku(Yaku.CHUUREN_POUTOU);
            if (isDoubleChuurenPoutou()){
-               addYaku(YAKU_CHUUREN_POUTOU);
+               addYaku(Yaku.CHUUREN_POUTOU);
            }
            return;
        }
        if (isDaiSanGen()){
-           addYaku(YAKU_DAISANGEN);
+           addYaku(Yaku.DAISANGEN);
            return;
        }
        if (isDaiSuuShii()){
-           addYaku(YAKU_DAISUUSHI);
+           addYaku(Yaku.DAISUUSHI);
            return;
        }
        if (isTsuuIiSou()){
-           addYaku(YAKU_TSUUIISOU);
+           addYaku(Yaku.TSUUIISOU);
            return;
        }
        if (isChinRouTou()){
-           addYaku(YAKU_CHINROUTOU);
+           addYaku(Yaku.CHINROUTOU);
            return;
        }
        if (isHonRouTou()){
-           addYaku(YAKU_HONROUTOU);
+           addYaku(Yaku.HONROUTOU);
        }
        if (isTanYao()){
-           addYaku(YAKU_TAN_YAO);
+           addYaku(Yaku.TAN_YAO);
        }
 
    }

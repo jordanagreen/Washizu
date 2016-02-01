@@ -310,8 +310,8 @@ public class Meld {
         json.put(KEY_TYPE, mType.toString());
         json.put(KEY_ROTATED_INDEX, mRotatedIndex);
         JSONArray jsonTiles = new JSONArray();
-        for (int i = 0; i < mTiles.length; i++){
-            jsonTiles.put(mTiles[i].toJson());
+        for (Tile tile: mTiles){
+            jsonTiles.put(tile.toJson());
         }
         json.put(KEY_TILES, jsonTiles);
         return json;

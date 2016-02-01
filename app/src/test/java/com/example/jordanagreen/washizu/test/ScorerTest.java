@@ -7,6 +7,7 @@ import com.example.jordanagreen.washizu.Player;
 import com.example.jordanagreen.washizu.Score;
 import com.example.jordanagreen.washizu.Scorer;
 import com.example.jordanagreen.washizu.Tile;
+import com.example.jordanagreen.washizu.Yaku;
 
 import org.junit.Test;
 
@@ -50,15 +51,7 @@ import static com.example.jordanagreen.washizu.Constants.SOU_8;
 import static com.example.jordanagreen.washizu.Constants.SOU_9;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static com.example.jordanagreen.washizu.Constants.XIA;
-import static com.example.jordanagreen.washizu.Constants.YAKU_CHII_TOITSU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_CHINROUTOU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_CHUUREN_POUTOU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_DAISANGEN;
-import static com.example.jordanagreen.washizu.Constants.YAKU_DAISUUSHI;
-import static com.example.jordanagreen.washizu.Constants.YAKU_HONROUTOU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_KOKUSHI_MUSOU;
-import static com.example.jordanagreen.washizu.Constants.YAKU_TAN_YAO;
-import static com.example.jordanagreen.washizu.Constants.YAKU_TSUUIISOU;
+
 import static org.junit.Assert.assertEquals;
 
 
@@ -81,7 +74,7 @@ public class ScorerTest {
         List<Integer> kokushiTiles = Arrays.asList(MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, PEI, XIA, XIA);
         Score score = scoreHand(kokushiTiles, TON);
-        assertEquals(score.getHan()[YAKU_KOKUSHI_MUSOU], CLOSED_HAN_KOKUSHI_MUSOU);
+        assertEquals(score.getHan()[Yaku.KOKUSHI_MUSOU.ordinal()], CLOSED_HAN_KOKUSHI_MUSOU);
     }
 
     @Test
@@ -89,7 +82,7 @@ public class ScorerTest {
         List<Integer> kokushiTiles = Arrays.asList(MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, PEI, XIA, TON);
         Score score = scoreHand(kokushiTiles, PIN_1);
-        assertEquals(score.getHan()[YAKU_KOKUSHI_MUSOU], CLOSED_HAN_KOKUSHI_MUSOU*2);
+        assertEquals(score.getHan()[Yaku.KOKUSHI_MUSOU.ordinal()], CLOSED_HAN_KOKUSHI_MUSOU*2);
     }
 
     @Test
@@ -98,12 +91,12 @@ public class ScorerTest {
         List<Integer> kokushiTiles = Arrays.asList(MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, XIA, XIA, XIA);
         Score score = scoreHand(kokushiTiles, PIN_1);
-        assertEquals(score.getHan()[YAKU_KOKUSHI_MUSOU], 0);
+        assertEquals(score.getHan()[Yaku.KOKUSHI_MUSOU.ordinal()], 0);
         //non-kokushi tile
         kokushiTiles = Arrays.asList(MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, XIA, XIA, PIN_2);
         score = scoreHand(kokushiTiles, PIN_1);
-        assertEquals(score.getHan()[YAKU_KOKUSHI_MUSOU], 0);
+        assertEquals(score.getHan()[Yaku.KOKUSHI_MUSOU.ordinal()], 0);
     }
 
     @Test
@@ -111,7 +104,7 @@ public class ScorerTest {
         List<Integer> chiiToitsuTiles = Arrays.asList(MAN_1, MAN_1, MAN_2, MAN_2, MAN_3, MAN_3,
                 MAN_4, MAN_4, MAN_5, MAN_5, MAN_6, MAN_6, MAN_7);
         Score score = scoreHand(chiiToitsuTiles, MAN_7);
-        assertEquals(score.getHan()[YAKU_CHII_TOITSU], CLOSED_HAN_CHII_TOITSU);
+        assertEquals(score.getHan()[Yaku.CHII_TOITSU.ordinal()], CLOSED_HAN_CHII_TOITSU);
     }
 
     @Test
@@ -119,7 +112,7 @@ public class ScorerTest {
         List<Integer> chiiToitsuTiles = Arrays.asList(MAN_1, MAN_1, MAN_2, MAN_2, MAN_3, MAN_3,
                 MAN_4, MAN_4, MAN_5, MAN_5, MAN_6, MAN_6, MAN_7);
         Score score = scoreHand(chiiToitsuTiles, MAN_8);
-        assertEquals(score.getHan()[YAKU_CHII_TOITSU], 0);
+        assertEquals(score.getHan()[Yaku.CHII_TOITSU.ordinal()], 0);
     }
 
     @Test
@@ -127,7 +120,7 @@ public class ScorerTest {
         List<Integer> chiiToitsuTiles = Arrays.asList(MAN_1, MAN_1, MAN_2, MAN_2, MAN_3, MAN_3,
                 MAN_4, MAN_4, MAN_5, MAN_5, MAN_6, MAN_6, MAN_6);
         Score score = scoreHand(chiiToitsuTiles, MAN_6);
-        assertEquals(score.getHan()[YAKU_CHII_TOITSU], 0);
+        assertEquals(score.getHan()[Yaku.CHII_TOITSU.ordinal()], 0);
     }
 
     @Test
@@ -135,15 +128,15 @@ public class ScorerTest {
         List<Integer> chuurenPoutouTiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_2, MAN_3, MAN_4,
                 MAN_5, MAN_6, MAN_7, MAN_8, MAN_8, MAN_9, MAN_9);
         Score score = scoreHand(chuurenPoutouTiles, MAN_9);
-        assertEquals(score.getHan()[YAKU_CHUUREN_POUTOU], CLOSED_HAN_CHUUREN_POUTOU);
+        assertEquals(score.getHan()[Yaku.CHUUREN_POUTOU.ordinal()], CLOSED_HAN_CHUUREN_POUTOU);
     }
 
     @Test
-       public void testDoubleChuurenPoutou(){
+    public void testDoubleChuurenPoutou(){
         List<Integer> chuurenPoutouTiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_2, MAN_3, MAN_4,
                 MAN_5, MAN_6, MAN_7, MAN_8, MAN_9, MAN_9, MAN_9);
         Score score = scoreHand(chuurenPoutouTiles, MAN_5);
-        assertEquals(score.getHan()[YAKU_CHUUREN_POUTOU], CLOSED_HAN_CHUUREN_POUTOU*2);
+        assertEquals(score.getHan()[Yaku.CHUUREN_POUTOU.ordinal()], CLOSED_HAN_CHUUREN_POUTOU*2);
     }
 
     @Test
@@ -151,11 +144,11 @@ public class ScorerTest {
         List<Integer> chuurenPoutouTiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_1, MAN_3, MAN_4,
                 MAN_5, MAN_6, MAN_7, MAN_8, MAN_9, MAN_9, MAN_9);
         Score score = scoreHand(chuurenPoutouTiles, MAN_5);
-        assertEquals(score.getHan()[YAKU_CHUUREN_POUTOU], 0);
+        assertEquals(score.getHan()[Yaku.CHUUREN_POUTOU.ordinal()], 0);
         chuurenPoutouTiles = Arrays.asList(MAN_1, MAN_1, MAN_1, PIN_2, MAN_3, MAN_4,
                 MAN_5, MAN_6, MAN_7, MAN_8, MAN_9, MAN_9, MAN_9);
         score = scoreHand(chuurenPoutouTiles, MAN_5);
-        assertEquals(score.getHan()[YAKU_CHUUREN_POUTOU], 0);
+        assertEquals(score.getHan()[Yaku.CHUUREN_POUTOU.ordinal()], 0);
     }
 
     @Test
@@ -163,7 +156,7 @@ public class ScorerTest {
         List<Integer> tiles = Arrays.asList(MAN_2, MAN_3, MAN_4, PIN_4, PIN_5, PIN_6, SOU_6,
                 SOU_7, SOU_8, MAN_5, MAN_6, MAN_7, MAN_8);
         Score score = scoreHand(tiles, MAN_8);
-        assertEquals(score.getHan()[YAKU_TAN_YAO], CLOSED_HAN_TAN_YAO);
+        assertEquals(score.getHan()[Yaku.TAN_YAO.ordinal()], CLOSED_HAN_TAN_YAO);
     }
 
     @Test
@@ -171,7 +164,7 @@ public class ScorerTest {
         List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, PIN_1, PIN_1, PIN_1, SOU_9,
                 SOU_9, SOU_9, MAN_9, MAN_9, MAN_9, SOU_1);
         Score score = scoreHand(tiles, SOU_1);
-        assertEquals(score.getHan()[YAKU_CHINROUTOU], CLOSED_HAN_CHINROUTOU);
+        assertEquals(score.getHan()[Yaku.CHINROUTOU.ordinal()], CLOSED_HAN_CHINROUTOU);
     }
 
     @Test
@@ -179,7 +172,7 @@ public class ScorerTest {
         List<Integer> tiles = Arrays.asList(CHUN, CHUN, CHUN, NAN, NAN, NAN, PEI,
                 PEI, PEI, HAKU, HAKU, HAKU, HATSU);
         Score score = scoreHand(tiles, HATSU);
-        assertEquals(score.getHan()[YAKU_TSUUIISOU], CLOSED_HAN_TSUUIISOU);
+        assertEquals(score.getHan()[Yaku.TSUUIISOU.ordinal()], CLOSED_HAN_TSUUIISOU);
     }
 
     @Test
@@ -187,7 +180,7 @@ public class ScorerTest {
         List<Integer> tiles = Arrays.asList(CHUN, CHUN, CHUN, HATSU, HATSU, HATSU, MAN_2,
                 MAN_3, MAN_4, HAKU, HAKU, HAKU, SOU_3);
         Score score = scoreHand(tiles, SOU_3);
-        assertEquals(score.getHan()[YAKU_DAISANGEN], CLOSED_HAN_DAISANGEN);
+        assertEquals(score.getHan()[Yaku.DAISANGEN.ordinal()], CLOSED_HAN_DAISANGEN);
     }
 
     @Test
@@ -195,7 +188,7 @@ public class ScorerTest {
         List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, PIN_1, PIN_1, PIN_1, SOU_9,
                 SOU_9, SOU_9, PEI, PEI, PEI, SOU_1);
         Score score = scoreHand(tiles, SOU_1);
-        assertEquals(score.getHan()[YAKU_HONROUTOU], CLOSED_HAN_HONROUTOU);
+        assertEquals(score.getHan()[Yaku.HONROUTOU.ordinal()], CLOSED_HAN_HONROUTOU);
     }
 
     @Test
@@ -203,7 +196,7 @@ public class ScorerTest {
         List<Integer> tiles = Arrays.asList(PEI, PEI, PEI, NAN, NAN, NAN, TON,
                 TON, TON, XIA, XIA, XIA, SOU_3);
         Score score = scoreHand(tiles, SOU_3);
-        assertEquals(score.getHan()[YAKU_DAISUUSHI], CLOSED_HAN_DAISUUSHI);
+        assertEquals(score.getHan()[Yaku.DAISUUSHI.ordinal()], CLOSED_HAN_DAISUUSHI);
     }
 
 }
