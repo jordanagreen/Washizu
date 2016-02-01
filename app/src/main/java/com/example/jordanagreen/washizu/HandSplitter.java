@@ -5,6 +5,34 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.example.jordanagreen.washizu.Constants.MAN_1;
+import static com.example.jordanagreen.washizu.Constants.MAN_2;
+import static com.example.jordanagreen.washizu.Constants.MAN_3;
+import static com.example.jordanagreen.washizu.Constants.MAN_4;
+import static com.example.jordanagreen.washizu.Constants.MAN_5;
+import static com.example.jordanagreen.washizu.Constants.MAN_6;
+import static com.example.jordanagreen.washizu.Constants.MAN_7;
+import static com.example.jordanagreen.washizu.Constants.MAN_8;
+import static com.example.jordanagreen.washizu.Constants.MAN_9;
+import static com.example.jordanagreen.washizu.Constants.PIN_1;
+import static com.example.jordanagreen.washizu.Constants.PIN_2;
+import static com.example.jordanagreen.washizu.Constants.PIN_3;
+import static com.example.jordanagreen.washizu.Constants.PIN_4;
+import static com.example.jordanagreen.washizu.Constants.PIN_5;
+import static com.example.jordanagreen.washizu.Constants.PIN_6;
+import static com.example.jordanagreen.washizu.Constants.PIN_7;
+import static com.example.jordanagreen.washizu.Constants.PIN_8;
+import static com.example.jordanagreen.washizu.Constants.PIN_9;
+import static com.example.jordanagreen.washizu.Constants.SOU_1;
+import static com.example.jordanagreen.washizu.Constants.SOU_2;
+import static com.example.jordanagreen.washizu.Constants.SOU_3;
+import static com.example.jordanagreen.washizu.Constants.SOU_4;
+import static com.example.jordanagreen.washizu.Constants.SOU_5;
+import static com.example.jordanagreen.washizu.Constants.SOU_6;
+import static com.example.jordanagreen.washizu.Constants.SOU_7;
+import static com.example.jordanagreen.washizu.Constants.SOU_8;
+import static com.example.jordanagreen.washizu.Constants.SOU_9;
+
 /**
  * Created by Jordan on 1/28/2016.
  */
@@ -16,10 +44,7 @@ public class HandSplitter {
 
     public HandSplitter(){
         if (mPossiblePairValues == null){
-            mPossiblePairValues = new int[3][3];
-            mPossiblePairValues[0] = new int[]{3, 6, 9};
-            mPossiblePairValues[1] = new int[]{2, 5, 8};
-            mPossiblePairValues[2] = new int[]{1, 4, 7};
+            mPossiblePairValues = makePossiblePairValues();
         }
     }
 
@@ -49,11 +74,11 @@ public class HandSplitter {
 
        /*
        The tiles in both a chii and a pon will add up to 3n: n+n+n or n-1 + n + n+1
-       So the full hand, not counting honors, is 4n + 2m where m is the pair and total 5 3
-       shows us what number the pair can be (unless it's an honor)
+       So the full hand, not counting honors, is 4n + 2m where m is the pair and total % 3
+       shows us what numbers the pair can be (unless it's an honor)
        */
 
-       int[] counts = hand.getTileCounts();
+//       int[] counts = hand.getTileCounts();
        List<Tile> pair = null;
        List<Tile> toDelete = new ArrayList<>();
 
@@ -99,10 +124,14 @@ public class HandSplitter {
                total += tile.getNumericalValue();
            }
            int[] possiblePairs = mPossiblePairValues[total % 3];
+//           List<Integer> possiblePairs = getPossiblePairTiles(total % 3);
            for (int pairValue: possiblePairs){
-               int inHand = counts[pairValue];
-               if (inHand >= 2){
+               List<Tile> inHand = getAllTilesById(tiles, pairValue);
+//               System.out.println("Trying pair " + pairValue);
+//               int inHand = counts[pairValue];
+               if (inHand.size() >= 2){
                    //take out the pair, try splitting the rest
+//                   System.out.println("Found pair " + pairValue);
                    pair = getAllTilesById(tiles, pairValue).subList(0, 2);
                    split.setPair(pair);
                    tiles.removeAll(pair);
@@ -114,6 +143,7 @@ public class HandSplitter {
                    }
                    //if it didn't work, put the pair back and try the next pair
                    tiles.addAll(pair);
+//                   Collections.sort(tiles);
                }
            }
            //if we've reached this point, it isn't going to work
@@ -132,16 +162,21 @@ public class HandSplitter {
      * @return A list of melds these tiles can be split into
      */
     private List<Meld> splitTiles(List<Tile> tiles){
+//        System.out.println("Splitting tiles");
+//        for (Tile tile: tiles){
+//            System.out.println(tile);
+//        }
         List<Meld> melds = new ArrayList<>();
         //make a copy so it doesn't change the original list when we take tiles out
         List<Tile> t = new ArrayList<>(tiles);
-        Collections.sort(tiles);
+        Collections.sort(t);
         while (t.size() > 0){
             Tile tile = t.get(0);
+//            System.out.println("Getting meld with tile " + tile);
             Tile tile2, tile3;
             MeldType type;
             //pon
-            List<Tile> allSameTiles = getAllTilesById(tiles, tile.getId());
+            List<Tile> allSameTiles = getAllTilesById(t, tile.getId());
             if (allSameTiles.size() >= 3){
                 tile = allSameTiles.get(0);
                 tile2 = allSameTiles.get(1);
@@ -150,17 +185,22 @@ public class HandSplitter {
             }
             //chii
             else {
-                tile2 = getTileById(tiles, tile.getId() + 1);
-                tile3 = getTileById(tiles, tile.getId() + 2);
+                tile2 = getTileById(t, tile.getId() + 1);
+                tile3 = getTileById(t, tile.getId() + 2);
                 if (!(tile.getSuit() == tile2.getSuit() && tile2.getSuit() == tile3.getSuit())){
                     throw new IllegalStateException("Tiles for chii aren't the same suit: " +
                             tile2 + " " + tile3);
                 }
                 type = MeldType.CHII;
             }
+//            System.out.println("Got meld with " + tile + " " + tile2 + " " + tile3);
             Meld meld = new Meld(tile, tile2, tile3, type);
             melds.add(meld);
             t.removeAll(Arrays.asList(tile, tile2, tile3));
+//            System.out.println("Tiles remaining:");
+//            for (Tile remaining: t){
+//                System.out.println(remaining);
+//            }
         }
         return melds;
     }
@@ -181,7 +221,24 @@ public class HandSplitter {
                 return tile;
             }
         }
-        throw new IllegalArgumentException("Trying to get tile that isn't in hand");
+        throw new IllegalArgumentException("Trying to get tile that isn't in hand: " + id);
+    }
+
+    private int[][] makePossiblePairValues(){
+        int[][] possiblePairValues = new int[3][3];
+        possiblePairValues[0] = new int[]{
+                MAN_3, MAN_6, MAN_9,
+                PIN_3, PIN_6, PIN_9,
+                SOU_3, SOU_6, SOU_9};
+        possiblePairValues[1] = new int[]{
+                MAN_2, MAN_5, MAN_8,
+                PIN_2, PIN_5, PIN_8,
+                SOU_2, SOU_5, SOU_8, };
+        possiblePairValues[2] = new int[]{
+                MAN_1, MAN_4, MAN_7,
+                PIN_1, PIN_4, PIN_7,
+                SOU_1, SOU_4, SOU_7};
+        return possiblePairValues;
     }
 
 }
