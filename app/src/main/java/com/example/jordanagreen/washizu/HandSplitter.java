@@ -60,6 +60,7 @@ public class HandSplitter {
      */
    public SplitHand splitHand(Hand hand, Tile winningTile){
        SplitHand split = new SplitHand();
+       split.setWinningTile(winningTile);
        //any open melds are obviously used
        for (Meld meld: hand.getMelds()){
            split.addMeld(meld);
@@ -135,7 +136,15 @@ public class HandSplitter {
                    pair = getAllTilesById(tiles, pairValue).subList(0, 2);
                    split.setPair(pair);
                    tiles.removeAll(pair);
-                   List<Meld> possibleMelds = splitTiles(tiles);
+                   List<Meld> possibleMelds;
+                   try{
+                        possibleMelds = splitTiles(tiles);
+                   }
+                   catch (IllegalStateException | IllegalArgumentException e){
+                       tiles.addAll(pair);
+                       Collections.sort(tiles);
+                       continue;
+                   }
                    //if it worked, we can return the melds we have now
                    if (possibleMelds != null){
                        split.addAllMelds(possibleMelds);
@@ -147,7 +156,7 @@ public class HandSplitter {
                }
            }
            //if we've reached this point, it isn't going to work
-           return null;
+           throw new IllegalArgumentException("Invalid hand");
        }
        //already found a pair of honors, try splitting this hand
        else {
@@ -185,8 +194,12 @@ public class HandSplitter {
             }
             //chii
             else {
-                tile2 = getTileById(t, tile.getId() + 1);
-                tile3 = getTileById(t, tile.getId() + 2);
+                try{
+                    tile2 = getTileById(t, tile.getId() + 1);
+                    tile3 = getTileById(t, tile.getId() + 2);
+                } catch (IllegalArgumentException e){
+                    throw new IllegalStateException(e);
+                }
                 if (!(tile.getSuit() == tile2.getSuit() && tile2.getSuit() == tile3.getSuit())){
                     throw new IllegalStateException("Tiles for chii aren't the same suit: " +
                             tile2 + " " + tile3);

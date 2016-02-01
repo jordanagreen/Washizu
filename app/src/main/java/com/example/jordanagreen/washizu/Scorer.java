@@ -31,119 +31,127 @@ import static com.example.jordanagreen.washizu.Constants.XIA;
  */
 public class Scorer {
 
-    private Hand mHand;
+//    private Hand mHand;
     //might not be in the hand already if it's from ron
-    private Tile mWinningTile;
-    private Score mScore;
+//    private Tile mWinningTile;
+//    private Score mScore;
 
-    public Scorer(Hand hand, Tile winningTile){
-        this.mHand = hand;
-        this.mWinningTile = winningTile;
-        this.mScore = new Score();
-    }
+//    public Scorer(Hand hand, Tile winningTile){
+//        this.mHand = hand;
+//        this.mWinningTile = winningTile;
+////        this.mScore = new Score();
+//    }
 
-    public Scorer(){
-        this.mScore = new Score();
-    }
+//    public Scorer(){
+//        this.mScore = new Score();
+//    }
+//
+//    public Score getScore(){
+//        return mScore;
+//    }
 
-    public Score getScore(){
-        return mScore;
-    }
+//    public void setHand(Hand hand){
+//        this.mHand = hand;
+//    }
 
-    public void setHand(Hand hand){
-        this.mHand = hand;
-    }
-
-    public void setWinningTile(Tile tile){
-        this.mWinningTile = tile;
-    }
+//    public void setWinningTile(Tile tile){
+//        this.mWinningTile = tile;
+//    }
 
     //all the tiles including the winning one for when which one was drawn doesn't matter
-    private List<Tile> getFullHand(){
-        List<Tile> tiles = new ArrayList<>();
-        for (Tile tile: mHand.getTiles()){
-            tiles.add(tile);
+//    private List<Tile> getFullHand(Hand hand, Tile winningTile){
+//        List<Tile> tiles = new ArrayList<>();
+//        for (Tile tile: hand.getTiles()){
+//            tiles.add(tile);
+//        }
+//        tiles.add(winningTile);
+//        return tiles;
+//    }
+//
+//    private List<Tile> getHandWithoutWinningTile(){
+//        List<Tile> tiles = new ArrayList<>();
+//        for (Tile tile: mHand.getTiles()){
+//            tiles.add(tile);
+//        }
+//        return tiles;
+//    }
+
+//    void addRiichi(){
+//        addYaku(Yaku.RIICHI);
+//    }
+//
+//    void addIppatsu(){
+//        addYaku(Yaku.IPPATSU);
+//    }
+
+    //return null if the hand couldn't be scored
+    public Score scoreHand(Hand hand){
+        Tile winningTile = hand.getDrawnTile();
+        Score score = new Score();
+        //do the two easy ones to check first
+        if (isKokushiMusou(hand, winningTile)){
+            score.addYaku(Yaku.KOKUSHI_MUSOU, hand.getIsOpen());
+            if (isDoubleKokushiMusou(hand)){
+                score.addYaku(Yaku.KOKUSHI_MUSOU, hand.getIsOpen());
+            }
+            //don't even bother checking anything else
+            return score;
         }
-        tiles.add(mWinningTile);
-        return tiles;
-    }
-
-    private List<Tile> getHandWithoutWinningTile(){
-        List<Tile> tiles = new ArrayList<>();
-        for (Tile tile: mHand.getTiles()){
-            tiles.add(tile);
+        if (isChiiToitsu(hand, winningTile)){
+            score.addYaku(Yaku.CHII_TOITSU, hand.getIsOpen());
         }
-        return tiles;
-    }
 
-    private void addYaku(Yaku yaku){
-        if (mHand.getIsOpen()){
-            mScore.addOpenYaku(yaku);
-        } else {
-            mScore.addClosedYaku(yaku);
+        //if we get to this point, it needs to be four melds and a pair
+        HandSplitter handSplitter = new HandSplitter();
+        SplitHand splitHand;
+        try {
+            splitHand = handSplitter.splitHand(hand, winningTile);
         }
-    }
+        catch (IllegalStateException | IllegalArgumentException e){
+            return null;
+        }
 
-    void addRiichi(){
-        addYaku(Yaku.RIICHI);
-    }
-
-    void addIppatsu(){
-        addYaku(Yaku.IPPATSU);
-    }
-
-   public void scoreHand(){
-       //do the two easy ones to check first
-       if (isKokushiMusou()){
-           addYaku(Yaku.KOKUSHI_MUSOU);
-           if (isDoubleKokushiMusou()){
-               addYaku(Yaku.KOKUSHI_MUSOU);
-           }
-           //don't even bother checking anything else
-           return;
-       }
-       if (isChiiToitsu()){
-           addYaku(Yaku.CHII_TOITSU);
-       }
-       //TODO: figure out how to actually make sure it's four melds and a pair, and split it
         //yakuman, can stop after we get one of them for obvious reasons
-       if (isChuurenPoutou()){
-           addYaku(Yaku.CHUUREN_POUTOU);
-           if (isDoubleChuurenPoutou()){
-               addYaku(Yaku.CHUUREN_POUTOU);
-           }
-           return;
-       }
-       if (isDaiSanGen()){
-           addYaku(Yaku.DAISANGEN);
-           return;
-       }
-       if (isDaiSuuShii()){
-           addYaku(Yaku.DAISUUSHI);
-           return;
-       }
-       if (isTsuuIiSou()){
-           addYaku(Yaku.TSUUIISOU);
-           return;
-       }
-       if (isChinRouTou()){
-           addYaku(Yaku.CHINROUTOU);
-           return;
-       }
-       if (isHonRouTou()){
-           addYaku(Yaku.HONROUTOU);
-       }
-       if (isTanYao()){
-           addYaku(Yaku.TAN_YAO);
-       }
+        if (isChuurenPoutou(splitHand)){
+            score.addYaku(Yaku.CHUUREN_POUTOU, hand.getIsOpen());
+            if (isDoubleChuurenPoutou(splitHand)){
+                score.addYaku(Yaku.CHUUREN_POUTOU, hand.getIsOpen());
+            }
+            return score;
+        }
+        if (isDaiSanGen(splitHand)){
+            score.addYaku(Yaku.DAISANGEN, hand.getIsOpen());
+            return score;
+        }
+        if (isDaiSuuShii(splitHand)){
+            score.addYaku(Yaku.DAISUUSHI, hand.getIsOpen());
+            return score;
+        }
+        if (isTsuuIiSou(splitHand)){
+            score.addYaku(Yaku.TSUUIISOU, hand.getIsOpen());
+            return score;
+        }
+        if (isChinRouTou(splitHand)){
+            score.addYaku(Yaku.CHINROUTOU, hand.getIsOpen());
+            return score;
+        }
+        if (isHonRouTou(splitHand)){
+            score.addYaku(Yaku.HONROUTOU, hand.getIsOpen());
+        }
+        if (isTanYao(splitHand)){
+            score.addYaku(Yaku.TAN_YAO, hand.getIsOpen());
+        }
 
-   }
 
-    private boolean isKokushiMusou(){
+        return score;
+    }
+
+    private boolean isKokushiMusou(Hand hand, Tile winningTile){
         int[] kokushiTiles = new int[]{MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, PEI, XIA, TON};
         int[] numberInHand = new int[kokushiTiles.length];
-        List<Tile> tiles = getFullHand();
+        List<Tile> tiles = new ArrayList<>(hand.getTiles());
+        tiles.add(winningTile);
         for (Tile tile: tiles){
             for (int i = 0; i < kokushiTiles.length; i++){
                 if (tile.getId() == kokushiTiles[i]){
@@ -169,9 +177,9 @@ public class Scorer {
         return foundPair;
     }
 
-    private boolean isDoubleKokushiMusou(){
+    private boolean isDoubleKokushiMusou(Hand hand){
         //one of each with 13-sided wait
-        List<Tile> tiles = getHandWithoutWinningTile();
+        List<Tile> tiles = hand.getTiles();
         int[] kokushiTiles = new int[]{MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, PEI, XIA, TON};
         int[] tileIDs = new int[tiles.size()];
@@ -188,9 +196,10 @@ public class Scorer {
         return true;
     }
 
-    private boolean isChiiToitsu(){
+    private boolean isChiiToitsu(Hand hand, Tile winningTile){
         //seven pairs
-        List<Tile> tiles = getFullHand();
+        List<Tile> tiles = new ArrayList<>(hand.getTiles());
+        tiles.add(winningTile);
         int[] tilesInHand = new int[TILE_MAX_ID];
         for (Tile tile: tiles){
             tilesInHand[tile.getId()]++;
@@ -207,9 +216,9 @@ public class Scorer {
         return true;
     }
 
-    private boolean isChuurenPoutou(){
+    private boolean isChuurenPoutou(SplitHand hand){
         // 1-1-1-2-3-4-5-6-7-8-9-9-9 and one more in the same suit
-        List<Tile> tiles = getFullHand();
+        List<Tile> tiles = hand.getFullHand();
         //make sure they're all the same suit and count them up
         Suit suit = tiles.get(0).getSuit();
         if (suit == Suit.HONOR) return false;
@@ -233,14 +242,14 @@ public class Scorer {
         return true;
     }
 
-    private boolean isDoubleChuurenPoutou(){
-        List<Tile> tiles = getHandWithoutWinningTile();
+    private boolean isDoubleChuurenPoutou(SplitHand hand){
+        List<Tile> tiles = hand.getHandWithoutWinningTile();
         int[] expectedIDs = new int[]{MAN_1, MAN_1, MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, MAN_6, MAN_7,
             MAN_8, MAN_9, MAN_9, MAN_9};
-        //change to the right suit by adding 9 to get from man -> pin -> sou
+        //change tiles we're comparing to to the right suit by adding 9 to get from man->pin->sou
         final Suit suit = tiles.get(0).getSuit();
         if (suit == Suit.HONOR) return false;
-        if (mWinningTile.getSuit() != suit) return false;
+        if (hand.getWinningTile().getSuit() != suit) return false;
         for (int i = 0; i < expectedIDs.length; i++){
             expectedIDs[i] = expectedIDs[i] + (suit.ordinal() * 9);
         }
@@ -257,45 +266,43 @@ public class Scorer {
     }
 
     //3 triples of dragons
-    private boolean isDaiSanGen(){
-        int[] tileCounts = mHand.getTileCounts();
-        return (tileCounts[CHUN] >= 3 && tileCounts[HAKU] >= 3 && tileCounts[HATSU] >= 3);
+    private boolean isDaiSanGen(SplitHand hand){
+        return hand.containsPonOf(CHUN) && hand.containsPonOf(HAKU) && hand.containsPonOf(HATSU);
     }
 
     //4 triples of winds
-    private boolean isDaiSuuShii(){
-        int[] tileCounts = mHand.getTileCounts();
-        return (tileCounts[XIA] >= 3 && tileCounts[TON] >= 3 && tileCounts[PEI] >= 3
-            && tileCounts[NAN] >= 3);
+    private boolean isDaiSuuShii(SplitHand hand){
+        return hand.containsPonOf(XIA) && hand.containsPonOf(TON) && hand.containsPonOf(NAN) &&
+                hand.containsPonOf(PEI);
     }
 
     //all honors
-    private boolean isTsuuIiSou(){
-        for (Tile tile: getFullHand()){
+    private boolean isTsuuIiSou(SplitHand hand){
+        for (Tile tile: hand.getFullHand()){
             if (tile.getSuit() != Suit.HONOR) return false;
         }
         return true;
     }
 
     //all terminals
-    private boolean isChinRouTou(){
-        for (Tile tile: getFullHand()){
+    private boolean isChinRouTou(SplitHand hand){
+        for (Tile tile: hand.getFullHand()){
             if (!tile.isTerminal()) return false;
         }
         return true;
     }
 
     //all terminals or honors
-    private boolean isHonRouTou(){
-        for (Tile tile: getFullHand()){
+    private boolean isHonRouTou(SplitHand hand){
+        for (Tile tile: hand.getFullHand()){
             if (!tile.isTerminal() && tile.getSuit() != Suit.HONOR) return false;
         }
         return true;
     }
 
     //no terminals or honors
-    private boolean isTanYao(){
-        for (Tile tile: getFullHand()){
+    private boolean isTanYao(SplitHand hand){
+        for (Tile tile: hand.getFullHand()){
             if (tile.isTerminal() || tile.getSuit() == Suit.HONOR) return false;
         }
         return true;

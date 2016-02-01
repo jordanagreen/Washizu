@@ -51,8 +51,8 @@ import static com.example.jordanagreen.washizu.Constants.SOU_8;
 import static com.example.jordanagreen.washizu.Constants.SOU_9;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static com.example.jordanagreen.washizu.Constants.XIA;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 
 /**
@@ -64,9 +64,9 @@ public class ScorerTest {
         Player player = new HumanPlayer(Constants.WIND_EAST);
         Tile drawnTile = new Tile(drawn);
         Hand hand = new Hand(tiles, drawnTile, player);
-        Scorer scorer = new Scorer(hand, drawnTile);
-        scorer.scoreHand();
-        return scorer.getScore();
+        Scorer scorer = new Scorer();
+        return scorer.scoreHand(hand);
+//        return scorer.getScore();
     }
 
     @Test
@@ -91,12 +91,12 @@ public class ScorerTest {
         List<Integer> kokushiTiles = Arrays.asList(MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, XIA, XIA, XIA);
         Score score = scoreHand(kokushiTiles, PIN_1);
-        assertEquals(score.getHan()[Yaku.KOKUSHI_MUSOU.ordinal()], 0);
+        assertNull(score);
         //non-kokushi tile
         kokushiTiles = Arrays.asList(MAN_1, MAN_9, PIN_1, PIN_9, SOU_1, SOU_9,
                 CHUN, HAKU, HATSU, NAN, XIA, XIA, PIN_2);
         score = scoreHand(kokushiTiles, PIN_1);
-        assertEquals(score.getHan()[Yaku.KOKUSHI_MUSOU.ordinal()], 0);
+        assertNull(score);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class ScorerTest {
         List<Integer> chiiToitsuTiles = Arrays.asList(MAN_1, MAN_1, MAN_2, MAN_2, MAN_3, MAN_3,
                 MAN_4, MAN_4, MAN_5, MAN_5, MAN_6, MAN_6, MAN_7);
         Score score = scoreHand(chiiToitsuTiles, MAN_8);
-        assertEquals(score.getHan()[Yaku.CHII_TOITSU.ordinal()], 0);
+        assertNull(score);
     }
 
     @Test
@@ -137,18 +137,6 @@ public class ScorerTest {
                 MAN_5, MAN_6, MAN_7, MAN_8, MAN_9, MAN_9, MAN_9);
         Score score = scoreHand(chuurenPoutouTiles, MAN_5);
         assertEquals(score.getHan()[Yaku.CHUUREN_POUTOU.ordinal()], CLOSED_HAN_CHUUREN_POUTOU*2);
-    }
-
-    @Test
-    public void testWrongChuurenPoutou(){
-        List<Integer> chuurenPoutouTiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_1, MAN_3, MAN_4,
-                MAN_5, MAN_6, MAN_7, MAN_8, MAN_9, MAN_9, MAN_9);
-        Score score = scoreHand(chuurenPoutouTiles, MAN_5);
-        assertEquals(score.getHan()[Yaku.CHUUREN_POUTOU.ordinal()], 0);
-        chuurenPoutouTiles = Arrays.asList(MAN_1, MAN_1, MAN_1, PIN_2, MAN_3, MAN_4,
-                MAN_5, MAN_6, MAN_7, MAN_8, MAN_9, MAN_9, MAN_9);
-        score = scoreHand(chuurenPoutouTiles, MAN_5);
-        assertEquals(score.getHan()[Yaku.CHUUREN_POUTOU.ordinal()], 0);
     }
 
     @Test
