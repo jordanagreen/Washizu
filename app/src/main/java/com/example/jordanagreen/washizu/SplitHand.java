@@ -72,7 +72,7 @@ public class SplitHand {
     List<Tile> getFullHand(){
         List<Tile> tiles = new ArrayList<>();
         for (Meld meld: mMelds){
-            tiles.addAll(Arrays.asList(meld.getTiles()));
+            tiles.addAll(meld.getTiles());
         }
         tiles.addAll(Arrays.asList(mPair));
         return tiles;
@@ -87,7 +87,7 @@ public class SplitHand {
     boolean containsPonOf(int tileID){
         for (Meld meld: mMelds){
             if (meld.getType() != MeldType.CHII){
-                if (meld.getTiles()[0].getId() == tileID){
+                if (meld.getTiles().get(0).getId() == tileID){
                     return true;
                 }
             }

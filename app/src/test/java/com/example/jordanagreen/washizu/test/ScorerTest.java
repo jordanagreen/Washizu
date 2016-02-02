@@ -37,6 +37,8 @@ import static com.example.jordanagreen.washizu.Constants.PIN_6;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
 import static com.example.jordanagreen.washizu.Constants.SOU_3;
+import static com.example.jordanagreen.washizu.Constants.SOU_4;
+import static com.example.jordanagreen.washizu.Constants.SOU_5;
 import static com.example.jordanagreen.washizu.Constants.SOU_6;
 import static com.example.jordanagreen.washizu.Constants.SOU_7;
 import static com.example.jordanagreen.washizu.Constants.SOU_8;
@@ -223,6 +225,28 @@ public class ScorerTest {
         Scorer scorer = new Scorer();
         score = scorer.scoreHand(hand, Wind.EAST, false);
         assertEquals(score.getHan()[Yaku.SUU_ANKOU.ordinal()], 0);
+    }
+
+    @Test
+    public void testPinFu(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, SOU_3, SOU_4,
+                SOU_5, MAN_2, MAN_3, MAN_4, SOU_3, SOU_3);
+        Score score = scoreHand(tiles, MAN_6);
+        assertEquals(score.getHan()[Yaku.PINFU.ordinal()], Yaku.PINFU.getClosedHan());
+    }
+
+    @Test
+    public void testWrongPinFu(){
+        //pair of xia
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, SOU_3, SOU_4,
+                SOU_5, MAN_2, MAN_3, MAN_4, XIA, XIA);
+        Score score = scoreHand(tiles, MAN_6);
+        assertEquals(score.getHan()[Yaku.PINFU.ordinal()], 0);
+        //one sided wait
+        tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_6, SOU_3, SOU_4,
+                SOU_5, MAN_2, MAN_3, MAN_4, XIA, XIA);
+        score = scoreHand(tiles, MAN_5);
+        assertEquals(score.getHan()[Yaku.PINFU.ordinal()], 0);
     }
 
 }

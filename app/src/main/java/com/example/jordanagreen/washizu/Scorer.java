@@ -104,13 +104,13 @@ public class Scorer {
         }
         //do yaku which have to be closed here
         if (!hand.getIsOpen()){
-            if (isSuuAnKou(splitHand, winningTile, isTsumo)){
+            if (isSuuAnKou(splitHand, isTsumo)){
                 score.addYaku(Yaku.SUU_ANKOU);
                 return score;
             }
-//            if (isPinfu(splitHand))){
-//                score.addYaku(Yaku.PINFU, hand.getIsOpen());
-//            }
+            if (isPinfu(splitHand, roundWind, hand.getPlayer().getWind())){
+                score.addYaku(Yaku.PINFU);
+            }
         }
 
 
@@ -301,15 +301,18 @@ public class Scorer {
     }
 
     private boolean isFanpai(SplitHand hand, Wind roundWind, Wind playerWind){
-        return hand.containsPonOf(CHUN) || hand.containsPonOf(HAKU) || hand.containsPonOf(HATSU) ||
-                hand.containsPonOf(roundWind.getTileID()) || hand.containsPonOf(playerWind.getTileID());
+        for (Meld meld: hand.getMelds()){
+             if (meld.getType() != MeldType.CHII && isFanpaiTile(meld.getTiles().get(0), roundWind,
+                     playerWind)) return true;
+        }
+        return false;
     }
 
     private int getTotalFanpai(SplitHand hand, Wind roundWind, Wind playerWind){
         int totalFanpai = 0;
         for (Meld meld: hand.getMelds()){
             if (meld.getType() != MeldType.CHII){
-                Tile tile = meld.getTiles()[0];
+                Tile tile = meld.getTiles().get(0);
                 if (tile.getId() == CHUN || tile.getId() == HATSU || tile.getId() == HAKU ||
                         tile.getId() == roundWind.getTileID()){
                     totalFanpai++;
@@ -323,20 +326,43 @@ public class Scorer {
         return totalFanpai;
     }
 
-    private boolean isSuuAnKou(SplitHand hand, Tile winningTile, boolean isTsumo){
+    private boolean isSuuAnKou(SplitHand hand, boolean isTsumo){
+        Tile winningTile = hand.getWinningTile();
         for (Meld meld: hand.getMelds()){
             if (meld.getType() == MeldType.CHII) return false;
             //isn't suu ankou if it was ron and winning tile was part of a pon
             if (!isTsumo){
-                if (winningTile.getId() == meld.getTiles()[0].getId()) return false;
+                if (winningTile.getId() == meld.getTiles().get(0).getId()) return false;
             }
         }
         return true;
     }
 
     //all chii, two-sided wait, pair isn't dragon or wind that's worth something
-//    private boolean isPinfu(SplitHand hand){
-//
-//    }
+    private boolean isPinfu(SplitHand hand, Wind roundWind, Wind playerWind){
+        Tile winningTile = hand.getWinningTile();
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() != MeldType.CHII) return false;
+            if (meld.getTiles().contains(winningTile)){
+                if (!isTwoSidedWait(meld, winningTile)) return false;
+            }
+        }
+        Tile pairTile = hand.getPair()[0];
+        return !isFanpaiTile(pairTile, roundWind, playerWind);
+    }
+
+    private boolean isFanpaiTile(Tile tile, Wind roundWind, Wind playerWind){
+        return (tile.getId() == CHUN || tile.getId() == HATSU || tile.getId() == HAKU ||
+                tile.getId() == roundWind.getTileID() || tile.getId() == playerWind.getTileID());
+    }
+
+    private boolean isTwoSidedWait(Meld meld, Tile winningTile){
+        if (meld.getType() != MeldType.CHII) return false;
+        if (!meld.getTiles().contains(winningTile))
+            throw new IllegalArgumentException();
+        return !(meld.getTiles().get(1).getId() == winningTile.getId()) &&
+                !(meld.getTiles().get(0).getNumericalValue() == 1 ||
+                meld.getTiles().get(2).getNumericalValue() == 9);
+    }
 
 }
