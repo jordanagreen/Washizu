@@ -1,183 +1,61 @@
 package com.example.jordanagreen.washizu;
 
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHANKAN;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHANTA;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHIIHOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHII_TOITSU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHINROUTOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHIN_ITSU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHUUREN_POUTOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_DAISANGEN;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_DAISUUSHI;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_DOUBLE_RIICHI;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_FANPAI;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_HAITEI;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_HONROUTOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_HON_ITSU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_HOUTEI;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_IIPEIKOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_IPPATSU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_ITTSUU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_JUNCHAN;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_KOKUSHI_MUSOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_PINFU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_RENHOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_RIICHI;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_RINSHAN;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_RYANPEIKOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_RYUUIISOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_SANSHOKU_DOUJUN;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_SANSHOUKU_DOUKOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_SAN_ANKOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_SAN_KANTSU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_SHOUSANGEN;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_SHOUSUUSHI;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_SUU_ANKOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_SUU_KANTSU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_TAN_YAO;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_TENHOU;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_TOITOI;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_TSUMO;
-import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_TSUUIISOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_CHANKAN;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_CHANTA;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_CHIIHOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_CHII_TOITSU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_CHINROUTOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_CHIN_ITSU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_CHUUREN_POUTOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_DAISANGEN;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_DAISUUSHI;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_DOUBLE_RIICHI;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_FANPAI;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_HAITEI;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_HONROUTOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_HON_ITSU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_HOUTEI;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_IIPEIKOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_IPPATSU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_ITTSUU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_JUNCHAN;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_KOKUSHI_MUSOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_PINFU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_RENHOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_RIICHI;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_RINSHAN;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_RYANPEIKOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_RYUUIISOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_SANSHOKU_DOUJUN;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_SANSHOUKU_DOUKOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_SAN_ANKOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_SAN_KANTSU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_SHOUSANGEN;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_SHOUSUUSHI;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_SUU_ANKOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_SUU_KANTSU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_TAN_YAO;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_TENHOU;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_TOITOI;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_TSUMO;
-import static com.example.jordanagreen.washizu.Constants.OPEN_HAN_TSUUIISOU;
-
 /**
  * Created by Jordan on 2/1/2016.
  */
 public enum Yaku {
-    RIICHI, IPPATSU, HAITEI, HOUTEI, RINSHAN, CHANKAN, TSUMO, PINFU, IIPEIKOU, SANSHOKU_DOUJUN,
-    ITTSUU, RYANPEIKOU, TOITOI, SAN_ANKOU, SANSHOUKU_DOUKOU, SAN_KANTSU, TAN_YAO, FANPAI, CHANTA,
-    JUNCHAN, HONROUTOU, SHOUSANGEN, CHII_TOITSU, HON_ITSU, CHIN_ITSU, KOKUSHI_MUSOU, SUU_ANKOU,
-    DAISANGEN, SHOUSUUSHI, DAISUUSHI, TSUUIISOU, CHINROUTOU, RYUUIISOU, CHUUREN_POUTOU, SUU_KANTSU,
-    TENHOU, CHIIHOU, RENHOU, DOUBLE_RIICHI;
+    RIICHI(-1, 1),
+    IPPATSU(-1, 1),
+    HAITEI(1, 1),
+    HOUTEI(1, 1),
+    RINSHAN(1, 1),
+    CHANKAN(1, 1),
+    TSUMO(-1, 1),
+    PINFU(-1, 1),
+    IIPEIKOU(-1, 1),
+    SANSHOKU_DOUJUN(1, 2),
+    ITTSUU(1, 2),
+    RYANPEIKOU(-1, 3),
+    TOITOI(-1, 2),
+    SAN_ANKOU(2, 2),
+    SANSHOUKU_DOUKOU(2, 2),
+    SAN_KANTSU(2, 2),
+    TAN_YAO(1, 1),
+    FANPAI(1, 1),
+    CHANTA(1, 2),
+    JUNCHAN(2, 3),
+    HONROUTOU(2, 2),
+    SHOUSANGEN(2, 2),
+    CHII_TOITSU(-1, 2),
+    HON_ITSU(2, 3),
+    CHIN_ITSU(5, 6),
+    KOKUSHI_MUSOU(-1, 13),
+    SUU_ANKOU(-1, 13),
+    DAISANGEN(13, 13),
+    SHOUSUUSHI(13, 13),
+    DAISUUSHI(13, 13),
+    TSUUIISOU(13, 13),
+    CHINROUTOU(13, 13),
+    RYUUIISOU(13, 13),
+    CHUUREN_POUTOU(-1, 13),
+    SUU_KANTSU(13, 13),
+    TENHOU(-1, 13),
+    CHIIHOU(-1, 13),
+    RENHOU(-1, 13),
+    DOUBLE_RIICHI(-1, 2);
 
-    public int getOpenScore(){
-        return openHan[ordinal()];
+    private int openHan, closedHan;
+
+    Yaku(int openHan, int closedHan){
+        this.openHan = openHan;
+        this.closedHan = closedHan;
     }
 
-    public int getClosedScore(){
-        return closedHan[ordinal()];
+    public int getOpenHan(){
+        return openHan;
     }
 
-    private static int[] closedHan = new int[]{
-        CLOSED_HAN_RIICHI,
-        CLOSED_HAN_IPPATSU,
-        CLOSED_HAN_HAITEI,
-        CLOSED_HAN_HOUTEI,
-        CLOSED_HAN_RINSHAN,
-        CLOSED_HAN_CHANKAN,
-        CLOSED_HAN_TSUMO,
-        CLOSED_HAN_PINFU,
-        CLOSED_HAN_IIPEIKOU,
-        CLOSED_HAN_SANSHOKU_DOUJUN,
-        CLOSED_HAN_ITTSUU,
-        CLOSED_HAN_RYANPEIKOU,
-        CLOSED_HAN_TOITOI,
-        CLOSED_HAN_SAN_ANKOU,
-        CLOSED_HAN_SANSHOUKU_DOUKOU,
-        CLOSED_HAN_SAN_KANTSU,
-        CLOSED_HAN_TAN_YAO,
-        CLOSED_HAN_FANPAI,
-        CLOSED_HAN_CHANTA,
-        CLOSED_HAN_JUNCHAN,
-        CLOSED_HAN_HONROUTOU,
-        CLOSED_HAN_SHOUSANGEN,
-        CLOSED_HAN_CHII_TOITSU,
-        CLOSED_HAN_HON_ITSU,
-        CLOSED_HAN_CHIN_ITSU,
-        CLOSED_HAN_KOKUSHI_MUSOU,
-        CLOSED_HAN_SUU_ANKOU,
-        CLOSED_HAN_DAISANGEN,
-        CLOSED_HAN_SHOUSUUSHI,
-        CLOSED_HAN_DAISUUSHI,
-        CLOSED_HAN_TSUUIISOU,
-        CLOSED_HAN_CHINROUTOU,
-        CLOSED_HAN_RYUUIISOU,
-        CLOSED_HAN_CHUUREN_POUTOU,
-        CLOSED_HAN_SUU_KANTSU,
-        CLOSED_HAN_TENHOU,
-        CLOSED_HAN_CHIIHOU,
-        CLOSED_HAN_RENHOU,
-        CLOSED_HAN_DOUBLE_RIICHI
-    };
-
-    private static int[] openHan = new int[]{
-        OPEN_HAN_RIICHI,
-        OPEN_HAN_IPPATSU,
-        OPEN_HAN_HAITEI,
-        OPEN_HAN_HOUTEI,
-        OPEN_HAN_RINSHAN,
-        OPEN_HAN_CHANKAN,
-        OPEN_HAN_TSUMO,
-        OPEN_HAN_PINFU,
-        OPEN_HAN_IIPEIKOU,
-        OPEN_HAN_SANSHOKU_DOUJUN,
-        OPEN_HAN_ITTSUU,
-        OPEN_HAN_RYANPEIKOU,
-        OPEN_HAN_TOITOI,
-        OPEN_HAN_SAN_ANKOU,
-        OPEN_HAN_SANSHOUKU_DOUKOU,
-        OPEN_HAN_SAN_KANTSU,
-        OPEN_HAN_TAN_YAO,
-        OPEN_HAN_FANPAI,
-        OPEN_HAN_CHANTA,
-        OPEN_HAN_JUNCHAN,
-        OPEN_HAN_HONROUTOU,
-        OPEN_HAN_SHOUSANGEN,
-        OPEN_HAN_CHII_TOITSU,
-        OPEN_HAN_HON_ITSU,
-        OPEN_HAN_CHIN_ITSU,
-        OPEN_HAN_KOKUSHI_MUSOU,
-        OPEN_HAN_SUU_ANKOU,
-        OPEN_HAN_DAISANGEN,
-        OPEN_HAN_SHOUSUUSHI,
-        OPEN_HAN_DAISUUSHI,
-        OPEN_HAN_TSUUIISOU,
-        OPEN_HAN_CHINROUTOU,
-        OPEN_HAN_RYUUIISOU,
-        OPEN_HAN_CHUUREN_POUTOU,
-        OPEN_HAN_SUU_KANTSU,
-        OPEN_HAN_TENHOU,
-        OPEN_HAN_CHIIHOU,
-        OPEN_HAN_RENHOU,
-        OPEN_HAN_DOUBLE_RIICHI
-    };
+    public int getClosedHan(){
+        return closedHan;
+    }
 }

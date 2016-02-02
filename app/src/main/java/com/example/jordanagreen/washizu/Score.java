@@ -39,15 +39,15 @@ public class Score {
 
     private void addClosedYaku(Yaku yaku){
 //        System.out.println("added " + closedHan[yaku] + " to " + han[yaku]);
-        han[yaku.ordinal()] += yaku.getClosedScore();
+        han[yaku.ordinal()] += yaku.getClosedHan();
     }
 
     private void addOpenYaku(Yaku yaku){
 //        System.out.println("added " + openHan[yaku] + " to " + yaku);
-        if (yaku.getOpenScore() == -1){
+        if (yaku.getOpenHan() == -1){
             throw new IllegalArgumentException("Trying to make an open yaku that can't be open");
         }
-        han[yaku.ordinal()] += yaku.getOpenScore();
+        han[yaku.ordinal()] += yaku.getOpenHan();
     }
 
 }
