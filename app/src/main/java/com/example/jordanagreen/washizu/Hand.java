@@ -189,6 +189,10 @@ public class Hand {
         mDrawnTile = tile;
     }
 
+    Player getPlayer(){
+        return mPlayer;
+    }
+
     public Tile getDrawnTile(){
         return mDrawnTile;
     }

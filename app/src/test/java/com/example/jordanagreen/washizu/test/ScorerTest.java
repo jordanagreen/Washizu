@@ -7,6 +7,7 @@ import com.example.jordanagreen.washizu.Score;
 import com.example.jordanagreen.washizu.Scorer;
 import com.example.jordanagreen.washizu.SeatDirection;
 import com.example.jordanagreen.washizu.Tile;
+import com.example.jordanagreen.washizu.Wind;
 import com.example.jordanagreen.washizu.Yaku;
 
 import org.junit.Test;
@@ -20,6 +21,7 @@ import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHINROUTOU;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_CHUUREN_POUTOU;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_DAISANGEN;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_DAISUUSHI;
+import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_FANPAI;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_HONROUTOU;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_KOKUSHI_MUSOU;
 import static com.example.jordanagreen.washizu.Constants.CLOSED_HAN_TAN_YAO;
@@ -62,10 +64,11 @@ public class ScorerTest {
 
     private Score scoreHand(List<Integer> tiles, int drawn){
         Player player = new HumanPlayer(SeatDirection.DOWN);
+        player.setWind(Wind.EAST);
         Tile drawnTile = new Tile(drawn);
         Hand hand = new Hand(tiles, drawnTile, player);
         Scorer scorer = new Scorer();
-        return scorer.scoreHand(hand);
+        return scorer.scoreHand(hand, Wind.EAST);
 //        return scorer.getScore();
     }
 
@@ -185,6 +188,22 @@ public class ScorerTest {
                 TON, TON, XIA, XIA, XIA, SOU_3);
         Score score = scoreHand(tiles, SOU_3);
         assertEquals(score.getHan()[Yaku.DAISUUSHI.ordinal()], CLOSED_HAN_DAISUUSHI);
+    }
+
+    @Test
+    public void testFanpai(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, PIN_1, PIN_1, PIN_1, SOU_9,
+                SOU_9, SOU_9, PEI, PEI, PEI, SOU_1);
+        Score score = scoreHand(tiles, SOU_1);
+        assertEquals(score.getHan()[Yaku.FANPAI.ordinal()], 0);
+        tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, PIN_1, PIN_1, PIN_1, SOU_9,
+                SOU_9, SOU_9, CHUN, CHUN, CHUN, SOU_1);
+        score = scoreHand(tiles, SOU_1);
+        assertEquals(score.getHan()[Yaku.FANPAI.ordinal()], CLOSED_HAN_FANPAI);
+        tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, PIN_1, PIN_1, PIN_1, SOU_9,
+                SOU_9, SOU_9, XIA, XIA, XIA, SOU_1);
+        score = scoreHand(tiles, SOU_1);
+        assertEquals(score.getHan()[Yaku.FANPAI.ordinal()], CLOSED_HAN_FANPAI * 2);
     }
 
 }

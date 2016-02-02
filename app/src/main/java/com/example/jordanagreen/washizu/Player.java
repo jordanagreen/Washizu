@@ -29,7 +29,7 @@ public abstract class Player {
     protected boolean inRiichi;
     protected Game game;
     int score;
-    Wind wind;
+    private Wind wind;
     private SeatDirection direction;
     private boolean isMyTurn;
 
@@ -83,6 +83,10 @@ public abstract class Player {
 
     public void setWind(Wind wind) {
         this.wind = wind;
+    }
+
+    public Wind getWind(){
+        return wind;
     }
 
     public void setIsMyTurn(boolean isMyTurn){

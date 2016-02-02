@@ -31,74 +31,21 @@ import static com.example.jordanagreen.washizu.Constants.XIA;
  */
 public class Scorer {
 
-//    private Hand mHand;
-    //might not be in the hand already if it's from ron
-//    private Tile mWinningTile;
-//    private Score mScore;
-
-//    public Scorer(Hand hand, Tile winningTile){
-//        this.mHand = hand;
-//        this.mWinningTile = winningTile;
-////        this.mScore = new Score();
-//    }
-
-//    public Scorer(){
-//        this.mScore = new Score();
-//    }
-//
-//    public Score getScore(){
-//        return mScore;
-//    }
-
-//    public void setHand(Hand hand){
-//        this.mHand = hand;
-//    }
-
-//    public void setWinningTile(Tile tile){
-//        this.mWinningTile = tile;
-//    }
-
-    //all the tiles including the winning one for when which one was drawn doesn't matter
-//    private List<Tile> getFullHand(Hand hand, Tile winningTile){
-//        List<Tile> tiles = new ArrayList<>();
-//        for (Tile tile: hand.getTiles()){
-//            tiles.add(tile);
-//        }
-//        tiles.add(winningTile);
-//        return tiles;
-//    }
-//
-//    private List<Tile> getHandWithoutWinningTile(){
-//        List<Tile> tiles = new ArrayList<>();
-//        for (Tile tile: mHand.getTiles()){
-//            tiles.add(tile);
-//        }
-//        return tiles;
-//    }
-
-//    void addRiichi(){
-//        addYaku(Yaku.RIICHI);
-//    }
-//
-//    void addIppatsu(){
-//        addYaku(Yaku.IPPATSU);
-//    }
-
     //return null if the hand couldn't be scored
-    public Score scoreHand(Hand hand){
+    public Score scoreHand(Hand hand, Wind roundWind){
         Tile winningTile = hand.getDrawnTile();
         Score score = new Score();
         //do the two easy ones to check first
         if (isKokushiMusou(hand, winningTile)){
-            score.addYaku(Yaku.KOKUSHI_MUSOU, hand.getIsOpen());
+            score.addYaku(Yaku.KOKUSHI_MUSOU);
             if (isDoubleKokushiMusou(hand)){
-                score.addYaku(Yaku.KOKUSHI_MUSOU, hand.getIsOpen());
+                score.addYaku(Yaku.KOKUSHI_MUSOU);
             }
             //don't even bother checking anything else
             return score;
         }
         if (isChiiToitsu(hand, winningTile)){
-            score.addYaku(Yaku.CHII_TOITSU, hand.getIsOpen());
+            score.addYaku(Yaku.CHII_TOITSU);
         }
 
         //if we get to this point, it needs to be four melds and a pair
@@ -113,35 +60,48 @@ public class Scorer {
 
         //yakuman, can stop after we get one of them for obvious reasons
         if (isChuurenPoutou(splitHand)){
-            score.addYaku(Yaku.CHUUREN_POUTOU, hand.getIsOpen());
+            score.addYaku(Yaku.CHUUREN_POUTOU);
             if (isDoubleChuurenPoutou(splitHand)){
-                score.addYaku(Yaku.CHUUREN_POUTOU, hand.getIsOpen());
+                score.addYaku(Yaku.CHUUREN_POUTOU);
             }
             return score;
         }
         if (isDaiSanGen(splitHand)){
-            score.addYaku(Yaku.DAISANGEN, hand.getIsOpen());
+            score.addYaku(Yaku.DAISANGEN);
             return score;
         }
         if (isDaiSuuShii(splitHand)){
-            score.addYaku(Yaku.DAISUUSHI, hand.getIsOpen());
+            score.addYaku(Yaku.DAISUUSHI);
             return score;
         }
         if (isTsuuIiSou(splitHand)){
-            score.addYaku(Yaku.TSUUIISOU, hand.getIsOpen());
+            score.addYaku(Yaku.TSUUIISOU);
             return score;
         }
         if (isChinRouTou(splitHand)){
-            score.addYaku(Yaku.CHINROUTOU, hand.getIsOpen());
+            score.addYaku(Yaku.CHINROUTOU);
             return score;
         }
         if (isHonRouTou(splitHand)){
-            score.addYaku(Yaku.HONROUTOU, hand.getIsOpen());
+            score.addYaku(Yaku.HONROUTOU);
         }
         if (isTanYao(splitHand)){
-            score.addYaku(Yaku.TAN_YAO, hand.getIsOpen());
+            score.addYaku(Yaku.TAN_YAO);
         }
 
+        if (isFanpai(splitHand, roundWind, hand.getPlayer().getWind())){
+            int totalFanpai = getTotalFanpai(splitHand, roundWind, hand.getPlayer().getWind());
+            for (int i = 0; i < totalFanpai; i++){
+                score.addYaku(Yaku.FANPAI);
+            }
+        }
+
+        //do yaku which have to be closed here
+        if (!hand.getIsOpen()){
+//            if (isPinfu(splitHand))){
+//                score.addYaku(Yaku.PINFU, hand.getIsOpen());
+//            }
+        }
 
         return score;
     }
@@ -308,5 +268,32 @@ public class Scorer {
         return true;
     }
 
+    private boolean isFanpai(SplitHand hand, Wind roundWind, Wind playerWind){
+        return hand.containsPonOf(CHUN) || hand.containsPonOf(HAKU) || hand.containsPonOf(HATSU) ||
+                hand.containsPonOf(roundWind.getTileID()) || hand.containsPonOf(playerWind.getTileID());
+    }
+
+    private int getTotalFanpai(SplitHand hand, Wind roundWind, Wind playerWind){
+        int totalFanpai = 0;
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() != MeldType.CHII){
+                Tile tile = meld.getTiles()[0];
+                if (tile.getId() == CHUN || tile.getId() == HATSU || tile.getId() == HAKU ||
+                        tile.getId() == roundWind.getTileID()){
+                    totalFanpai++;
+                }
+                //do this one separately to handle round and player's winds being the same
+                if (tile.getId() == playerWind.getTileID()){
+                    totalFanpai++;
+                }
+            }
+        }
+        return totalFanpai;
+    }
+
+    //all chii, two-sided wait, pair isn't dragon or wind that's worth something
+//    private boolean isPinfu(SplitHand hand){
+//
+//    }
 
 }
