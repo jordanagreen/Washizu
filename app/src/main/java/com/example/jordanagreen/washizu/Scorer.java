@@ -32,7 +32,7 @@ import static com.example.jordanagreen.washizu.Constants.XIA;
 public class Scorer {
 
     //return null if the hand couldn't be scored
-    public Score scoreHand(Hand hand, Wind roundWind){
+    public Score scoreHand(Hand hand, Wind roundWind, boolean isTsumo){
         Tile winningTile = hand.getDrawnTile();
         Score score = new Score();
         //do the two easy ones to check first
@@ -44,9 +44,29 @@ public class Scorer {
             //don't even bother checking anything else
             return score;
         }
+        boolean shouldSplit = true;
         if (isChiiToitsu(hand, winningTile)){
             score.addYaku(Yaku.CHII_TOITSU);
+            shouldSplit = false;
         }
+        //these can go with chii toitsu so do them before splitting
+        //TODO: chii toitsu cna go with honroutou, tanyao, honitsu, chinitsu
+
+        //TODO: this and chii toitsu together are daichiisei, if allowed it's a double yakuman
+        if (isTsuuIiSou(hand)){
+            score.addYaku(Yaku.TSUUIISOU);
+            return score;
+        }
+
+        if (isHonRouTou(hand)){
+            score.addYaku(Yaku.HONROUTOU);
+        }
+        if (isTanYao(hand)){
+            score.addYaku(Yaku.TAN_YAO);
+        }
+
+        //if we got chii toitsu, don't split the hand
+        if (!shouldSplit) return score;
 
         //if we get to this point, it needs to be four melds and a pair
         HandSplitter handSplitter = new HandSplitter();
@@ -74,33 +94,31 @@ public class Scorer {
             score.addYaku(Yaku.DAISUUSHI);
             return score;
         }
-        if (isTsuuIiSou(splitHand)){
-            score.addYaku(Yaku.TSUUIISOU);
+        if (isShouSuuShii(splitHand)){
+            score.addYaku(Yaku.SHOUSUUSHI);
             return score;
         }
-        if (isChinRouTou(splitHand)){
+        if (isChinRouTou(hand)){
             score.addYaku(Yaku.CHINROUTOU);
             return score;
         }
-        if (isHonRouTou(splitHand)){
-            score.addYaku(Yaku.HONROUTOU);
+        //do yaku which have to be closed here
+        if (!hand.getIsOpen()){
+            if (isSuuAnKou(splitHand, winningTile, isTsumo)){
+                score.addYaku(Yaku.SUU_ANKOU);
+                return score;
+            }
+//            if (isPinfu(splitHand))){
+//                score.addYaku(Yaku.PINFU, hand.getIsOpen());
+//            }
         }
-        if (isTanYao(splitHand)){
-            score.addYaku(Yaku.TAN_YAO);
-        }
+
 
         if (isFanpai(splitHand, roundWind, hand.getPlayer().getWind())){
             int totalFanpai = getTotalFanpai(splitHand, roundWind, hand.getPlayer().getWind());
             for (int i = 0; i < totalFanpai; i++){
                 score.addYaku(Yaku.FANPAI);
             }
-        }
-
-        //do yaku which have to be closed here
-        if (!hand.getIsOpen()){
-//            if (isPinfu(splitHand))){
-//                score.addYaku(Yaku.PINFU, hand.getIsOpen());
-//            }
         }
 
         return score;
@@ -236,8 +254,22 @@ public class Scorer {
                 hand.containsPonOf(PEI);
     }
 
+    //3 triples of winds and a pair
+    private boolean isShouSuuShii(SplitHand hand){
+        List<Wind> winds = new ArrayList<>(Arrays.asList(Wind.values()));
+        for (Wind wind: Wind.values()){
+            if (hand.containsPonOf(wind.getTileID())){
+                winds.remove(wind);
+            }
+        }
+        //should have only one left after pons are taken out
+        if (winds.size() != 1) return false;
+        //pair should be of the last wind
+        return hand.getPair()[0].getId() == winds.get(0).getTileID();
+    }
+
     //all honors
-    private boolean isTsuuIiSou(SplitHand hand){
+    private boolean isTsuuIiSou(Hand hand){
         for (Tile tile: hand.getFullHand()){
             if (tile.getSuit() != Suit.HONOR) return false;
         }
@@ -245,7 +277,7 @@ public class Scorer {
     }
 
     //all terminals
-    private boolean isChinRouTou(SplitHand hand){
+    private boolean isChinRouTou(Hand hand){
         for (Tile tile: hand.getFullHand()){
             if (!tile.isTerminal()) return false;
         }
@@ -253,7 +285,7 @@ public class Scorer {
     }
 
     //all terminals or honors
-    private boolean isHonRouTou(SplitHand hand){
+    private boolean isHonRouTou(Hand hand){
         for (Tile tile: hand.getFullHand()){
             if (!tile.isTerminal() && tile.getSuit() != Suit.HONOR) return false;
         }
@@ -261,7 +293,7 @@ public class Scorer {
     }
 
     //no terminals or honors
-    private boolean isTanYao(SplitHand hand){
+    private boolean isTanYao(Hand hand){
         for (Tile tile: hand.getFullHand()){
             if (tile.isTerminal() || tile.getSuit() == Suit.HONOR) return false;
         }
@@ -289,6 +321,17 @@ public class Scorer {
             }
         }
         return totalFanpai;
+    }
+
+    private boolean isSuuAnKou(SplitHand hand, Tile winningTile, boolean isTsumo){
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == MeldType.CHII) return false;
+            //isn't suu ankou if it was ron and winning tile was part of a pon
+            if (!isTsumo){
+                if (winningTile.getId() == meld.getTiles()[0].getId()) return false;
+            }
+        }
+        return true;
     }
 
     //all chii, two-sided wait, pair isn't dragon or wind that's worth something

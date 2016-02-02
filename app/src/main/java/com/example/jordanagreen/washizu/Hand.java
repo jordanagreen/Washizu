@@ -153,6 +153,12 @@ public class Hand {
         return false;
     }
 
+    public List<Tile> getFullHand(){
+        List<Tile> tiles = new ArrayList<>(mTiles);
+        tiles.add(mDrawnTile);
+        return tiles;
+    }
+
     public void discardTile(Tile tile){
         if (mTiles.contains(tile)){
             mTiles.remove(tile);

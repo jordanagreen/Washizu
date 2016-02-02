@@ -52,14 +52,17 @@ import static org.junit.Assert.assertNull;
  */
 public class ScorerTest {
 
-    private Score scoreHand(List<Integer> tiles, int drawn){
+    private Score scoreHand(List<Integer> tiles, int drawn, boolean isTsumo){
         Player player = new HumanPlayer(SeatDirection.DOWN);
         player.setWind(Wind.EAST);
         Tile drawnTile = new Tile(drawn);
         Hand hand = new Hand(tiles, drawnTile, player);
         Scorer scorer = new Scorer();
-        return scorer.scoreHand(hand, Wind.EAST);
-//        return scorer.getScore();
+        return scorer.scoreHand(hand, Wind.EAST, isTsumo);
+    }
+
+    private Score scoreHand(List<Integer> tiles, int drawn){
+        return scoreHand(tiles, drawn, true);
     }
 
     @Test
@@ -166,8 +169,8 @@ public class ScorerTest {
 
     @Test
     public void testHonRouTou(){
-        List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, PIN_1, PIN_1, PIN_1, SOU_9,
-                SOU_9, SOU_9, PEI, PEI, PEI, SOU_1);
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_9, MAN_9, PIN_1, PIN_1, SOU_9,
+                SOU_9, XIA, XIA, PEI, PEI, SOU_1);
         Score score = scoreHand(tiles, SOU_1);
         assertEquals(score.getHan()[Yaku.HONROUTOU.ordinal()], Yaku.HONROUTOU.getClosedHan());
     }
@@ -194,6 +197,32 @@ public class ScorerTest {
                 SOU_9, SOU_9, XIA, XIA, XIA, SOU_1);
         score = scoreHand(tiles, SOU_1);
         assertEquals(score.getHan()[Yaku.FANPAI.ordinal()], Yaku.FANPAI.getClosedHan() * 2);
+    }
+
+    @Test
+    public void testShouSuuShii(){
+        List<Integer> tiles = Arrays.asList(PEI, PEI, PEI, NAN, NAN, NAN, TON,
+                TON, TON, SOU_3, SOU_3, SOU_3, XIA);
+        Score score = scoreHand(tiles, XIA);
+        assertEquals(score.getHan()[Yaku.SHOUSUUSHI.ordinal()], Yaku.SHOUSUUSHI.getClosedHan());
+    }
+
+    @Test
+    public void testSuuAnkou(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_2, MAN_2, MAN_2, TON,
+                TON, TON, SOU_3, SOU_3, SOU_3, XIA);
+        Score score = scoreHand(tiles, XIA);
+        assertEquals(score.getHan()[Yaku.SUU_ANKOU.ordinal()], Yaku.SUU_ANKOU.getClosedHan());
+        //try with calling ron to make a pon, should not be suu ankou
+        tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_2, MAN_2, MAN_2, TON,
+                TON, TON, SOU_3, SOU_3, XIA, XIA);
+        Player player = new HumanPlayer(SeatDirection.DOWN);
+        player.setWind(Wind.EAST);
+        Tile drawnTile = new Tile(SOU_3);
+        Hand hand = new Hand(tiles, drawnTile, player);
+        Scorer scorer = new Scorer();
+        score = scorer.scoreHand(hand, Wind.EAST, false);
+        assertEquals(score.getHan()[Yaku.SUU_ANKOU.ordinal()], 0);
     }
 
 }

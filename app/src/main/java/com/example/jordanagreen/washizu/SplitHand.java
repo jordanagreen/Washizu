@@ -11,11 +11,14 @@ import java.util.List;
 public class SplitHand {
 
     private List<Meld> mMelds;
+    //only really need this for san ankou
+    private List<Meld> mClosedMelds;
     private Tile[] mPair;
     private Tile mWinningTile;
 
     SplitHand(){
         mMelds = new ArrayList<>(4);
+        mClosedMelds = new ArrayList<>(4);
         mPair = new Tile[2];
     }
 
@@ -35,9 +38,11 @@ public class SplitHand {
     }
 
     void addAllMelds(Collection<Meld> melds){
-        for (Meld meld: melds){
-            mMelds.add(meld);
-        }
+        mMelds.addAll(melds);
+    }
+
+    void addAllClosedMelds(Collection<Meld> melds){
+        mClosedMelds.addAll(melds);
     }
 
     void setPair(List<Tile> tiles){
@@ -53,6 +58,10 @@ public class SplitHand {
 
     List<Meld> getMelds(){
         return mMelds;
+    }
+
+    List<Meld> getClosedMelds(){
+        return mClosedMelds;
     }
 
     Tile[] getPair(){

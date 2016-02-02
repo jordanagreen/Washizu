@@ -148,6 +148,8 @@ public class HandSplitter {
                    //if it worked, we can return the melds we have now
                    if (possibleMelds != null){
                        split.addAllMelds(possibleMelds);
+                       //keep track of which ones were closed for san ankou
+                       split.addAllClosedMelds(possibleMelds);
                        return split;
                    }
                    //if it didn't work, put the pair back and try the next pair
@@ -162,6 +164,7 @@ public class HandSplitter {
        else {
            List<Meld> possibleMelds = splitTiles(tiles);
            split.addAllMelds(possibleMelds);
+           split.addAllClosedMelds(possibleMelds);
            return split;
        }
    }
