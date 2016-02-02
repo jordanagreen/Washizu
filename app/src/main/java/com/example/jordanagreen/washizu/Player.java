@@ -29,11 +29,11 @@ public abstract class Player {
     protected boolean inRiichi;
     protected Game game;
     int score;
-    int wind;
-    private int direction;
+    Wind wind;
+    private SeatDirection direction;
     private boolean isMyTurn;
 
-    public Player(int direction){
+    public Player(SeatDirection direction){
         this.direction = direction;
         this.hand = new Hand(this);
         this.score = Constants.STARTING_SCORE;
@@ -45,8 +45,9 @@ public abstract class Player {
     public Player(JSONObject json) throws JSONException {
         this.hand = new Hand(json.getJSONObject(KEY_HAND), this);
         this.discards = new DiscardPool(json.getJSONObject(KEY_DISCARDS));
-        this.direction = json.getInt(KEY_DIRECTION);
+        this.direction = Enum.valueOf(SeatDirection.class, json.getString(KEY_DIRECTION));
         this.score = json.getInt(KEY_SCORE);
+        this.wind = Enum.valueOf(Wind.class, json.getString(KEY_WIND));
         this.inRiichi = json.getBoolean(KEY_IN_RIICHI);
         this.isMyTurn = json.getBoolean(KEY_IS_MY_TURN);
     }
@@ -55,8 +56,8 @@ public abstract class Player {
         JSONObject json = new JSONObject();
         json.put(KEY_HAND, hand.toJson());
         json.put(KEY_DISCARDS, discards.toJson());
-        json.put(KEY_DIRECTION, direction);
-        json.put(KEY_WIND, wind);
+        json.put(KEY_DIRECTION, direction.toString());
+        json.put(KEY_WIND, wind.toString());
         json.put(KEY_SCORE, score);
         json.put(KEY_IN_RIICHI, inRiichi);
         json.put(KEY_IS_MY_TURN, isMyTurn);
@@ -80,7 +81,7 @@ public abstract class Player {
         return hand;
     }
 
-    public void setWind(int wind) {
+    public void setWind(Wind wind) {
         this.wind = wind;
     }
 
@@ -92,7 +93,7 @@ public abstract class Player {
         return isMyTurn;
     }
 
-    public int getDirection(){
+    public SeatDirection getDirection(){
         return direction;
     }
 
@@ -134,8 +135,8 @@ public abstract class Player {
     public abstract boolean shouldChii(Tile tile);
     public abstract boolean shouldKan(Tile tile);
 
-    //calledDirection is the player called from * 90 so we know which tile to rotate
-    public void callPon(Tile tile, int calledDirection){
+    //calledDirection's angle is the player called from * 90 so we know which tile to rotate
+    public void callPon(Tile tile, SeatDirection calledDirection){
         //get the two other tiles from the hand
         int ia = 0;
         int ib = 0;
@@ -222,7 +223,7 @@ public abstract class Player {
         return inHand == 3;
     }
 
-    public void callKan(Tile tile, int calledDirection){
+    public void callKan(Tile tile, SeatDirection calledDirection){
         for (Meld meld: hand.getMelds()){
             if (meld.getType() == MeldType.PON && meld.getTiles()[0].compareTo(tile) == 0){
                 hand.makeShouminkan(tile, meld);

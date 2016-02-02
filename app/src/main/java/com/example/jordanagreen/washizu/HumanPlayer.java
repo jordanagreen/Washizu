@@ -15,7 +15,7 @@ public class HumanPlayer extends Player {
 
     public static final String TAG = "HumanPlayer";
 
-    public HumanPlayer(int direction){
+    public HumanPlayer(SeatDirection direction){
         super(direction);
     }
 

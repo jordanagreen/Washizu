@@ -1,11 +1,11 @@
 package com.example.jordanagreen.washizu.test;
 
-import com.example.jordanagreen.washizu.Constants;
 import com.example.jordanagreen.washizu.Hand;
 import com.example.jordanagreen.washizu.HumanPlayer;
 import com.example.jordanagreen.washizu.Player;
 import com.example.jordanagreen.washizu.Score;
 import com.example.jordanagreen.washizu.Scorer;
+import com.example.jordanagreen.washizu.SeatDirection;
 import com.example.jordanagreen.washizu.Tile;
 import com.example.jordanagreen.washizu.Yaku;
 
@@ -61,7 +61,7 @@ import static org.junit.Assert.assertNull;
 public class ScorerTest {
 
     private Score scoreHand(List<Integer> tiles, int drawn){
-        Player player = new HumanPlayer(Constants.WIND_EAST);
+        Player player = new HumanPlayer(SeatDirection.DOWN);
         Tile drawnTile = new Tile(drawn);
         Hand hand = new Hand(tiles, drawnTile, player);
         Scorer scorer = new Scorer();

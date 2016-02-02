@@ -7,17 +7,6 @@ import android.content.res.Resources;
  */
 public class Constants {
 
-//    helps for rotating tiles - note that this is the reverse of turn order (i.e. clockwise)
-    public static final int SEAT_DOWN = 0;
-    public static final int SEAT_LEFT = 90;
-    public static final int SEAT_UP = 180;
-    public static final int SEAT_RIGHT = 270;
-
-    public static final int WIND_EAST = 0;
-    public static final int WIND_SOUTH = 1;
-    public static final int WIND_WEST = 2;
-    public static final int WIND_NORTH = 3;
-
     public static final int HAND_SIZE = 13;
     public static final int STARTING_SCORE = 2500;
 
@@ -41,11 +30,6 @@ public class Constants {
     public static final int DISCARD_SIDE_ROW_TILES = 12;
     public static final int DISCARD_SIDE_NUM_ROWS = 2;
     public static final int DISCARD_SIDE_MAX_TILES = DISCARD_SIDE_ROW_TILES * DISCARD_SIDE_NUM_ROWS;
-
-//    public static final int SUIT_MAN = 0;
-//    public static final int SUIT_PIN = 1;
-//    public static final int SUIT_SOU = 2;
-//    public static final int SUIT_HONOR = 3;
 
     //not worth putting in an enum, too many cases where the number is needed and ordinal is a pain
     public static final int MAN_1 = 0;
@@ -100,53 +84,6 @@ public class Constants {
     public static final int NUM_ROUNDS = ROUND_SOUTH_4;
 
     public static final int DELAY_BETWEEN_TURNS_MS = 300;
-
-//    public static final int MELD_TYPE_CHII = 0;
-//    public static final int MELD_TYPE_PON = 1;
-//    public static final int MELD_TYPE_KAN = 2;
-//    public static final int MELD_TYPE_SHOUMINKAN = 3;
-
-//    public static final int YAKU_RIICHI = 0;
-//    public static final int YAKU_IPPATSU = 1;
-//    public static final int YAKU_HAITEI = 2;
-//    public static final int YAKU_HOUTEI = 3;
-//    public static final int YAKU_RINSHAN = 4;
-//    public static final int YAKU_CHANKAN = 5;
-//    public static final int YAKU_TSUMO = 6;
-//    public static final int YAKU_PINFU = 7;
-//    public static final int YAKU_IIPEIKOU = 8;
-//    public static final int YAKU_SANSHOKU_DOUJUN = 9;
-//    public static final int YAKU_ITTSUU = 10;
-//    public static final int YAKU_RYANPEIKOU = 11;
-//    public static final int YAKU_TOITOI = 12;
-//    public static final int YAKU_SAN_ANKOU = 13;
-//    public static final int YAKU_SANSHOUKU_DOUKOU = 14;
-//    public static final int YAKU_SAN_KANTSU = 15;
-//    public static final int YAKU_TAN_YAO = 16;
-//    public static final int YAKU_FANPAI = 17;
-//    public static final int YAKU_CHANTA = 18;
-//    public static final int YAKU_JUNCHAN = 19;
-//    public static final int YAKU_HONROUTOU = 20;
-//    public static final int YAKU_SHOUSANGEN = 21;
-//    public static final int YAKU_CHII_TOITSU = 22;
-//    public static final int YAKU_HON_ITSU = 23;
-//    public static final int YAKU_CHIN_ITSU = 24;
-//    public static final int YAKU_KOKUSHI_MUSOU = 25;
-//    public static final int YAKU_SUU_ANKOU = 26;
-//    public static final int YAKU_DAISANGEN = 27;
-//    public static final int YAKU_SHOUSUUSHI = 28;
-//    public static final int YAKU_DAISUUSHI = 29;
-//    public static final int YAKU_TSUUIISOU = 30;
-//    public static final int YAKU_CHINROUTOU = 31;
-//    public static final int YAKU_RYUUIISOU = 32;
-//    public static final int YAKU_CHUUREN_POUTOU = 33;
-//    public static final int YAKU_SUU_KANTSU = 34;
-//    public static final int YAKU_TENHOU = 35;
-//    public static final int YAKU_CHIIHOU = 36;
-//    public static final int YAKU_RENHOU = 37;
-//    public static final int YAKU_DOUBLE_RIICHI = 38;
-
-//    public static final int TOTAL_YAKU = YAKU_DOUBLE_RIICHI;
 
     //default han for each yaku
     //-1 means you can't get that yaku open

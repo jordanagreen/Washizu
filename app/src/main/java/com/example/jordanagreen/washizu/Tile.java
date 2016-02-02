@@ -107,10 +107,10 @@ public class Tile implements Comparable<Tile>{
         return getNumericalValue() == 1 || getNumericalValue() == 9;
     }
 
-    public void draw(Canvas canvas, int x, int y, int seatDirection){
+    public void draw(Canvas canvas, int x, int y, int angle){
         int drawId = isReversed ? UNKNOWN : id;
         Matrix matrix = new Matrix();
-        matrix.postRotate(seatDirection);
+        matrix.postRotate(angle);
 
         // for some reason just applying the rotated matrix to the canvas doesn't work?
         Bitmap result = Bitmap.createBitmap(tileImages[drawId], 0, 0, tileImages[drawId].getWidth(),
@@ -118,10 +118,10 @@ public class Tile implements Comparable<Tile>{
         canvas.drawBitmap(result, x, y, null);
     }
 
-    public void drawSmall(Canvas canvas, int x, int y, int seatDirection){
+    public void drawSmall(Canvas canvas, int x, int y, int angle){
         int drawId = isReversed ? UNKNOWN : id;
         Matrix matrix = new Matrix();
-        matrix.postRotate(seatDirection);
+        matrix.postRotate(angle);
 
         // for some reason just applying the rotated matrix to the canvas doesn't work?
         Bitmap result = Bitmap.createBitmap(smallTileImages[drawId], 0, 0,

@@ -16,7 +16,7 @@ public class AiPlayer extends Player {
 
     public static final String TAG = "AiPlayer";
 
-    public AiPlayer(int direction){
+    public AiPlayer(SeatDirection direction){
         super(direction);
     }
 

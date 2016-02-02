@@ -13,10 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
-import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
-import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
-import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
-import static com.example.jordanagreen.washizu.Constants.SEAT_UP;
 import static com.example.jordanagreen.washizu.Constants.TILE_HEIGHT;
 import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TILE_WIDTH;
@@ -219,17 +215,17 @@ public class Hand {
         }
     }
 
-    public void makePon(Tile a, Tile b, Tile c, int calledDirection){
+    public void makePon(Tile a, Tile b, Tile c, SeatDirection calledDirection){
         if (a.compareTo(b) != 0 || b.compareTo(c) != 0){
             throw new IllegalArgumentException("Illegal mTiles for pon");
         }
         Log.d(TAG, "Pon with " + a + " " + b + " " + c + " by " + mPlayer.getDirection()
                 + " from " + calledDirection);
         int rotatedIndex = 0;
-        if (calledDirection == (mPlayer.getDirection() + 180) % 360){
+        if (calledDirection == (mPlayer.getDirection().addOffset(180))){
            rotatedIndex = 1;
         }
-        else if (calledDirection == (mPlayer.getDirection() + 90) % 360){
+        else if (calledDirection == (mPlayer.getDirection().addOffset(270))){
            rotatedIndex = 2;
         }
         Meld meld = new Meld(a, b, c, rotatedIndex, MeldType.PON, this);
@@ -238,22 +234,23 @@ public class Hand {
     }
 
     //TODO: maybe split open and closed kans into their own methods
-    public void makeKan(Tile a, Tile b, Tile c, Tile d, int calledDirection, boolean isClosed){
+    public void makeKan(Tile a, Tile b, Tile c, Tile d, SeatDirection calledDirection, boolean isClosed){
         if (a.compareTo(b) != 0 || b.compareTo(c) != 0 || c.compareTo(d) != 0){
             throw new IllegalArgumentException("Illegal mTiles for kan");
         }
         if (isClosed){
             Log.d(TAG, "Closed kan with " + a + " " + b + " " + c + " " + d);
-            Meld meld = new Meld(a, b, c, d, calledDirection, MeldType.SHOUMINKAN);
+            //rotated index shouldn't matter for closed kan
+            Meld meld = new Meld(a, b, c, d, 0, MeldType.SHOUMINKAN);
             addMeld(meld);
         }
         else {
             Log.d(TAG, "Kan with " + a + " " + b + " " + c + " " + d);
             int rotatedIndex = 0;
-            if (calledDirection == (mPlayer.getDirection() + 180) % 360){
+            if (calledDirection == (mPlayer.getDirection().addOffset(180))){
                 rotatedIndex = 1;
             }
-            else if (calledDirection == (mPlayer.getDirection() + 90) % 360){
+            else if (calledDirection == (mPlayer.getDirection().addOffset(90))){
                 rotatedIndex = 3;
             }
             Log.d(TAG, "Kan rotated index is " + rotatedIndex);
@@ -292,16 +289,16 @@ public class Hand {
         }
     }
 
-    public void draw(Canvas canvas, int seatDirection, boolean drawDrawnTile){
+    public void draw(Canvas canvas, SeatDirection seatDirection, boolean drawDrawnTile){
         drawHand(canvas, seatDirection, drawDrawnTile);
         drawMelds(canvas, seatDirection);
     }
 
-    private void drawHand(Canvas canvas, int seatDirection, boolean drawDrawnTile){
+    private void drawHand(Canvas canvas, SeatDirection seatDirection, boolean drawDrawnTile){
         // draw the ones on the narrow sides of the phone in two rows
         switch (seatDirection){
-            case SEAT_DOWN:
-            case SEAT_UP:
+            case DOWN:
+            case UP:
                 //this code draws it in two rows - didn't work that well but might be worth keeping
 
 //                int horCenterPadding = (canvas.getWidth() - (TILE_WIDTH * HAND_BOTTOM_ROW_TILES))/2;
@@ -347,13 +344,13 @@ public class Hand {
                         int x = TILE_WIDTH * i
                                 + horCenterPadding;
                         int y = canvas.getHeight() - TILE_HEIGHT;
-                        if (seatDirection == SEAT_UP) {
+                        if (seatDirection == SeatDirection.UP) {
                             x = canvas.getWidth() - TILE_WIDTH - x;
                             y = 0;
                         }
                         Tile tile = mTiles.get(i);
                         tile.setLocation(x, y);
-                        tile.draw(canvas, x, y, seatDirection);
+                        tile.draw(canvas, x, y, seatDirection.getAngle());
                     }
                 }
 //                }
@@ -363,38 +360,38 @@ public class Hand {
                     int x = TILE_WIDTH * Math.max((mTiles.size() - 2), 0) + horCenterPadding;
 //                    int y = canvas.getHeight() - (TILE_HEIGHT * 2  + TILE_WIDTH);
                     int y = canvas.getHeight() - (TILE_WIDTH + TILE_HEIGHT);
-                    if (seatDirection == SEAT_UP){
+                    if (seatDirection == SeatDirection.UP){
                         x = canvas.getWidth() - x - TILE_HEIGHT;
                         y = canvas.getHeight() - y - TILE_WIDTH;
                     }
                     mDrawnTile.setLocation(x, y);
-                    mDrawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
+                    mDrawnTile.draw(canvas, x, y, (seatDirection.addOffset(90).getAngle()));
                 }
                 break;
-            case SEAT_LEFT:
-            case SEAT_RIGHT:
+            case LEFT:
+            case RIGHT:
                 int verCenterPadding = (canvas.getHeight() - (TILE_WIDTH * HAND_SIZE)) /2;
                 for (int i = 0; i < mTiles.size(); i++){
                     if (mTiles.get(i) != null){
                         int x = 0;
                         int y = (TILE_WIDTH * i) + verCenterPadding;
-                        if (seatDirection == SEAT_RIGHT){
+                        if (seatDirection == SeatDirection.RIGHT){
                             x = canvas.getWidth() - TILE_HEIGHT;
                             y = canvas.getHeight() - TILE_WIDTH - y;
                         }
                         Tile tile = mTiles.get(i);
                         tile.setLocation(x, y);
-                        tile.draw(canvas, x, y, seatDirection);
+                        tile.draw(canvas, x, y, seatDirection.getAngle());
                     }
                 }
                 if (drawDrawnTile && mDrawnTile != null){
                     int x = TILE_HEIGHT;
                     int y = (TILE_WIDTH * 11) + verCenterPadding;
-                    if (seatDirection == SEAT_RIGHT){
+                    if (seatDirection == SeatDirection.RIGHT){
                         x = canvas.getWidth() - x - TILE_HEIGHT;
                         y = canvas.getHeight() - y - TILE_WIDTH;
                     }
-                    mDrawnTile.draw(canvas, x, y, (seatDirection + 90) % 360);
+                    mDrawnTile.draw(canvas, x, y, (seatDirection.addOffset(90).getAngle()));
                 }
                 break;
             default:
@@ -403,7 +400,7 @@ public class Hand {
 
     }
 
-    private void drawMelds(Canvas canvas, int seatDirection){
+    private void drawMelds(Canvas canvas, SeatDirection seatDirection){
         for (int i = 0; i < mMelds.size(); i++){
             mMelds.get(i).draw(canvas, seatDirection, i);
         }

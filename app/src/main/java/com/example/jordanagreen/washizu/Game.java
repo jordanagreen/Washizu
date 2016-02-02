@@ -17,16 +17,8 @@ import java.util.Random;
 import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
 import static com.example.jordanagreen.washizu.Constants.ROUND_EAST_1;
-import static com.example.jordanagreen.washizu.Constants.SEAT_DOWN;
-import static com.example.jordanagreen.washizu.Constants.SEAT_LEFT;
-import static com.example.jordanagreen.washizu.Constants.SEAT_RIGHT;
-import static com.example.jordanagreen.washizu.Constants.SEAT_UP;
 import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TILE_MIN_ID;
-import static com.example.jordanagreen.washizu.Constants.WIND_EAST;
-import static com.example.jordanagreen.washizu.Constants.WIND_NORTH;
-import static com.example.jordanagreen.washizu.Constants.WIND_SOUTH;
-import static com.example.jordanagreen.washizu.Constants.WIND_WEST;
 
 /**
  * Created by Jordan on 9/17/2015.
@@ -123,20 +115,20 @@ public class Game {
 
     public void startGame(){
         Log.d(TAG, "startGame");
-        players[0] = new HumanPlayer(SEAT_DOWN);
-        players[1] = new AiPlayer(SEAT_RIGHT);
-        players[2] = new AiPlayer(SEAT_UP);
-        players[3] = new AiPlayer(SEAT_LEFT);
+        players[0] = new HumanPlayer(SeatDirection.DOWN);
+        players[1] = new AiPlayer(SeatDirection.RIGHT);
+        players[2] = new AiPlayer(SeatDirection.UP);
+        players[3] = new AiPlayer(SeatDirection.LEFT);
         for (Player player: players){
             player.setGame(this);
         }
 
         Random rand = new Random();
         int firstEast = rand.nextInt(4);
-        players[firstEast].setWind(WIND_EAST);
-        players[(firstEast+1)%4].setWind(WIND_SOUTH);
-        players[(firstEast+2)%4].setWind(WIND_WEST);
-        players[(firstEast +3)%4].setWind(WIND_NORTH);
+        players[firstEast].setWind(Wind.EAST);
+        players[(firstEast+1)%4].setWind(Wind.SOUTH);
+        players[(firstEast+2)%4].setWind(Wind.WEST);
+        players[(firstEast +3)%4].setWind(Wind.NORTH);
         startRound(ROUND_EAST_1);
 
         mCurrentPlayerIndex = firstEast;
@@ -276,7 +268,9 @@ public class Game {
             case PON:
                 Log.d(TAG, "Player " + playerIndex + " calling pon on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
-                players[playerIndex].callPon(discardedTile, mCurrentPlayerIndex * 90);
+                //TODO: this shouldn't default to 90
+                players[playerIndex].callPon(discardedTile,
+                        SeatDirection.values()[mCurrentPlayerIndex]);
                 break;
             case CHII:
                 Log.d(TAG, "Player " + (mCurrentPlayerIndex + 1) % players.length +
@@ -286,7 +280,8 @@ public class Game {
             case KAN:
                 Log.d(TAG, "Player " + playerIndex + " calling kan on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
-                players[playerIndex].callKan(discardedTile, mCurrentPlayerIndex * 90);
+                players[playerIndex].callKan(discardedTile,
+                        SeatDirection.values()[mCurrentPlayerIndex].addOffset(90));
                 mKanMade = true;
                 //TODO: when dora are added, flip another one here
                 break;
