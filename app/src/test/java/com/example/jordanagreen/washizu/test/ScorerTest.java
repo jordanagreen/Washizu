@@ -249,4 +249,26 @@ public class ScorerTest {
         assertEquals(score.getHan()[Yaku.PINFU.ordinal()], 0);
     }
 
+    @Test
+    public void testToiToi(){
+        //all closed is suu ankou, not toitoi
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_2, MAN_2, MAN_2, TON,
+                TON, TON, SOU_3, SOU_3, SOU_3, XIA);
+        Score score = scoreHand(tiles, XIA);
+        assertEquals(score.getHan()[Yaku.TOITOI.ordinal()], 0);
+        Player player = new HumanPlayer(SeatDirection.DOWN);
+        player.setWind(Wind.EAST);
+        tiles = Arrays.asList(MAN_1, MAN_1, MAN_3, MAN_3, MAN_2, MAN_2, MAN_2,
+                CHUN, CHUN, CHUN, TON, TON);
+        Hand hand = player.getHand();
+        for (int id: tiles){
+            hand.addTile(new Tile(id));
+        }
+        player.callPon(new Tile(MAN_1), SeatDirection.DOWN);
+        hand.setDrawnTile(new Tile(MAN_3));
+        Scorer scorer = new Scorer();
+        score = scorer.scoreHand(hand, Wind.EAST, false);
+        assertEquals(score.getHan()[Yaku.TOITOI.ordinal()], Yaku.TOITOI.getOpenHan());
+    }
+
 }

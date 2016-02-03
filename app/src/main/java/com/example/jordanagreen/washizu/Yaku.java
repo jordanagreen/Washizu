@@ -16,7 +16,7 @@ public enum Yaku {
     SANSHOKU_DOUJUN(1, 2),
     ITTSUU(1, 2),
     RYANPEIKOU(-1, 3),
-    TOITOI(-1, 2),
+    TOITOI(2, -1),
     SAN_ANKOU(2, 2),
     SANSHOUKU_DOUKOU(2, 2),
     SAN_KANTSU(2, 2),

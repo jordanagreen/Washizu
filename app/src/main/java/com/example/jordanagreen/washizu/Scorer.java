@@ -113,12 +113,15 @@ public class Scorer {
             }
         }
 
-
         if (isFanpai(splitHand, roundWind, hand.getPlayer().getWind())){
             int totalFanpai = getTotalFanpai(splitHand, roundWind, hand.getPlayer().getWind());
             for (int i = 0; i < totalFanpai; i++){
                 score.addYaku(Yaku.FANPAI);
             }
+        }
+
+        if (isToiToi(splitHand)){
+            score.addYaku(Yaku.TOITOI, true);
         }
 
         return score;
@@ -363,6 +366,13 @@ public class Scorer {
         return !(meld.getTiles().get(1).getId() == winningTile.getId()) &&
                 !(meld.getTiles().get(0).getNumericalValue() == 1 ||
                 meld.getTiles().get(2).getNumericalValue() == 9);
+    }
+
+    private boolean isToiToi(SplitHand hand){
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == MeldType.CHII) return false;
+        }
+        return true;
     }
 
 }
