@@ -2,7 +2,11 @@ package com.example.jordanagreen.washizu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.example.jordanagreen.washizu.Constants.CHUN;
 import static com.example.jordanagreen.washizu.Constants.HAKU;
@@ -119,6 +123,9 @@ public class Scorer {
             if (isPinfu(splitHand, roundWind, hand.getPlayer().getWind())){
                 score.addYaku(Yaku.PINFU);
             }
+            if (isIiPeiKou(splitHand)){
+                score.addYaku(Yaku.IIPEIKOU);
+            }
         }
 
         //do the rest of the yaku here, can be open
@@ -141,6 +148,12 @@ public class Scorer {
         }
         if (isSanKantsu(splitHand)){
             score.addYaku(Yaku.SAN_KANTSU, hand.getIsOpen());
+        }
+        if (isSanShokuDouJun(splitHand)){
+            score.addYaku(Yaku.SANSHOKU_DOUJUN, hand.getIsOpen());
+        }
+        if (isSanShokuDouKou(splitHand)){
+            score.addYaku(Yaku.SANSHOUKU_DOUKOU, hand.getIsOpen());
         }
 
         return score;
@@ -436,6 +449,90 @@ public class Scorer {
                 return false;
         }
         return true;
+    }
+
+    //two identical chiis, closed only
+    private boolean isIiPeiKou(SplitHand hand){
+        Set<Integer> firstTiles = new HashSet<>();
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == MeldType.CHII){
+                //just check if they have the same first tile
+                 if (firstTiles.contains(meld.getTiles().get(0).getId())){
+                     return true;
+                 }
+                firstTiles.add(meld.getTiles().get(0).getId());
+            }
+        }
+        return false;
+    }
+
+    //same chii in all three suits
+    private boolean isSanShokuDouJun(SplitHand hand){
+        SuitCounter[] suitCounters = new SuitCounter[7];
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == MeldType.CHII){
+                Tile tile = meld.getTiles().get(0);
+                int val = tile.getNumericalValue() - 1;
+                if (suitCounters[val] == null){
+                    suitCounters[val] = new SuitCounter();
+                }
+                suitCounters[val].foundSuit(tile.getSuit());
+            }
+        }
+        for (SuitCounter suitCounter : suitCounters){
+            if (suitCounter != null){
+                if (suitCounter.allFound()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //same pon in all three suits
+    private boolean isSanShokuDouKou(SplitHand hand){
+        SuitCounter[] suitCounters = new SuitCounter[9];
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() != MeldType.CHII){
+                Tile tile = meld.getTiles().get(0);
+                if (tile.getSuit() == Suit.HONOR) continue;
+                int val = tile.getNumericalValue() - 1;
+                if (suitCounters[val] == null){
+                    suitCounters[val] = new SuitCounter();
+                }
+                suitCounters[val].foundSuit(tile.getSuit());
+            }
+        }
+        for (SuitCounter suitCounter : suitCounters){
+            if (suitCounter != null){
+                if (suitCounter.allFound()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //for keeping track of which suits we've found in san shoku
+    class SuitCounter {
+        Map<Suit, Boolean> found;
+        SuitCounter(){
+            found = new HashMap<>();
+            found.put(Suit.SOU, false);
+            found.put(Suit.MAN, false);
+            found.put(Suit.PIN, false);
+        }
+
+        void foundSuit(Suit suit){
+            found.put(suit, true);
+        }
+
+        boolean allFound(){
+            for (Suit suit: found.keySet()){
+                if (!found.get(suit)) return false;
+            }
+            return true;
+        }
     }
 
 }

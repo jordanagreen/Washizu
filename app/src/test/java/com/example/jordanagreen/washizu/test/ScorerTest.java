@@ -31,6 +31,7 @@ import static com.example.jordanagreen.washizu.Constants.NAN;
 import static com.example.jordanagreen.washizu.Constants.PEI;
 import static com.example.jordanagreen.washizu.Constants.PIN_1;
 import static com.example.jordanagreen.washizu.Constants.PIN_2;
+import static com.example.jordanagreen.washizu.Constants.PIN_3;
 import static com.example.jordanagreen.washizu.Constants.PIN_4;
 import static com.example.jordanagreen.washizu.Constants.PIN_5;
 import static com.example.jordanagreen.washizu.Constants.PIN_6;
@@ -325,6 +326,30 @@ public class ScorerTest {
         Scorer scorer = new Scorer();
         Score score = scorer.scoreHand(hand, Wind.EAST, false);
         assertEquals(score.getHan()[Yaku.SUU_KANTSU.ordinal()], Yaku.SUU_KANTSU.getClosedHan());
+    }
+
+    @Test
+    public void testIiPeiKou(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, SOU_3, SOU_4, SOU_5, SOU_3,
+                SOU_4, SOU_5, SOU_9, SOU_9, SOU_9, TON);
+        Score score = scoreHand(tiles, TON);
+        assertEquals(score.getHan()[Yaku.IIPEIKOU.ordinal()], Yaku.IIPEIKOU.getClosedHan());
+    }
+
+    @Test
+    public void testSanShokuDouKou(){
+        List<Integer> tiles = Arrays.asList(MAN_2, MAN_2, MAN_2, SOU_2, SOU_2, SOU_2, PIN_2,
+                PIN_2, PIN_2, SOU_7, SOU_8, SOU_9, TON);
+        Score score = scoreHand(tiles, TON);
+        assertEquals(score.getHan()[Yaku.SANSHOUKU_DOUKOU.ordinal()], Yaku.SANSHOUKU_DOUKOU.getClosedHan());
+    }
+
+    @Test
+    public void testSanShokuDouJun(){
+        List<Integer> tiles = Arrays.asList(MAN_2, MAN_3, MAN_4, SOU_2, SOU_3, SOU_4, PIN_2,
+                PIN_3, PIN_4, SOU_7, SOU_8, SOU_9, TON);
+        Score score = scoreHand(tiles, TON);
+        assertEquals(score.getHan()[Yaku.SANSHOKU_DOUJUN.ordinal()], Yaku.SANSHOKU_DOUJUN.getClosedHan());
     }
 
 }
