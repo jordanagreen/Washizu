@@ -36,6 +36,7 @@ import static com.example.jordanagreen.washizu.Constants.PIN_5;
 import static com.example.jordanagreen.washizu.Constants.PIN_6;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
+import static com.example.jordanagreen.washizu.Constants.SOU_2;
 import static com.example.jordanagreen.washizu.Constants.SOU_3;
 import static com.example.jordanagreen.washizu.Constants.SOU_4;
 import static com.example.jordanagreen.washizu.Constants.SOU_5;
@@ -269,6 +270,61 @@ public class ScorerTest {
         Scorer scorer = new Scorer();
         score = scorer.scoreHand(hand, Wind.EAST, false);
         assertEquals(score.getHan()[Yaku.TOITOI.ordinal()], Yaku.TOITOI.getOpenHan());
+    }
+
+    @Test
+    public void testItsuu(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, MAN_6, MAN_7,
+                MAN_8, TON, SOU_3, SOU_3, SOU_3, TON);
+        Score score = scoreHand(tiles, MAN_9);
+        assertEquals(score.getHan()[Yaku.ITTSUU.ordinal()], Yaku.ITTSUU.getClosedHan());
+    }
+
+    @Test
+    public void testChanta(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_7, MAN_8, MAN_9, NAN,
+                NAN, NAN, SOU_9, SOU_9, SOU_9, TON);
+        Score score = scoreHand(tiles, TON);
+        assertEquals(score.getHan()[Yaku.CHANTA.ordinal()], Yaku.CHANTA.getClosedHan());
+    }
+
+    @Test
+    public void testSanKantsu(){
+        Player player = new HumanPlayer(SeatDirection.DOWN);
+        player.setWind(Wind.EAST);
+        Hand hand = player.getHand();
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_3, MAN_3, MAN_3, HATSU,
+                CHUN, CHUN, CHUN, SOU_1, SOU_2, SOU_3);
+        for (int id: tiles){
+            hand.addTile(new Tile(id));
+        }
+        hand.makeClosedKan(new Tile(MAN_1));
+        hand.makeClosedKan(new Tile(MAN_3));
+        hand.makeClosedKan(new Tile(CHUN));
+        hand.setDrawnTile(new Tile(HATSU));
+        Scorer scorer = new Scorer();
+        Score score = scorer.scoreHand(hand, Wind.EAST, false);
+        assertEquals(score.getHan()[Yaku.SAN_KANTSU.ordinal()], Yaku.SAN_KANTSU.getClosedHan());
+    }
+
+    @Test
+    public void testSuuKantsu(){
+        Player player = new HumanPlayer(SeatDirection.DOWN);
+        player.setWind(Wind.EAST);
+        Hand hand = player.getHand();
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_1, MAN_1, MAN_3, MAN_3, MAN_3, HATSU,
+                CHUN, CHUN, CHUN, TON, TON, TON);
+        for (int id: tiles){
+            hand.addTile(new Tile(id));
+        }
+        hand.makeClosedKan(new Tile(MAN_1));
+        hand.makeClosedKan(new Tile(MAN_3));
+        hand.makeClosedKan(new Tile(CHUN));
+        hand.makeClosedKan(new Tile(TON));
+        hand.setDrawnTile(new Tile(HATSU));
+        Scorer scorer = new Scorer();
+        Score score = scorer.scoreHand(hand, Wind.EAST, false);
+        assertEquals(score.getHan()[Yaku.SUU_KANTSU.ordinal()], Yaku.SUU_KANTSU.getClosedHan());
     }
 
 }

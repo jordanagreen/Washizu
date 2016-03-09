@@ -19,8 +19,12 @@ import static com.example.jordanagreen.washizu.Constants.MAN_9;
 import static com.example.jordanagreen.washizu.Constants.NAN;
 import static com.example.jordanagreen.washizu.Constants.PEI;
 import static com.example.jordanagreen.washizu.Constants.PIN_1;
+import static com.example.jordanagreen.washizu.Constants.PIN_4;
+import static com.example.jordanagreen.washizu.Constants.PIN_7;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
+import static com.example.jordanagreen.washizu.Constants.SOU_4;
+import static com.example.jordanagreen.washizu.Constants.SOU_7;
 import static com.example.jordanagreen.washizu.Constants.SOU_9;
 import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TON;
@@ -45,7 +49,7 @@ public class Scorer {
             return score;
         }
         boolean shouldSplit = true;
-        if (isChiiToitsu(hand, winningTile)){
+        if (isChiiToitsu(hand)){
             score.addYaku(Yaku.CHII_TOITSU);
             shouldSplit = false;
         }
@@ -102,6 +106,10 @@ public class Scorer {
             score.addYaku(Yaku.CHINROUTOU);
             return score;
         }
+        if (isSuuKantsu(splitHand)){
+            score.addYaku(Yaku.SUU_KANTSU);;
+            return score;
+        }
         //do yaku which have to be closed here
         if (!hand.getIsOpen()){
             if (isSuuAnKou(splitHand, isTsumo)){
@@ -113,15 +121,26 @@ public class Scorer {
             }
         }
 
+        //do the rest of the yaku here, can be open
+        if (isItsuu(splitHand)){
+            score.addYaku(Yaku.ITTSUU, hand.getIsOpen());
+        }
         if (isFanpai(splitHand, roundWind, hand.getPlayer().getWind())){
             int totalFanpai = getTotalFanpai(splitHand, roundWind, hand.getPlayer().getWind());
             for (int i = 0; i < totalFanpai; i++){
                 score.addYaku(Yaku.FANPAI);
             }
         }
-
         if (isToiToi(splitHand)){
             score.addYaku(Yaku.TOITOI, true);
+        }
+        if (!isHonRouTou(hand)){
+            if (isChanta(splitHand)){
+                score.addYaku(Yaku.CHANTA, hand.getIsOpen());
+            }
+        }
+        if (isSanKantsu(splitHand)){
+            score.addYaku(Yaku.SAN_KANTSU, hand.getIsOpen());
         }
 
         return score;
@@ -177,11 +196,10 @@ public class Scorer {
         return true;
     }
 
-    private boolean isChiiToitsu(Hand hand, Tile winningTile){
+    private boolean isChiiToitsu(Hand hand){
         //seven pairs
-        List<Tile> tiles = new ArrayList<>(hand.getTiles());
-        tiles.add(winningTile);
-        int[] tilesInHand = new int[TILE_MAX_ID];
+        List<Tile> tiles = hand.getFullHand();
+        int[] tilesInHand = new int[TILE_MAX_ID + 1];
         for (Tile tile: tiles){
             tilesInHand[tile.getId()]++;
             //four of a kind doesn't count as two pairs
@@ -369,8 +387,53 @@ public class Scorer {
     }
 
     private boolean isToiToi(SplitHand hand){
+//        return hand.getStats().getPons() == 4;
         for (Meld meld: hand.getMelds()){
             if (meld.getType() == MeldType.CHII) return false;
+        }
+        return true;
+    }
+
+    //straight
+    private boolean isItsuu(SplitHand hand){
+        return ((hand.containsChiiStartingWith(MAN_1) && hand.containsChiiStartingWith(MAN_4) &&
+                hand.containsChiiStartingWith(MAN_7)) ||
+                (hand.containsChiiStartingWith(PIN_1) && hand.containsChiiStartingWith(PIN_4) &&
+                hand.containsChiiStartingWith(PIN_7)) ||
+                hand.containsChiiStartingWith(SOU_1) && hand.containsChiiStartingWith(SOU_4) &&
+                hand.containsChiiStartingWith(SOU_7));
+    }
+
+    //terminals or honors in every set
+    private boolean isChanta(SplitHand hand){
+        for (Meld meld: hand.getMelds()){
+            if (!containsTerminalOrHonor(meld)) return false;
+        }
+        Tile tile = hand.getPair()[0];
+        return (tile.isTerminal() || tile.getSuit() == Suit.HONOR);
+    }
+
+    private boolean containsTerminalOrHonor(Meld meld){
+        for (Tile tile: meld.getTiles()){
+            if (tile.isTerminal() || tile.getSuit() == Suit.HONOR) return true;
+        }
+        return false;
+    }
+
+    private boolean isSanKantsu(SplitHand hand){
+//        return hand.getStats().getKans() == 3;
+        int kans = 0;
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() == MeldType.KAN || meld.getType() == MeldType.SHOUMINKAN) kans++;
+        }
+        return kans == 3;
+    }
+
+    private boolean isSuuKantsu(SplitHand hand){
+//        return hand.getStats().getKans() == 4;
+        for (Meld meld: hand.getMelds()){
+            if (meld.getType() != MeldType.KAN && meld.getType() != MeldType.SHOUMINKAN)
+                return false;
         }
         return true;
     }

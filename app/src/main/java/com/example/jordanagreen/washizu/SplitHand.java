@@ -15,11 +15,13 @@ public class SplitHand {
     private List<Meld> mClosedMelds;
     private Tile[] mPair;
     private Tile mWinningTile;
+//    private Stats mStats;
 
     SplitHand(){
         mMelds = new ArrayList<>(4);
         mClosedMelds = new ArrayList<>(4);
         mPair = new Tile[2];
+//        mStats = new Stats();
     }
 
     void setWinningTile(Tile tile){
@@ -30,15 +32,39 @@ public class SplitHand {
         return mWinningTile;
     }
 
+//    Stats getStats(){
+//        return mStats;
+//    }
+
     void addMeld(Meld meld){
         if (mMelds.size() == 4){
             throw new IllegalStateException("Already have four melds");
         }
         mMelds.add(meld);
+//        if (meld.getType() != MeldType.CHII){
+//            mStats.pons++;
+//            if (meld.getType() == MeldType.KAN || meld.getType() == MeldType.SHOUMINKAN){
+//                mStats.kans++;
+//            }
+//        } else {
+//            mStats.chiis++;
+//        }
+//        for (Tile tile: meld.getTiles()){
+//            if (tile.isTerminal()){
+//                mStats.terminals++;
+//            } else if (tile.getSuit() == Suit.HONOR) {
+//                mStats.honors++;
+//            } else {
+//                mStats.nonTerminals++;
+//            }
+//        }
     }
 
     void addAllMelds(Collection<Meld> melds){
-        mMelds.addAll(melds);
+//        mMelds.addAll(melds);
+        for (Meld meld: melds){
+            addMeld(meld);
+        }
     }
 
     void addAllClosedMelds(Collection<Meld> melds){
@@ -54,6 +80,15 @@ public class SplitHand {
         }
         mPair[0] = tiles.get(0);
         mPair[1] = tiles.get(1);
+//        for (Tile tile: mPair){
+//            if (tile.isTerminal()){
+//                mStats.terminals++;
+//            } else if (tile.getSuit() == Suit.HONOR) {
+//                mStats.honors++;
+//            } else {
+//                mStats.nonTerminals++;
+//            }
+//        }
     }
 
     List<Meld> getMelds(){
@@ -95,6 +130,17 @@ public class SplitHand {
         return false;
     }
 
+    boolean containsChiiStartingWith(int tileID){
+        for (Meld meld: mMelds){
+            if (meld.getType() == MeldType.CHII){
+                if (meld.getTiles().get(0).getId() == tileID){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public String toString(){
         StringBuilder sb = new StringBuilder();
         for (Meld meld: mMelds){
@@ -107,5 +153,39 @@ public class SplitHand {
         sb.append("PAIR: ").append(mPair[0]).append(" ").append(mPair[1]);
         return sb.toString();
     }
+
+    //TODO: this might not be needed, just here in case
+//    class Stats {
+//        private int pons;
+//        private int kans;
+//        private int chiis;
+//        private int terminals;
+//        private int nonTerminals;
+//        private int honors;
+//
+//        public int getPons() {
+//            return pons;
+//        }
+//
+//        public int getKans() {
+//            return kans;
+//        }
+//
+//        public int getChiis() {
+//            return chiis;
+//        }
+//
+//        public int getTerminals() {
+//            return terminals;
+//        }
+//
+//        public int getNonTerminals() {
+//            return nonTerminals;
+//        }
+//
+//        public int getHonors() {
+//            return honors;
+//        }
+//    }
 
 }
