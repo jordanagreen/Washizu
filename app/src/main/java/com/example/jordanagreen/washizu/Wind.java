@@ -8,7 +8,7 @@ import static com.example.jordanagreen.washizu.Constants.XIA;
  * Created by Jordan on 2/1/2016.
  */
 public enum Wind {
-    EAST(XIA), SOUTH(NAN), WEST(PEI), NORTH(TON);
+    EAST(TON), SOUTH(NAN), WEST(XIA), NORTH(PEI);
 
     private int tileID;
 

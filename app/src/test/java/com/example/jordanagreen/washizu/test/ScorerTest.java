@@ -62,7 +62,7 @@ public class ScorerTest {
         Tile drawnTile = new Tile(drawn);
         Hand hand = new Hand(tiles, drawnTile, player);
         Scorer scorer = new Scorer();
-        return scorer.scoreHand(hand, Wind.EAST, isTsumo);
+        return scorer.scoreHand(hand, Wind.EAST, drawnTile, isTsumo);
     }
 
     private Score scoreHand(List<Integer> tiles, int drawn){
@@ -198,7 +198,7 @@ public class ScorerTest {
         score = scoreHand(tiles, SOU_1);
         assertEquals(score.getHan()[Yaku.FANPAI.ordinal()], Yaku.FANPAI.getClosedHan());
         tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, PIN_1, PIN_1, PIN_1, SOU_9,
-                SOU_9, SOU_9, XIA, XIA, XIA, SOU_1);
+                SOU_9, SOU_9, TON, TON, TON, SOU_1);
         score = scoreHand(tiles, SOU_1);
         assertEquals(score.getHan()[Yaku.FANPAI.ordinal()], Yaku.FANPAI.getClosedHan() * 2);
     }
@@ -225,7 +225,7 @@ public class ScorerTest {
         Tile drawnTile = new Tile(SOU_3);
         Hand hand = new Hand(tiles, drawnTile, player);
         Scorer scorer = new Scorer();
-        score = scorer.scoreHand(hand, Wind.EAST, false);
+        score = scorer.scoreHand(hand, Wind.EAST, drawnTile, false);
         assertEquals(score.getHan()[Yaku.SUU_ANKOU.ordinal()], 0);
     }
 
@@ -239,14 +239,14 @@ public class ScorerTest {
 
     @Test
     public void testWrongPinFu(){
-        //pair of xia
+        //pair of ton
         List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, SOU_3, SOU_4,
-                SOU_5, MAN_2, MAN_3, MAN_4, XIA, XIA);
+                SOU_5, MAN_2, MAN_3, MAN_4, TON, TON);
         Score score = scoreHand(tiles, MAN_6);
         assertEquals(score.getHan()[Yaku.PINFU.ordinal()], 0);
         //one sided wait
         tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_6, SOU_3, SOU_4,
-                SOU_5, MAN_2, MAN_3, MAN_4, XIA, XIA);
+                SOU_5, MAN_2, MAN_3, MAN_4, TON, TON);
         score = scoreHand(tiles, MAN_5);
         assertEquals(score.getHan()[Yaku.PINFU.ordinal()], 0);
     }
@@ -267,9 +267,10 @@ public class ScorerTest {
             hand.addTile(new Tile(id));
         }
         player.callPon(new Tile(MAN_1), SeatDirection.DOWN);
-        hand.setDrawnTile(new Tile(MAN_3));
+        Tile drawnTile = new Tile(MAN_3);
+        hand.setDrawnTile(drawnTile);
         Scorer scorer = new Scorer();
-        score = scorer.scoreHand(hand, Wind.EAST, false);
+        score = scorer.scoreHand(hand, Wind.EAST, drawnTile, false);
         assertEquals(score.getHan()[Yaku.TOITOI.ordinal()], Yaku.TOITOI.getOpenHan());
     }
 
@@ -302,9 +303,10 @@ public class ScorerTest {
         hand.makeClosedKan(new Tile(MAN_1));
         hand.makeClosedKan(new Tile(MAN_3));
         hand.makeClosedKan(new Tile(CHUN));
-        hand.setDrawnTile(new Tile(HATSU));
+        Tile drawnTile = new Tile(HATSU);
+        hand.setDrawnTile(drawnTile);
         Scorer scorer = new Scorer();
-        Score score = scorer.scoreHand(hand, Wind.EAST, false);
+        Score score = scorer.scoreHand(hand, Wind.EAST, drawnTile, false);
         assertEquals(score.getHan()[Yaku.SAN_KANTSU.ordinal()], Yaku.SAN_KANTSU.getClosedHan());
     }
 
@@ -322,9 +324,10 @@ public class ScorerTest {
         hand.makeClosedKan(new Tile(MAN_3));
         hand.makeClosedKan(new Tile(CHUN));
         hand.makeClosedKan(new Tile(TON));
-        hand.setDrawnTile(new Tile(HATSU));
+        Tile drawnTile = new Tile(HATSU);
+        hand.setDrawnTile(drawnTile);
         Scorer scorer = new Scorer();
-        Score score = scorer.scoreHand(hand, Wind.EAST, false);
+        Score score = scorer.scoreHand(hand, Wind.EAST, drawnTile, false);
         assertEquals(score.getHan()[Yaku.SUU_KANTSU.ordinal()], Yaku.SUU_KANTSU.getClosedHan());
     }
 

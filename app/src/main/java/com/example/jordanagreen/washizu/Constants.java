@@ -62,10 +62,10 @@ public class Constants {
     public static final int CHUN = 27;
     public static final int HAKU = 28;
     public static final int HATSU = 29;
-    public static final int NAN = 30;
-    public static final int PEI = 31;
-    public static final int XIA = 32;
-    public static final int TON = 33;
+    public static final int NAN = 30; //south
+    public static final int PEI = 31; //north
+    public static final int XIA = 32; //west
+    public static final int TON = 33; //east
 
     public static final int TILE_MIN_ID = MAN_1;
     public static final int TILE_MAX_ID = TON;
