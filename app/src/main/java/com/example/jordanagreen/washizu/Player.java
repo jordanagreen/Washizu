@@ -24,109 +24,109 @@ public abstract class Player {
     public static final String KEY_IS_MY_TURN = "is_my_turn";
     public static final String KEY_IS_AI = "is_ai";
 
-    protected Hand hand;
-    private DiscardPool discards;
-    protected boolean inRiichi;
-    protected Game game;
-    int score;
-    private Wind wind;
-    private SeatDirection direction;
-    private boolean isMyTurn;
+    protected Hand mHand;
+    private DiscardPool mDiscards;
+    protected boolean mInRiichi;
+    protected Game mGame;
+    int mScore;
+    private Wind mWind;
+    private SeatDirection mDirection;
+    private boolean mIsMyTurn;
 
     public Player(SeatDirection direction){
-        this.direction = direction;
-        this.hand = new Hand(this);
-        this.score = Constants.STARTING_SCORE;
-        this.discards = new DiscardPool();
-        this.inRiichi = false;
-        isMyTurn = false;
+        this.mDirection = direction;
+        this.mHand = new Hand(this);
+        this.mScore = Constants.STARTING_SCORE;
+        this.mDiscards = new DiscardPool();
+        this.mInRiichi = false;
+        mIsMyTurn = false;
     }
 
     public Player(JSONObject json) throws JSONException {
-        this.hand = new Hand(json.getJSONObject(KEY_HAND), this);
-        this.discards = new DiscardPool(json.getJSONObject(KEY_DISCARDS));
-        this.direction = Enum.valueOf(SeatDirection.class, json.getString(KEY_DIRECTION));
-        this.score = json.getInt(KEY_SCORE);
-        this.wind = Enum.valueOf(Wind.class, json.getString(KEY_WIND));
-        this.inRiichi = json.getBoolean(KEY_IN_RIICHI);
-        this.isMyTurn = json.getBoolean(KEY_IS_MY_TURN);
+        this.mHand = new Hand(json.getJSONObject(KEY_HAND), this);
+        this.mDiscards = new DiscardPool(json.getJSONObject(KEY_DISCARDS));
+        this.mDirection = Enum.valueOf(SeatDirection.class, json.getString(KEY_DIRECTION));
+        this.mScore = json.getInt(KEY_SCORE);
+        this.mWind = Enum.valueOf(Wind.class, json.getString(KEY_WIND));
+        this.mInRiichi = json.getBoolean(KEY_IN_RIICHI);
+        this.mIsMyTurn = json.getBoolean(KEY_IS_MY_TURN);
     }
 
     public JSONObject toJson() throws JSONException{
         JSONObject json = new JSONObject();
-        json.put(KEY_HAND, hand.toJson());
-        json.put(KEY_DISCARDS, discards.toJson());
-        json.put(KEY_DIRECTION, direction.toString());
-        json.put(KEY_WIND, wind.toString());
-        json.put(KEY_SCORE, score);
-        json.put(KEY_IN_RIICHI, inRiichi);
-        json.put(KEY_IS_MY_TURN, isMyTurn);
+        json.put(KEY_HAND, mHand.toJson());
+        json.put(KEY_DISCARDS, mDiscards.toJson());
+        json.put(KEY_DIRECTION, mDirection.toString());
+        json.put(KEY_WIND, mWind.toString());
+        json.put(KEY_SCORE, mScore);
+        json.put(KEY_IN_RIICHI, mInRiichi);
+        json.put(KEY_IS_MY_TURN, mIsMyTurn);
         json.put(KEY_IS_AI, this instanceof AiPlayer);
         return json;
     }
 
     public void setGame(Game game){
-        this.game = game;
+        this.mGame = game;
     }
 
     public abstract void takeTurn(Game.GameCallback callback);
 
     public void drawTile(){
-        Tile tile = game.drawTile();
-        Log.d(TAG, "Player " + direction + " Drew tile " + tile);
-        hand.setDrawnTile(tile);
+        Tile tile = mGame.drawTile();
+        Log.d(TAG, "Player " + mDirection + " Drew tile " + tile);
+        mHand.setDrawnTile(tile);
     }
 
     public Hand getHand(){
-        return hand;
+        return mHand;
     }
 
     public void setWind(Wind wind) {
-        this.wind = wind;
+        this.mWind = wind;
     }
 
     public Wind getWind(){
-        return wind;
+        return mWind;
     }
 
     public void setIsMyTurn(boolean isMyTurn){
-        this.isMyTurn = isMyTurn;
+        this.mIsMyTurn = isMyTurn;
     }
 
     public boolean getIsMyTurn(){
-        return isMyTurn;
+        return mIsMyTurn;
     }
 
     public SeatDirection getDirection(){
-        return direction;
+        return mDirection;
     }
 
     public void discardTile(Tile tile){
         Log.d(TAG, "discarding tile " + tile);
-        hand.discardTile(tile);
+        mHand.discardTile(tile);
         tile.isReversed = false;
-        discards.addTile(tile, false);
+        mDiscards.addTile(tile, false);
         Log.d(TAG, "Discarded " + tile);
     }
 
     public void discardTileAndCallRiichi(Tile tile){
-        hand.discardTile(tile);
-        discards.addTile(tile, true);
-        inRiichi = true;
+        mHand.discardTile(tile);
+        mDiscards.addTile(tile, true);
+        mInRiichi = true;
         Log.d(TAG, "Discarded " + tile + " for Riichi");
     }
 
     public Tile getLastDiscardedTile(){
-        return discards.getLastTile();
+        return mDiscards.getLastTile();
     }
 
     public void removeLastDiscardedTile(){
-        discards.removeLastTile();
+        mDiscards.removeLastTile();
     }
 
     public boolean canPon(Tile tile){
         int inHand = 0;
-        for (Tile t: hand.getTiles()){
+        for (Tile t: mHand.getTiles()){
             if (tile.compareTo(t) == 0){
                 inHand++;
             }
@@ -144,14 +144,14 @@ public abstract class Player {
         //get the two other tiles from the hand
         int ia = 0;
         int ib = 0;
-        for (int i = 0; i < hand.getTiles().size(); i++){
-            if (hand.getTile(i).compareTo(tile) == 0){
+        for (int i = 0; i < mHand.getTiles().size(); i++){
+            if (mHand.getTile(i).compareTo(tile) == 0){
                 ia = i;
                 break;
             }
         }
-        for (int i = ia + 1; i < hand.getTiles().size(); i++){
-            if (hand.getTile(i).compareTo(tile) == 0){
+        for (int i = ia + 1; i < mHand.getTiles().size(); i++){
+            if (mHand.getTile(i).compareTo(tile) == 0){
                 ib = i;
                 break;
             }
@@ -159,9 +159,9 @@ public abstract class Player {
         if (ib == 0){
             throw new IllegalStateException("Called pon but couldn't find two similar tiles");
         }
-        Tile a = hand.getTile(ia);
-        Tile b = hand.getTile(ib);
-        hand.makePon(tile, a, b, calledDirection);
+        Tile a = mHand.getTile(ia);
+        Tile b = mHand.getTile(ib);
+        mHand.makePon(tile, a, b, calledDirection);
     }
 
     public boolean canChii(Tile tile){
@@ -169,17 +169,17 @@ public abstract class Player {
             return false;
         }
         int id = tile.getId();
-        if (hand.containsTileById(id - 1) && hand.containsTileById(id - 2)){
+        if (mHand.containsTileById(id - 1) && mHand.containsTileById(id - 2)){
             if (Tile.areSameSuit(id, id-1, id-2)){
                 return true;
             }
         }
-        if (hand.containsTileById(id - 1) && hand.containsTileById(id + 1)){
+        if (mHand.containsTileById(id - 1) && mHand.containsTileById(id + 1)){
             if (Tile.areSameSuit(id-1, id, id+1)){
                 return true;
             }
         }
-        if (hand.containsTileById(id + 1) && hand.containsTileById(id + 2)){
+        if (mHand.containsTileById(id + 1) && mHand.containsTileById(id + 2)){
             if (Tile.areSameSuit(id, id+1, id+2)){
                 return true;
             }
@@ -191,18 +191,18 @@ public abstract class Player {
 
     public void callChii(Tile tile){
         Tile[] tiles = getTilesForChii(tile);
-        hand.makeChii(tiles[0], tiles[1], tiles[2]);
+        mHand.makeChii(tiles[0], tiles[1], tiles[2]);
     }
 
     public void draw(Canvas canvas){
         //if it's this player's turn, draw the tile they drew too
-        hand.draw(canvas, direction, isMyTurn);
-        discards.draw(canvas, direction);
+        mHand.draw(canvas, mDirection, mIsMyTurn);
+        mDiscards.draw(canvas, mDirection);
     }
 
     public boolean canKanOnCall(Tile tile){
         int inHand = 0;
-        for (Tile t : hand.getTiles()){
+        for (Tile t : mHand.getTiles()){
             if (t.compareTo(tile) == 0){
                 inHand++;
             }
@@ -211,7 +211,7 @@ public abstract class Player {
     }
 
     public boolean canKanOnDraw(Tile tile){
-        for (Meld meld: hand.getMelds()){
+        for (Meld meld: mHand.getMelds()){
             if (meld.getType() == MeldType.PON){
                 if (meld.getTiles().get(0).compareTo(tile) == 0){
                     return true;
@@ -219,7 +219,7 @@ public abstract class Player {
             }
         }
         int inHand = 0;
-        for (Tile t : hand.getTiles()){
+        for (Tile t : mHand.getTiles()){
             if (t.compareTo(tile) == 0){
                 inHand++;
             }
@@ -228,25 +228,26 @@ public abstract class Player {
     }
 
     public void callKan(Tile tile, SeatDirection calledDirection){
-        for (Meld meld: hand.getMelds()){
+        for (Meld meld: mHand.getMelds()){
             if (meld.getType() == MeldType.PON && meld.getTiles().get(0).compareTo(tile) == 0){
-                hand.makeShouminkan(tile, meld);
+                mHand.makeShouminkan(tile, meld);
                 return;
             }
         }
-        List<Tile> tiles = hand.getAllTilesById(tile.getId());
+        List<Tile> tiles = mHand.getAllTilesById(tile.getId());
         if (tiles.size() != 3){
             throw new IllegalArgumentException("Trying to call kan without three tiles in hand");
         }
-        hand.makeKan(tiles.get(0), tiles.get(1), tiles.get(2), tile, calledDirection, false);
+        mHand.makeKan(tiles.get(0), tiles.get(1), tiles.get(2), tile, calledDirection, false);
     }
 
     public void callKanOnDraw(Tile tile){
-        List<Tile> tiles = hand.getAllTilesById(tile.getId());
+        List<Tile> tiles = mHand.getAllTilesById(tile.getId());
         if (tiles.size() != 3){
             throw new IllegalArgumentException("Trying to call kan without three tiles in hand");
         }
 //        hand.makeKan(tiles.get(0), tiles.get(1), tiles.get(2), tile, calledDirection, false);
     }
+
 
 }

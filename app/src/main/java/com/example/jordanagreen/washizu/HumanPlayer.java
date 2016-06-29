@@ -49,22 +49,22 @@ public class HumanPlayer extends Player {
         int id = tile.getId();
         Tile tilea = null;
         Tile tileb = null;
-        if (hand.containsTileById(id - 1) && hand.containsTileById(id - 2)){
+        if (mHand.containsTileById(id - 1) && mHand.containsTileById(id - 2)){
             if (Tile.areSameSuit(id, id-1, id-2)){
-                tilea = hand.getTileById(id-2);
-                tileb = hand.getTileById(id-1);
+                tilea = mHand.getTileById(id-2);
+                tileb = mHand.getTileById(id-1);
             }
         }
-        else if (hand.containsTileById(id - 1) && hand.containsTileById(id + 1)){
+        else if (mHand.containsTileById(id - 1) && mHand.containsTileById(id + 1)){
             if (Tile.areSameSuit(id-1, id, id+1)){
-                tilea = hand.getTileById(id-1);
-                tileb = hand.getTileById(id+1);
+                tilea = mHand.getTileById(id-1);
+                tileb = mHand.getTileById(id+1);
             }
         }
-        else if (hand.containsTileById(id + 1) && hand.containsTileById(id + 2)){
+        else if (mHand.containsTileById(id + 1) && mHand.containsTileById(id + 2)){
             if (Tile.areSameSuit(id, id+1, id+2)){
-                tilea = hand.getTileById(id+1);
-                tileb = hand.getTileById(id+2);
+                tilea = mHand.getTileById(id+1);
+                tileb = mHand.getTileById(id+2);
             }
         }
         if (tilea == null || tileb == null){
@@ -82,8 +82,8 @@ public class HumanPlayer extends Player {
         int x = (int) event.getX();
         int y = (int) event.getY();
         //can't remove tiles while iterating without using an iterator, so just mark it for discard
-        for (int i = 0; i < hand.getTiles().size(); i++){
-            Tile tile = hand.getTile(i);
+        for (int i = 0; i < mHand.getTiles().size(); i++){
+            Tile tile = mHand.getTile(i);
             if ((x > tile.x && x < tile.x + TILE_WIDTH) &&
                     y > tile.y && y < tile.y + TILE_HEIGHT){
                 tile.onTouch(event);
@@ -91,8 +91,8 @@ public class HumanPlayer extends Player {
             }
         }
         //check if it's the drawn tile
-        if (tileToDiscard == null && hand.getDrawnTile() != null){
-            Tile drawnTile = hand.getDrawnTile();
+        if (tileToDiscard == null && mHand.getDrawnTile() != null){
+            Tile drawnTile = mHand.getDrawnTile();
             if (x > drawnTile.x && x < drawnTile.x + TILE_HEIGHT &&
                     y > drawnTile.y && y < drawnTile.y + TILE_WIDTH){
                 drawnTile.onTouch(event);

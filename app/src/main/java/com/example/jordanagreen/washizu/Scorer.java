@@ -514,7 +514,7 @@ public class Scorer {
     }
 
     //for keeping track of which suits we've found in san shoku
-    class SuitCounter {
+    private class SuitCounter {
         Map<Suit, Boolean> found;
         SuitCounter(){
             found = new HashMap<>();

@@ -313,7 +313,7 @@ public class Game {
     private void dealHands(){
         for (Player player: players){
             for (int i = 0; i < HAND_SIZE; i++){
-                player.hand.addTile(drawTile());
+                player.mHand.addTile(drawTile());
             }
 //            Leave this off for debugging right now
 //            player.hand.setTilesVisibility();

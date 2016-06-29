@@ -40,8 +40,8 @@ public class AiPlayer extends Player {
 
     private Tile pickTileToDiscard(){
         Random rand = new Random();
-        int i = rand.nextInt(hand.getTiles().size());
-        return hand.getTile(i);
+        int i = rand.nextInt(mHand.getTiles().size());
+        return mHand.getTile(i);
     }
 
     @Override
@@ -64,22 +64,22 @@ public class AiPlayer extends Player {
         int id = tile.getId();
         Tile tilea = null;
         Tile tileb = null;
-        if (hand.containsTileById(id - 1) && hand.containsTileById(id - 2)){
+        if (mHand.containsTileById(id - 1) && mHand.containsTileById(id - 2)){
             if (Tile.areSameSuit(id, id-1, id-2)){
-                tilea = hand.getTileById(id-2);
-                tileb = hand.getTileById(id-1);
+                tilea = mHand.getTileById(id-2);
+                tileb = mHand.getTileById(id-1);
             }
         }
-        else if (hand.containsTileById(id - 1) && hand.containsTileById(id + 1)){
+        else if (mHand.containsTileById(id - 1) && mHand.containsTileById(id + 1)){
             if (Tile.areSameSuit(id-1, id, id+1)){
-                tilea = hand.getTileById(id-1);
-                tileb = hand.getTileById(id+1);
+                tilea = mHand.getTileById(id-1);
+                tileb = mHand.getTileById(id+1);
             }
         }
-        else if (hand.containsTileById(id + 1) && hand.containsTileById(id + 2)){
+        else if (mHand.containsTileById(id + 1) && mHand.containsTileById(id + 2)){
             if (Tile.areSameSuit(id, id+1, id+2)){
-                tilea = hand.getTileById(id+1);
-                tileb = hand.getTileById(id+2);
+                tilea = mHand.getTileById(id+1);
+                tileb = mHand.getTileById(id+2);
             }
         }
         //TODO: figure out why this sometimes gets thrown
