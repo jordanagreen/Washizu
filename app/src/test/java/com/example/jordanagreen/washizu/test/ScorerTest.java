@@ -231,9 +231,11 @@ public class ScorerTest {
 
     @Test
     public void testPinFu(){
-        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, SOU_3, SOU_4,
-                SOU_5, MAN_2, MAN_3, MAN_4, SOU_3, SOU_3);
-        Score score = scoreHand(tiles, MAN_6);
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, MAN_6, PIN_2,
+                PIN_3, SOU_6, SOU_7, SOU_8, SOU_9, SOU_9);
+        Score score = scoreHand(tiles, PIN_4);
+        assertEquals(score.getHan()[Yaku.PINFU.ordinal()], Yaku.PINFU.getClosedHan());
+        score = scoreHand(tiles, PIN_1);
         assertEquals(score.getHan()[Yaku.PINFU.ordinal()], Yaku.PINFU.getClosedHan());
     }
 

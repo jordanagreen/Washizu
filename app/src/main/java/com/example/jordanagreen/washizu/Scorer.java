@@ -1,5 +1,7 @@
 package com.example.jordanagreen.washizu;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +40,8 @@ import static com.example.jordanagreen.washizu.Constants.XIA;
  * Created by Jordan on 12/1/2015.
  */
 public class Scorer {
+
+    public static final String TAG = "Scorer";
 
     //return null if the hand couldn't be scored, also check if 0 yaku
     public Score scoreHand(Hand hand, Wind roundWind, Tile winningTile, boolean isTsumo){
@@ -115,12 +119,14 @@ public class Scorer {
             return score;
         }
         //do yaku which have to be closed here
+        Log.d(TAG, "open? " + hand.getIsOpen());
         if (!hand.getIsOpen()){
             if (isSuuAnKou(splitHand, isTsumo)){
                 score.addYaku(Yaku.SUU_ANKOU);
                 return score;
             }
             if (isPinfu(splitHand, roundWind, hand.getPlayer().getWind())){
+                Log.d(TAG, "pinfu");
                 score.addYaku(Yaku.PINFU);
             }
             if (isIiPeiKou(splitHand)){
@@ -399,9 +405,10 @@ public class Scorer {
         if (meld.getType() != MeldType.CHII) return false;
         if (!meld.getTiles().contains(winningTile))
             throw new IllegalArgumentException();
-        return !(meld.getTiles().get(1).getId() == winningTile.getId()) &&
-                !(meld.getTiles().get(0).getNumericalValue() == 1 ||
-                meld.getTiles().get(2).getNumericalValue() == 9);
+//        return !(meld.getTiles().get(1).getId() == winningTile.getId()) &&
+//                !(meld.getTiles().get(0).getNumericalValue() == 1 ||
+//                meld.getTiles().get(2).getNumericalValue() == 9);
+        return meld.getTiles().get(1).getId() != winningTile.getId();
     }
 
     private boolean isToiToi(SplitHand hand){

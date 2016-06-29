@@ -24,9 +24,17 @@ import static com.example.jordanagreen.washizu.Constants.MAN_7;
 import static com.example.jordanagreen.washizu.Constants.MAN_9;
 import static com.example.jordanagreen.washizu.Constants.NAN;
 import static com.example.jordanagreen.washizu.Constants.PEI;
+import static com.example.jordanagreen.washizu.Constants.PIN_1;
+import static com.example.jordanagreen.washizu.Constants.PIN_2;
+import static com.example.jordanagreen.washizu.Constants.PIN_3;
+import static com.example.jordanagreen.washizu.Constants.PIN_4;
 import static com.example.jordanagreen.washizu.Constants.SOU_3;
 import static com.example.jordanagreen.washizu.Constants.SOU_4;
 import static com.example.jordanagreen.washizu.Constants.SOU_5;
+import static com.example.jordanagreen.washizu.Constants.SOU_6;
+import static com.example.jordanagreen.washizu.Constants.SOU_7;
+import static com.example.jordanagreen.washizu.Constants.SOU_8;
+import static com.example.jordanagreen.washizu.Constants.SOU_9;
 import static com.example.jordanagreen.washizu.Constants.TON;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.TestCase.assertTrue;
@@ -55,11 +63,11 @@ public class PlayerTest {
 
     @Test
     public void testCanRon_Valid(){
-        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, SOU_3, SOU_4,
-                SOU_5, MAN_2, MAN_3, MAN_4, SOU_3, SOU_3);
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, MAN_6, PIN_2,
+                PIN_3, SOU_6, SOU_7, SOU_8, SOU_9, SOU_9);
         setHand(tiles);
-        Tile winningTile = new Tile(MAN_6);
-        assertTrue(mPlayer.canRon(winningTile));
+        assertTrue(mPlayer.canRon(new Tile(PIN_4)));
+        assertTrue(mPlayer.canRon(new Tile(PIN_1)));
     }
 
     @Test
@@ -119,7 +127,7 @@ public class PlayerTest {
 
     @Test
     public void testCanRon_FuritenOnOtherWait(){
-        
+
     }
 
 
