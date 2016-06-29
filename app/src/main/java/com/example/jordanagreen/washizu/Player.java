@@ -81,6 +81,10 @@ public abstract class Player {
         return mHand;
     }
 
+    public DiscardPool getDiscardPool(){
+        return mDiscards;
+    }
+
     public void setWind(Wind wind) {
         this.mWind = wind;
     }
@@ -138,6 +142,7 @@ public abstract class Player {
     public abstract boolean shouldPon(Tile tile);
     public abstract boolean shouldChii(Tile tile);
     public abstract boolean shouldKan(Tile tile);
+    public abstract boolean shouldRon(Tile tile);
 
     //calledDirection's angle is the player called from * 90 so we know which tile to rotate
     public void callPon(Tile tile, SeatDirection calledDirection){
@@ -249,5 +254,24 @@ public abstract class Player {
 //        hand.makeKan(tiles.get(0), tiles.get(1), tiles.get(2), tile, calledDirection, false);
     }
 
+    public boolean canRon(Tile tile){
+        //if the player discarded this tile already, that's furiten
+        //TODO: check for furiten on waits other than the tile being called on
+        if (mDiscards.containsTile(tile)){
+            return false;
+        }
+        Scorer scorer = new Scorer();
+        Score score = scorer.scoreHand(mHand, mGame.getRoundWind(), tile, false);
+        //invalid hand
+        if (score == null){
+            return false;
+        }
+        for (int yaku: score.getHan()){
+            if (yaku > 0){ //hand is worth at least one yaku
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

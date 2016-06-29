@@ -33,6 +33,7 @@ public class Game {
     public static final String KEY_CALL_MADE = "call_made";
     public static final String KEY_WAITING_FOR_DECISION_CALL = "waiting_for_decision_on_call";
     public static final String KEY_POOL = "pool";
+    public static final String KEY_ROUND_WIND = "round_wind";
 
     private Player[] players;
     private int roundNumber;
@@ -41,6 +42,7 @@ public class Game {
     private boolean mCallMade;
     private boolean mKanMade; //needs to be separate so you can draw after kan
     private boolean mWaitingForDecisionOnCall;
+    private Wind mRoundWind;
 
     public Game(){
         Log.d(TAG, "default game constructor called");
@@ -49,6 +51,7 @@ public class Game {
         mCallMade = false;
         mKanMade = false;
         mWaitingForDecisionOnCall = false;
+        mRoundWind = Wind.EAST;
     }
 
     //TODO: find out when this doesn't work right, seems to be good enough for now
@@ -76,6 +79,7 @@ public class Game {
         mCurrentPlayerIndex = json.getInt(KEY_CURRENT_PLAYER_INDEX);
         mCallMade = json.getBoolean(KEY_CALL_MADE);
         mWaitingForDecisionOnCall = json.getBoolean(KEY_WAITING_FOR_DECISION_CALL);
+        mRoundWind = Enum.valueOf(Wind.class, json.getString(KEY_ROUND_WIND));
         Log.d(TAG, "Finishing recreation");
         //not entirely sure this will work, but looks like it does for now
         if (!mWaitingForDecisionOnCall){
@@ -109,9 +113,13 @@ public class Game {
         json.put(KEY_CALL_MADE, mCallMade);
         json.put(KEY_WAITING_FOR_DECISION_CALL, mWaitingForDecisionOnCall);
         json.put(KEY_POOL, jsonPool);
+        json.put(KEY_ROUND_WIND, mRoundWind.toString());
         return json;
     }
 
+    public Wind getRoundWind(){
+        return mRoundWind;
+    }
 
     public void startGame(){
         Log.d(TAG, "startGame");

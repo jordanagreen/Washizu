@@ -39,9 +39,9 @@ import static com.example.jordanagreen.washizu.Constants.XIA;
  */
 public class Scorer {
 
-    //return null if the hand couldn't be scored
-    public Score scoreHand(Hand hand, Wind roundWind, boolean isTsumo){
-        Tile winningTile = hand.getDrawnTile();
+    //return null if the hand couldn't be scored, also check if 0 yaku
+    public Score scoreHand(Hand hand, Wind roundWind, Tile winningTile, boolean isTsumo){
+//        Tile winningTile = hand.getDrawnTile();
         Score score = new Score();
         //do the two easy ones to check first
         if (isKokushiMusou(hand, winningTile)){
@@ -53,12 +53,12 @@ public class Scorer {
             return score;
         }
         boolean shouldSplit = true;
-        if (isChiiToitsu(hand)){
+        if (isChiiToitsu(hand, winningTile)){
             score.addYaku(Yaku.CHII_TOITSU);
             shouldSplit = false;
         }
         //these can go with chii toitsu so do them before splitting
-        //TODO: chii toitsu cna go with honroutou, tanyao, honitsu, chinitsu
+        //TODO: chii toitsu can go with honroutou, tanyao, honitsu, chinitsu
 
         //TODO: this and chii toitsu together are daichiisei, if allowed it's a double yakuman
         if (isTsuuIiSou(hand)){
@@ -209,9 +209,14 @@ public class Scorer {
         return true;
     }
 
-    private boolean isChiiToitsu(Hand hand){
+    private boolean isChiiToitsu(Hand hand, Tile winningTile){
         //seven pairs
-        List<Tile> tiles = hand.getFullHand();
+        List<Tile> tiles = new ArrayList<>(hand.getTiles());
+        tiles.add(winningTile);
+        // in case of four melds which would make the only two tiles in the hand be a pair
+        if (tiles.size() != 14){
+            return false;
+        }
         int[] tilesInHand = new int[TILE_MAX_ID + 1];
         for (Tile tile: tiles){
             tilesInHand[tile.getId()]++;

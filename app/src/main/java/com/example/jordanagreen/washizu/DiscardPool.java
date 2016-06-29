@@ -124,4 +124,14 @@ public class DiscardPool {
         }
     }
 
+    public boolean containsTile(Tile tile){
+        int id = tile.getId();
+        for (Tile t: tiles){
+            if (t.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
