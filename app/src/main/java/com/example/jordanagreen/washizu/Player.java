@@ -255,6 +255,7 @@ public abstract class Player {
     }
 
     public boolean canRon(Tile tile){
+        Log.d(TAG, "checking player " + mDirection + " for ron");
         //if the player discarded this tile already, that's furiten
         //TODO: check for furiten on waits other than the tile being called on
         if (mDiscards.containsTile(tile)){
@@ -272,6 +273,14 @@ public abstract class Player {
             }
         }
         return false;
+    }
+
+    public void callRon(Tile tile, Player player){
+        Log.d(TAG, "Called ron on " + tile);
+        Log.d(TAG, mHand.toString());
+        Scorer scorer = new Scorer();
+        Score score = scorer.scoreHand(mHand, mGame.getRoundWind(), tile, false);
+        Log.d(TAG, "Ron: " + score);
     }
 
 }

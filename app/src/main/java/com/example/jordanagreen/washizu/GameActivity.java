@@ -28,8 +28,7 @@ public class GameActivity extends Activity {
         setContentView(R.layout.activity_game);
         //TODO: switch to something like getExternalStorageDirectory once testing is done
         // for now it's easier to just put files in assets from a computer
-        mRootFolderPath = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS);
+        mRootFolderPath = Environment.getExternalStorageDirectory();
 
         if (savedInstanceState != null){
             String jsonString;

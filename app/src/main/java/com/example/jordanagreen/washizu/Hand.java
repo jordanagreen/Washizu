@@ -105,6 +105,15 @@ public class Hand {
         return json;
     }
 
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("hand: ");
+        for (Tile tile: mTiles){
+            sb.append(" ").append(tile);
+        }
+        return sb.toString();
+    }
+
     public List<Tile> getTiles() {
         return mTiles;
     }

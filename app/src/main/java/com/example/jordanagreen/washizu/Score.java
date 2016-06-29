@@ -15,7 +15,11 @@ public class Score {
 
     //TODO: actually do this
     public int calculateScore(){
-        return 0;
+        int s = 0;
+        for (int h: han){
+            s += h;
+        }
+        return s;
     }
 
     public int[] getHan(){
@@ -48,6 +52,17 @@ public class Score {
             throw new IllegalArgumentException("Trying to make an open yaku that can't be open");
         }
         han[yaku.ordinal()] += yaku.getOpenHan();
+    }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("score: ").append(calculateScore());
+        for (int i = 0; i < han.length; i++){
+            if (han[i] > 0){
+                sb.append(" ").append(Yaku.values()[i]).append(" ").append(han[i]);
+            }
+        }
+        return sb.toString();
     }
 
 }

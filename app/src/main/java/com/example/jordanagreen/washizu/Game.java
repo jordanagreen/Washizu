@@ -174,7 +174,7 @@ public class Game {
                 @Override
                 public void callback() {
                     Tile discardedTile = players[mCurrentPlayerIndex].getLastDiscardedTile();
-                    checkForCalls(discardedTile);
+                    checkForCalls(discardedTile, MeldType.RON);
                 }
             });
         }
@@ -202,60 +202,96 @@ public class Game {
         }, DELAY_BETWEEN_TURNS_MS);
     }
 
-    private void checkForCalls(Tile discardedTile){
+    private void checkForCalls(Tile discardedTile, MeldType callType){
         //TODO: check for kan and ron
 
         mWaitingForDecisionOnCall = false;
-        Log.d(TAG, "Checking tile " + discardedTile + " for calls");
-        //check all other players for pon and kan
-        for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++){
-            int i = j % players.length;
-            if (players[i].canPon(discardedTile)){
-                if (players[i].canKanOnCall(discardedTile)){
-                    if (players[i].shouldKan(discardedTile)){
-                        if (players[i] instanceof AiPlayer) {
-                            onCallMade(i, MeldType.KAN);
+        Log.d(TAG, "Checking tile " + discardedTile + " for calls of type " + callType);
+        switch (callType){
+            case RON:
+                //check all other players for ron
+                for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++) {
+                    int i = j % players.length;
+                    if (players[i].canRon(discardedTile)) {
+                        Log.d(TAG, "Player " + i + " can ron");
+                        if (players[i].shouldRon(discardedTile)) {
+                            if (players[i] instanceof AiPlayer) {
+                                onCallMade(i, MeldType.RON);
+                            } else {
+                                mWaitingForDecisionOnCall = true;
+                                Log.d(TAG, "Waiting for touch on ron");
+                            }
                         }
-                        else {
-                            mWaitingForDecisionOnCall = true;
-                            Log.d(TAG, "Waiting for touch on kan");
+                    }
+                }
+                if (!mCallMade && !mWaitingForDecisionOnCall){
+                    Log.d(TAG, "No ron called, checking for pon and kan");
+                    checkForCalls(discardedTile, MeldType.PON);
+                }
+                break;
+            case PON: //and kan
+                //check all other players for pon and kan
+                if (!mCallMade) {
+                    for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++) {
+                        int i = j % players.length;
+                        if (players[i].canPon(discardedTile)) {
+                            if (players[i].canKanOnCall(discardedTile)) {
+                                if (players[i].shouldKan(discardedTile)) {
+                                    if (players[i] instanceof AiPlayer) {
+                                        onCallMade(i, MeldType.KAN);
+                                    } else {
+                                        mWaitingForDecisionOnCall = true;
+                                        Log.d(TAG, "Waiting for touch on kan");
+                                    }
+                                }
+                            }
+                            //TODO: when buttons are added, allow calling either kan or pon
+                            else if (players[i].shouldPon(discardedTile)) {
+                                if (players[i] instanceof AiPlayer) {
+                                    onCallMade(i, MeldType.PON);
+                                } else {
+                                    mWaitingForDecisionOnCall = true;
+                                    Log.d(TAG, "Waiting for touch on pon");
+                                }
+                            }
                         }
                     }
                 }
-                //TODO: when buttons are added, allow calling either kan or pon
-                else if (players[i].shouldPon(discardedTile)){
-                    if (players[i] instanceof AiPlayer){
-                        onCallMade(i, MeldType.PON);
-                    }
-                    else {
-                        mWaitingForDecisionOnCall = true;
-                        Log.d(TAG, "Waiting for touch on pon");
+                if (!mCallMade && !mWaitingForDecisionOnCall){
+                    Log.d(TAG, "No pon or kan called, checking for chii");
+                    checkForCalls(discardedTile, MeldType.CHII);
+                }
+                break;
+            case CHII:
+                //check next player for chii
+                if (!mCallMade) {
+                    if (players[(mCurrentPlayerIndex + 1) % players.length].canChii(discardedTile)) {
+                        if (players[(mCurrentPlayerIndex + 1) % players.length].shouldChii(discardedTile)) {
+
+                            if (players[(mCurrentPlayerIndex + 1) % players.length] instanceof AiPlayer){
+                                onCallMade((mCurrentPlayerIndex + 1) % players.length, MeldType.CHII);
+                            }
+                            else {
+                                mWaitingForDecisionOnCall = true;
+                                Log.d(TAG, "Waiting for touch on chii");
+                            }
+
+                        }
                     }
                 }
-            }
-        }
-        //check next player for chii
-        if (!mCallMade) {
-            if (players[(mCurrentPlayerIndex + 1) % players.length].canChii(discardedTile)) {
-                if (players[(mCurrentPlayerIndex + 1) % players.length].shouldChii(discardedTile)) {
-
-                    if (players[(mCurrentPlayerIndex + 1) % players.length] instanceof AiPlayer){
-                        onCallMade((mCurrentPlayerIndex + 1) % players.length, MeldType.CHII);
-                    }
-                    else {
-                        mWaitingForDecisionOnCall = true;
-                        Log.d(TAG, "Waiting for touch on chii");
-                    }
-
+                if (!mCallMade && !mWaitingForDecisionOnCall){
+                    Log.d(TAG, "No calls made, going to next turn");
+                    onTurnFinished((mCurrentPlayerIndex + 1) % players.length);
                 }
-            }
+                //otherwise, wait for onCallMade to be triggered when the user presses a button
+                break;
         }
         //if no calls were made, just go to the player on the right
-        if (!mCallMade && !mWaitingForDecisionOnCall){
-            Log.d(TAG, "No calls made, going to next turn");
-            onTurnFinished((mCurrentPlayerIndex + 1) % players.length);
-        }
-        //otherwise, wait for onCallMade to be triggered when the user presses a button
+
+
+
+
+
     }
 
     private Tile getLastDiscardedTile(){
@@ -273,6 +309,11 @@ public class Game {
         Log.d(TAG, "Player " + playerIndex + " making a call from player " + mCurrentPlayerIndex);
         Tile discardedTile = getLastDiscardedTile();
         switch (callType){
+            case RON:
+                Log.d(TAG, "Player " + playerIndex + " calling ron on " + discardedTile + " from "
+                        + mCurrentPlayerIndex);
+                players[playerIndex].callRon(discardedTile, players[mCurrentPlayerIndex]);
+                break;
             case PON:
                 Log.d(TAG, "Player " + playerIndex + " calling pon on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
@@ -349,8 +390,12 @@ public class Game {
                 //for now just do it because no actual buttons yet
                 if (players[0] instanceof HumanPlayer){
                     if (getLastDiscardedTile() != null){
-                        if (players[0].canPon(getLastDiscardedTile())){
-                            //TODO: allow picking which to make
+                        //TODO: allow picking which to make
+                        if (players[0].canRon(getLastDiscardedTile())){
+                            Log.d(TAG, "human player can ron");
+                            onCallMade(0, MeldType.RON);
+                        }
+                        else if (players[0].canPon(getLastDiscardedTile())){
                             if (players[0].canKanOnCall(getLastDiscardedTile())){
                                 onCallMade(0, MeldType.KAN);
                             }
@@ -372,7 +417,7 @@ public class Game {
                 //once we've actually discarded a tile, start the next turn
                 if (((HumanPlayer)(players[mCurrentPlayerIndex])).onTouch(event)){
                     Tile discardedTile = players[mCurrentPlayerIndex].getLastDiscardedTile();
-                    checkForCalls(discardedTile);
+                    checkForCalls(discardedTile, MeldType.RON);
                 }
             }
         }
