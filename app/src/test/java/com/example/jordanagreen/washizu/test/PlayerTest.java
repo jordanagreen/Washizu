@@ -49,7 +49,7 @@ public class PlayerTest {
 
     @Before
     public void setUp(){
-        mGame = new Game();
+        mGame = new Game(null);
         mPlayer = new HumanPlayer(SeatDirection.DOWN);
         mPlayer.setGame(mGame);
         mPlayer.setWind(Wind.NORTH);
