@@ -130,6 +130,14 @@ public class Hand {
         }
     }
 
+    public void empty(){
+        mTiles.clear();
+        mMelds.clear();
+        mDrawnTile = null;
+        mTilesToDraw.clear();
+        mIsOpen = false;
+    }
+
     public void setTilesVisibility(){
         if (mPlayer instanceof AiPlayer){
             for (Tile tile: mTiles){

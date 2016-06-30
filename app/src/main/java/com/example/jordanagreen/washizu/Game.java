@@ -16,6 +16,7 @@ import java.util.Random;
 
 import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
+import static com.example.jordanagreen.washizu.Constants.NUM_ROUNDS;
 import static com.example.jordanagreen.washizu.Constants.ROUND_EAST_1;
 import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
 import static com.example.jordanagreen.washizu.Constants.TILE_MIN_ID;
@@ -30,6 +31,7 @@ public class Game {
     public static final String KEY_PLAYERS = "players";
     public static final String KEY_ROUND_NUMBER = "round_number";
     public static final String KEY_CURRENT_PLAYER_INDEX = "current_player_index";
+    public static final String KEY_CURRENT_DEALER_INDEX = "current_dealer_index";
     public static final String KEY_CALL_MADE = "call_made";
     public static final String KEY_WAITING_FOR_DECISION_CALL = "waiting_for_decision_on_call";
     public static final String KEY_POOL = "pool";
@@ -39,6 +41,7 @@ public class Game {
     private int mRoundNumber;
     private ArrayDeque<Tile> pool;
     private int mCurrentPlayerIndex;
+    private int mCurrentDealerIndex;
     private boolean mCallMade;
     private boolean mKanMade; //needs to be separate so you can draw after kan
     private boolean mWaitingForDecisionOnCall;
@@ -81,6 +84,7 @@ public class Game {
         }
         mRoundNumber = json.getInt(KEY_ROUND_NUMBER);
         mCurrentPlayerIndex = json.getInt(KEY_CURRENT_PLAYER_INDEX);
+        mCurrentDealerIndex = json.getInt(KEY_CURRENT_DEALER_INDEX);
         mCallMade = json.getBoolean(KEY_CALL_MADE);
         mWaitingForDecisionOnCall = json.getBoolean(KEY_WAITING_FOR_DECISION_CALL);
         mRoundWind = Enum.valueOf(Wind.class, json.getString(KEY_ROUND_WIND));
@@ -114,6 +118,7 @@ public class Game {
         }
         json.put(KEY_ROUND_NUMBER, mRoundNumber);
         json.put(KEY_CURRENT_PLAYER_INDEX, mCurrentPlayerIndex);
+        json.put(KEY_CURRENT_DEALER_INDEX, mCurrentDealerIndex);
         json.put(KEY_CALL_MADE, mCallMade);
         json.put(KEY_WAITING_FOR_DECISION_CALL, mWaitingForDecisionOnCall);
         json.put(KEY_POOL, jsonPool);
@@ -136,24 +141,47 @@ public class Game {
         }
 
         Random rand = new Random();
-        int firstEast = rand.nextInt(4);
-        players[firstEast].setWind(Wind.EAST);
-        players[(firstEast+1)%4].setWind(Wind.SOUTH);
-        players[(firstEast+2)%4].setWind(Wind.WEST);
-        players[(firstEast +3)%4].setWind(Wind.NORTH);
-        startRound(ROUND_EAST_1);
-
-        mCurrentPlayerIndex = firstEast;
-        takeNextTurn();
+        mCurrentDealerIndex = rand.nextInt(4);
+        setPlayerWinds(mCurrentDealerIndex);
+        startRound(ROUND_EAST_1, mCurrentDealerIndex);
     }
 
-    private void startRound(int roundNumber) {
+    private void startRound(int roundNumber, int dealerIndex) {
         Log.d(TAG, "Starting round " + roundNumber);
+        Log.d(TAG, "Dealer is " + dealerIndex);
         // should this be part of the call or auto-increment?
-        this.mRoundNumber = roundNumber;
+        mRoundNumber = roundNumber;
+        mCurrentPlayerIndex = dealerIndex;
         updateRoundNumberText(roundNumber);
         shufflePool();
         dealHands();
+        takeNextTurn();
+    }
+
+    private void setPlayerWinds(int eastPlayerIndex){
+        players[eastPlayerIndex].setWind(Wind.EAST);
+        players[(eastPlayerIndex+1)%4].setWind(Wind.SOUTH);
+        players[(eastPlayerIndex+2)%4].setWind(Wind.WEST);
+        players[(eastPlayerIndex +3)%4].setWind(Wind.NORTH);
+    }
+
+
+    private void endRound(){
+        //TODO: stuff like calculating scores
+        Log.d(TAG, "Ending round " + mRoundNumber);
+
+        //empty everyone's hands, discards, etc
+        for (Player player: players){
+            player.reset();
+        }
+        
+        if (mRoundNumber < NUM_ROUNDS){
+            // rotate the seat winds
+            mCurrentDealerIndex = (mCurrentDealerIndex + 1) % players.length;
+            setPlayerWinds(mCurrentDealerIndex);
+            startRound(mRoundNumber + 1, mCurrentDealerIndex);
+        }
+        // else end the game
     }
 
     private void takeNextTurn(){
@@ -306,13 +334,17 @@ public class Game {
         //call the tile, remove it from the discard, and that player gets the next turn
         Log.d(TAG, "Player " + playerIndex + " making a call from player " + mCurrentPlayerIndex);
         Tile discardedTile = getLastDiscardedTile();
+        mCallMade = true;
+        mWaitingForDecisionOnCall = false;
         switch (callType){
             case RON:
                 Log.d(TAG, "Player " + playerIndex + " calling ron on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
                 players[playerIndex].callRon(discardedTile, players[mCurrentPlayerIndex]);
                 //TODO: go to the next round
-                break;
+                endRound();
+                // don't break and go to the next turn since the round is over
+                return;
             case PON:
                 Log.d(TAG, "Player " + playerIndex + " calling pon on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
@@ -339,8 +371,6 @@ public class Game {
                 throw new IllegalArgumentException("Illegal call type");
         }
         players[mCurrentPlayerIndex].removeLastDiscardedTile();
-        mCallMade = true;
-        mWaitingForDecisionOnCall = false;
         Log.d(TAG, "call finished");
         onTurnFinished(playerIndex);
     }
@@ -362,7 +392,7 @@ public class Game {
     private void dealHands(){
         for (Player player: players){
             for (int i = 0; i < HAND_SIZE; i++){
-                player.mHand.addTile(drawTile());
+                player.getHand().addTile(drawTile());
             }
 //            Leave this off for debugging right now
 //            player.hand.setTilesVisibility();
@@ -392,6 +422,7 @@ public class Game {
 
             // if waiting for decision on a call, touching out of the buttons should not call
             if (mWaitingForDecisionOnCall){
+                Log.d(TAG, "touch while waiting for decision on call");
                 mWaitingForDecisionOnCall = false;
                 mWashizuView.makeAllButtonsUnclickable();
                 Log.d(TAG, "Player didn't call, going to next turn");

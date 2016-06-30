@@ -119,14 +119,14 @@ public class Scorer {
             return score;
         }
         //do yaku which have to be closed here
-        Log.d(TAG, "open? " + hand.getIsOpen());
+//        Log.d(TAG, "open? " + hand.getIsOpen());
         if (!hand.getIsOpen()){
             if (isSuuAnKou(splitHand, isTsumo)){
                 score.addYaku(Yaku.SUU_ANKOU);
                 return score;
             }
             if (isPinfu(splitHand, roundWind, hand.getPlayer().getWind())){
-                Log.d(TAG, "pinfu");
+//                Log.d(TAG, "pinfu");
                 score.addYaku(Yaku.PINFU);
             }
             if (isIiPeiKou(splitHand)){

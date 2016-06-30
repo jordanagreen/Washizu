@@ -279,4 +279,11 @@ public abstract class Player {
         Log.d(TAG, "Ron: " + score);
     }
 
+    public void reset(){
+        mHand.empty();
+        mDiscards.empty();
+        mInRiichi = false;
+        mIsMyTurn = false;
+    }
+
 }

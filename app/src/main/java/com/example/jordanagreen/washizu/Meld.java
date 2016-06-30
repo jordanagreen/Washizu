@@ -1,7 +1,6 @@
 package com.example.jordanagreen.washizu;
 
 import android.graphics.Canvas;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +35,7 @@ public class Meld {
         this.mType = type;
         this.mRotatedIndex = rotatedIndex;
         this.mHand = hand;
-        Log.d(TAG, "Meld made type " + type +  " rotated index " + rotatedIndex);
+//        Log.d(TAG, "Meld made type " + type +  " rotated index " + rotatedIndex);
     }
 
     public Meld(Tile a, Tile b, Tile c, Tile d, int rotatedIndex, MeldType type){
@@ -65,7 +64,7 @@ public class Meld {
     public Meld(Tile a, Tile b, Tile c, MeldType type){
         mTiles = Arrays.asList(a, b, c);
         this.mType = type;
-        Log.d(TAG, "Meld made type " + type);
+//        Log.d(TAG, "Meld made type " + type);
     }
 
     //also for making things a bit easier when scoring
