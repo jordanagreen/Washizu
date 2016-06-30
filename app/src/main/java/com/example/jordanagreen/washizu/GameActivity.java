@@ -181,7 +181,7 @@ public class GameActivity extends Activity {
         mWashizuView.onButtonPressed(MeldType.RON);
     }
 
-    private void makeAllButtonsUnclickable(){
+    public void makeAllButtonsUnclickable(){
         for (Button button: mButtons){
             button.setAlpha(.3f);
             button.setClickable(false);

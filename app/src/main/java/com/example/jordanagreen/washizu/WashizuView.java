@@ -240,4 +240,9 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         gameActivity.makeButtonClickable(buttonType);
     }
 
+    public void makeAllButtonsUnclickable(){
+        GameActivity gameActivity = (GameActivity) getContext();
+        gameActivity.makeAllButtonsUnclickable();
+    }
+
 }

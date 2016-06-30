@@ -336,6 +336,7 @@ public class Game {
         }
         players[mCurrentPlayerIndex].removeLastDiscardedTile();
         mCallMade = true;
+        mWaitingForDecisionOnCall = false;
         Log.d(TAG, "call finished");
         onTurnFinished(playerIndex);
     }
@@ -377,8 +378,17 @@ public class Game {
     public boolean onTouch(MotionEvent event){
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             Log.d(TAG, "Touch down at " + event.getX() + ", " + event.getY());
+
+            // if waiting for decision on a call, touching out of the buttons should not call
+            if (mWaitingForDecisionOnCall){
+                mWaitingForDecisionOnCall = false;
+                mWashizuView.makeAllButtonsUnclickable();
+                Log.d(TAG, "Player didn't call, going to next turn");
+                onTurnFinished((mCurrentPlayerIndex + 1) % players.length);
+            }
+
             // if it's the player's turn, let him pick a tile to discard
-            if (players[mCurrentPlayerIndex] instanceof HumanPlayer
+            else if (players[mCurrentPlayerIndex] instanceof HumanPlayer
                     && players[mCurrentPlayerIndex].getIsMyTurn()) {
                 //once we've actually discarded a tile, start the next turn
                 if (((HumanPlayer)(players[mCurrentPlayerIndex])).onTouch(event)){
