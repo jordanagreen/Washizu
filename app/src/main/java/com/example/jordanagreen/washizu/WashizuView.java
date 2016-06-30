@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +39,7 @@ import static com.example.jordanagreen.washizu.Constants.PIN_6;
 import static com.example.jordanagreen.washizu.Constants.PIN_7;
 import static com.example.jordanagreen.washizu.Constants.PIN_8;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
+import static com.example.jordanagreen.washizu.Constants.ROUNDS_PER_WIND;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
 import static com.example.jordanagreen.washizu.Constants.SOU_2;
 import static com.example.jordanagreen.washizu.Constants.SOU_3;
@@ -243,6 +245,15 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     public void makeAllButtonsUnclickable(){
         GameActivity gameActivity = (GameActivity) getContext();
         gameActivity.makeAllButtonsUnclickable();
+    }
+
+    public void updateRoundNumberText(int roundNumber){
+        TextView t = (TextView)((GameActivity) getContext()).findViewById(R.id.round_text);
+        String s = (roundNumber <= ROUNDS_PER_WIND ?
+                getResources().getString(R.string.round_east) :
+                getResources().getString(R.string.round_south)) +
+                " " + ((roundNumber % ROUNDS_PER_WIND) + 1);
+        t.setText(s);
     }
 
 }

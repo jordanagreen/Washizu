@@ -36,7 +36,7 @@ public class Game {
     public static final String KEY_ROUND_WIND = "round_wind";
 
     private Player[] players;
-    private int roundNumber;
+    private int mRoundNumber;
     private ArrayDeque<Tile> pool;
     private int mCurrentPlayerIndex;
     private boolean mCallMade;
@@ -53,6 +53,7 @@ public class Game {
         mKanMade = false;
         mWaitingForDecisionOnCall = false;
         mRoundWind = Wind.EAST;
+        mRoundNumber = 1;
         this.mWashizuView = washizuView;
     }
 
@@ -78,7 +79,7 @@ public class Game {
         for (int i = 0; i < jsonPool.length(); i++){
             pool.push(new Tile(jsonPool.getJSONObject(i)));
         }
-        roundNumber = json.getInt(KEY_ROUND_NUMBER);
+        mRoundNumber = json.getInt(KEY_ROUND_NUMBER);
         mCurrentPlayerIndex = json.getInt(KEY_CURRENT_PLAYER_INDEX);
         mCallMade = json.getBoolean(KEY_CALL_MADE);
         mWaitingForDecisionOnCall = json.getBoolean(KEY_WAITING_FOR_DECISION_CALL);
@@ -111,7 +112,7 @@ public class Game {
                 jsonPool.put(lastDrawnTile.toJson());
             }
         }
-        json.put(KEY_ROUND_NUMBER, roundNumber);
+        json.put(KEY_ROUND_NUMBER, mRoundNumber);
         json.put(KEY_CURRENT_PLAYER_INDEX, mCurrentPlayerIndex);
         json.put(KEY_CALL_MADE, mCallMade);
         json.put(KEY_WAITING_FOR_DECISION_CALL, mWaitingForDecisionOnCall);
@@ -149,7 +150,8 @@ public class Game {
     private void startRound(int roundNumber) {
         Log.d(TAG, "Starting round " + roundNumber);
         // should this be part of the call or auto-increment?
-        this.roundNumber = roundNumber;
+        this.mRoundNumber = roundNumber;
+        updateRoundNumberText(roundNumber);
         shufflePool();
         dealHands();
     }
@@ -309,6 +311,7 @@ public class Game {
                 Log.d(TAG, "Player " + playerIndex + " calling ron on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
                 players[playerIndex].callRon(discardedTile, players[mCurrentPlayerIndex]);
+                //TODO: go to the next round
                 break;
             case PON:
                 Log.d(TAG, "Player " + playerIndex + " calling pon on " + discardedTile + " from "
@@ -373,6 +376,13 @@ public class Game {
         }
         else {
             return pool.pop();
+        }
+    }
+
+    private void updateRoundNumberText(int roundNumber){
+        // view might be null during testing
+        if (mWashizuView != null){
+            mWashizuView.updateRoundNumberText(roundNumber);
         }
     }
 

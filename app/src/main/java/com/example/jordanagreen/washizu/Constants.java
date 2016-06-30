@@ -82,6 +82,7 @@ public class Constants {
     public static final int ROUND_SOUTH_4 = 7;
 
     public static final int NUM_ROUNDS = ROUND_SOUTH_4;
+    public static final int ROUNDS_PER_WIND = 4;
 
     public static final int DELAY_BETWEEN_TURNS_MS = 300;
 
