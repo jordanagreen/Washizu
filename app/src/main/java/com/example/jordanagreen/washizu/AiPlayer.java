@@ -44,22 +44,18 @@ public class AiPlayer extends Player {
         return mHand.getTile(i);
     }
 
-    @Override
     public boolean shouldPon(Tile tile){
         return true;
     }
 
-    @Override
     public boolean shouldChii(Tile tile){
         return true;
     }
 
-    @Override
     public boolean shouldKan(Tile tile){
         return true;
     }
 
-    @Override
     public boolean shouldRon(Tile tile){
         return true;
     }

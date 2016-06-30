@@ -226,14 +226,15 @@ public class Game {
             int i = j % players.length;
             if (players[i].canRon(discardedTile)) {
                 Log.d(TAG, "Player " + i + " can ron");
-                if (players[i].shouldRon(discardedTile)) {
-                    if (players[i] instanceof AiPlayer) {
+                if (players[i] instanceof AiPlayer) {
+                    if (((AiPlayer) players[i]).shouldRon(discardedTile)) {
                         onCallMade(i, MeldType.RON);
-                    } else {
-                        mWaitingForDecisionOnCall = true;
-                        mWashizuView.makeButtonClickable(MeldType.RON);
-                        Log.d(TAG, "Waiting for touch on ron");
                     }
+                }
+                else {
+                    mWaitingForDecisionOnCall = true;
+                    mWashizuView.makeButtonClickable(MeldType.RON);
+                    Log.d(TAG, "Waiting for touch on ron");
                 }
             }
         }
@@ -245,25 +246,26 @@ public class Game {
             int i = j % players.length;
             if (players[i].canPon(discardedTile)) {
                 if (players[i].canKanOnCall(discardedTile)) {
-                    if (players[i].shouldKan(discardedTile)) {
-                        if (players[i] instanceof AiPlayer) {
-                            onCallMade(i, MeldType.KAN);
-                        } else {
-                            mWaitingForDecisionOnCall = true;
-                            mWashizuView.makeButtonClickable(MeldType.KAN);
-                            Log.d(TAG, "Waiting for touch on kan");
-                        }
-                    }
-                }
-                //TODO: when buttons are added, allow calling either kan or pon
-                else if (players[i].shouldPon(discardedTile)) {
                     if (players[i] instanceof AiPlayer) {
-                        onCallMade(i, MeldType.PON);
+                        if (((AiPlayer) players[i]).shouldKan(discardedTile)){
+                            onCallMade(i, MeldType.KAN);
+                        }
                     } else {
                         mWaitingForDecisionOnCall = true;
-                        mWashizuView.makeButtonClickable(MeldType.PON);
-                        Log.d(TAG, "Waiting for touch on pon");
+                        mWashizuView.makeButtonClickable(MeldType.KAN);
+                        Log.d(TAG, "Waiting for touch on kan");
                     }
+                }
+                // allow picking either kan or pon
+                if (players[i] instanceof AiPlayer) {
+                    if (!mCallMade && ((AiPlayer) players[i]).shouldPon(discardedTile)){
+                        onCallMade(i, MeldType.PON);
+                    }
+                }
+                else {
+                    mWaitingForDecisionOnCall = true;
+                    mWashizuView.makeButtonClickable(MeldType.PON);
+                    Log.d(TAG, "Waiting for touch on pon");
                 }
             }
         }
@@ -272,18 +274,17 @@ public class Game {
     private void checkForChii(Tile discardedTile){
         //check next player for chii
         if (!mCallMade) {
-            if (players[(mCurrentPlayerIndex + 1) % players.length].canChii(discardedTile)) {
-                if (players[(mCurrentPlayerIndex + 1) % players.length].shouldChii(discardedTile)) {
-
-                    if (players[(mCurrentPlayerIndex + 1) % players.length] instanceof AiPlayer){
+            Player nextPlayer = players[(mCurrentPlayerIndex + 1) % players.length];
+            if (nextPlayer.canChii(discardedTile)) {
+                if (nextPlayer instanceof AiPlayer){
+                    if (((AiPlayer) nextPlayer).shouldChii(discardedTile)){
                         onCallMade((mCurrentPlayerIndex + 1) % players.length, MeldType.CHII);
                     }
-                    else {
-                        mWaitingForDecisionOnCall = true;
-                        mWashizuView.makeButtonClickable(MeldType.CHII);
-                        Log.d(TAG, "Waiting for touch on chii");
-                    }
-
+                }
+                else {
+                    mWaitingForDecisionOnCall = true;
+                    mWashizuView.makeButtonClickable(MeldType.CHII);
+                    Log.d(TAG, "Waiting for touch on chii");
                 }
             }
         }

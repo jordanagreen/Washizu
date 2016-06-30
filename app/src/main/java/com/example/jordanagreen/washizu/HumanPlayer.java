@@ -27,28 +27,6 @@ public class HumanPlayer extends Player {
     public void takeTurn(GameCallback callback){
     }
 
-    //TODO: make buttons appear on the screen
-
-    @Override
-    public boolean shouldPon(Tile tile){
-        return true;
-    }
-
-    @Override
-    public boolean shouldChii(Tile tile){
-        return true;
-    }
-
-    @Override
-    public boolean shouldKan(Tile tile){
-        return true;
-    }
-
-    @Override
-    public boolean shouldRon(Tile tile){
-        return true;
-    }
-
     @Override
     protected Tile[] getTilesForChii(Tile tile){
         //TODO: get some better logic for this, for now it's just picking an option randomly

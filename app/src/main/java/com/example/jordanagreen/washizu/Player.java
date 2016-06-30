@@ -69,6 +69,8 @@ public abstract class Player {
         this.mGame = game;
     }
 
+    //TODO: all the abstract stuff only gets done in AiPlayer, maybe make it non-abstract later
+
     public abstract void takeTurn(GameCallback callback);
 
     public void drawTile(){
@@ -137,12 +139,6 @@ public abstract class Player {
         }
         return inHand >= 2;
     }
-
-    //might be better to take out the abstractness eventually
-    public abstract boolean shouldPon(Tile tile);
-    public abstract boolean shouldChii(Tile tile);
-    public abstract boolean shouldKan(Tile tile);
-    public abstract boolean shouldRon(Tile tile);
 
     //calledDirection's angle is the player called from * 90 so we know which tile to rotate
     public void callPon(Tile tile, SeatDirection calledDirection){
