@@ -61,7 +61,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
     public static final String TAG = "WashizuView";
 
-    private Game game;
+    private Game mGame;
 
     public WashizuView(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -72,8 +72,12 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         Tile.setSmallTileImages(loadSmallTileImages());
 
         Log.d(TAG, "constructor called");
-//        game = new Game();
-//        game.startGame();
+
+    }
+
+
+    public void onButtonPressed(MeldType buttonType){
+        mGame.onButtonPressed(buttonType);
     }
 
     private Bitmap[] loadTileImages(){
@@ -188,7 +192,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        game.onTouch(event);
+        mGame.onTouch(event);
         return super.onTouchEvent(event);
     }
 
@@ -196,13 +200,13 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(Color.WHITE);
-        game.onDraw(canvas);
+        mGame.onDraw(canvas);
         postInvalidate();
     }
 
     public String getGameJsonAsString(){
         try{
-            return game.toJson().toString();
+            return mGame.toJson().toString();
         }
         catch (JSONException e){
             Log.e(TAG, "error", e);
@@ -215,7 +219,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 //        Log.d(TAG, jsonString);
         try {
             JSONObject json = new JSONObject(jsonString);
-            game = new Game(json);
+            mGame = new Game(this, json);
         }
         catch (JSONException e){
             Log.e(TAG, "error", e);
@@ -226,11 +230,14 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void startNewGame(){
         Log.d(TAG, "starting new game");
-        game = new Game();
-        game.startGame();
+        mGame = new Game(this);
+        mGame.startGame();
 
     }
 
-
+    public void makeButtonClickable(MeldType buttonType){
+        GameActivity gameActivity = (GameActivity) getContext();
+        gameActivity.makeButtonClickable(buttonType);
+    }
 
 }

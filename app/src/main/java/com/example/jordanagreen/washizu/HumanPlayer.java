@@ -24,7 +24,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void takeTurn(Game.GameCallback callback){
+    public void takeTurn(GameCallback callback){
     }
 
     //TODO: make buttons appear on the screen

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,14 +23,26 @@ public class GameActivity extends Activity {
     public static final String EXTRA_FILENAME = "filename";
 
     private File mRootFolderPath;
+    private WashizuView mWashizuView;
+    private Button chiiButton;
+    private Button ponButton;
+    private Button kanButton;
+    private Button ronButton;
+    private Button[] mButtons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        //TODO: switch to something like getExternalStorageDirectory once testing is done
-        // for now it's easier to just put files in assets from a computer
         mRootFolderPath = Environment.getExternalStorageDirectory();
+
+        mWashizuView = (WashizuView) findViewById(R.id.game_view);
+        chiiButton = (Button) findViewById(R.id.chii_button);
+        ponButton = (Button) findViewById(R.id.pon_button);
+        kanButton = (Button) findViewById(R.id.kan_button);
+        ronButton = (Button) findViewById(R.id.ron_button);
+        mButtons = new Button[]{chiiButton, ponButton, kanButton, ronButton};
+        makeAllButtonsUnclickable();
 
         if (savedInstanceState != null){
             String jsonString;
@@ -67,15 +81,14 @@ public class GameActivity extends Activity {
     }
 
     private void startNewGame(){
-        WashizuView washizuView = (WashizuView) findViewById(R.id.game_view);
         try{
             Log.d(TAG, "Starting new game");
-            washizuView.startNewGame();
+            mWashizuView.startNewGame();
         }
         catch (Exception e){
             Log.e(TAG, "An exception was thrown.", e);
             //save the state to see what went wrong
-            String gameState = washizuView.getGameJsonAsString();
+            String gameState = mWashizuView.getGameJsonAsString();
             if (gameState != null){
                 String filename = "game-state.json";
                 writeToFile(filename, gameState);
@@ -85,14 +98,13 @@ public class GameActivity extends Activity {
 
     private void resumeGame(String jsonString){
         Log.d(TAG, "Resuming game");
-        WashizuView washizuView = (WashizuView) findViewById(R.id.game_view);
         try{
-            washizuView.restoreGameFromJsonString(jsonString);
+            mWashizuView.restoreGameFromJsonString(jsonString);
         }
         catch (Exception e){
             Log.e(TAG, "An exception was thrown.", e);
             //save the state to see what went wrong
-            String gameState = washizuView.getGameJsonAsString();
+            String gameState = mWashizuView.getGameJsonAsString();
             if (gameState != null){
                 String filename = "game-state.json";
                 writeToFile(filename, gameState);
@@ -117,8 +129,7 @@ public class GameActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        WashizuView game = (WashizuView) findViewById(R.id.game_view);
-        String gameState = game.getGameJsonAsString();
+        String gameState = mWashizuView.getGameJsonAsString();
         if (gameState != null){
             outState.putString(GAME_STATE_KEY, gameState);
 //            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
@@ -149,4 +160,54 @@ public class GameActivity extends Activity {
             Log.e(TAG, "Error writing file", e);
         }
     }
+
+    public void onChiiButtonPressed(View v){
+        makeAllButtonsUnclickable();
+        mWashizuView.onButtonPressed(MeldType.CHII);
+    }
+
+    public void onPonButtonPressed(View v){
+        makeAllButtonsUnclickable();
+        mWashizuView.onButtonPressed(MeldType.PON);
+    }
+
+    public void onKanButtonPressed(View v){
+        makeAllButtonsUnclickable();
+        mWashizuView.onButtonPressed(MeldType.KAN);
+    }
+
+    public void onRonButtonPressed(View v){
+        makeAllButtonsUnclickable();
+        mWashizuView.onButtonPressed(MeldType.RON);
+    }
+
+    private void makeAllButtonsUnclickable(){
+        for (Button button: mButtons){
+            button.setAlpha(.3f);
+            button.setClickable(false);
+        }
+    }
+
+    public void makeButtonClickable(MeldType buttonType){
+        Button button;
+        switch (buttonType){
+            case CHII:
+                button = chiiButton;
+                break;
+            case PON:
+                button = ponButton;
+                break;
+            case KAN:
+                button = kanButton;
+                break;
+            case RON:
+                button = ronButton;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        button.setAlpha(1f);
+        button.setClickable(true);
+    }
+
 }

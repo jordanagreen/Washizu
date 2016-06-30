@@ -1,5 +1,47 @@
-<com.example.jordanagreen.washizu.WashizuView
+<FrameLayout android:id="@+id/game_frame"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/game_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent">
+    <com.example.jordanagreen.washizu.WashizuView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/game_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+        <Button
+            android:id="@+id/chii_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:onClick="onChiiButtonPressed"
+            android:text="Chii"/>
+        <Button
+            android:id="@+id/pon_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:layout_toRightOf="@id/chii_button"
+            android:onClick="onPonButtonPressed"
+            android:text="Pon"/>
+        <Button
+            android:id="@+id/kan_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/chii_button"
+            android:clickable="false"
+            android:onClick="onKanButtonPressed"
+            android:text="Kan"/>
+        <Button
+            android:id="@+id/ron_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/kan_button"
+            android:clickable="false"
+            android:layout_below="@id/pon_button"
+            android:onClick="onRonButtonPressed"
+            android:text="Ron"/>
+    </RelativeLayout>
+</FrameLayout>

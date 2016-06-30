@@ -43,8 +43,9 @@ public class Game {
     private boolean mKanMade; //needs to be separate so you can draw after kan
     private boolean mWaitingForDecisionOnCall;
     private Wind mRoundWind;
+    private WashizuView mWashizuView;
 
-    public Game(){
+    public Game(WashizuView washizuView){
         Log.d(TAG, "default game constructor called");
         players = new Player[4];
         pool = new ArrayDeque<>();
@@ -52,10 +53,12 @@ public class Game {
         mKanMade = false;
         mWaitingForDecisionOnCall = false;
         mRoundWind = Wind.EAST;
+        this.mWashizuView = washizuView;
     }
 
     //TODO: find out when this doesn't work right, seems to be good enough for now
-    public Game(JSONObject json) throws JSONException{
+    public Game(WashizuView washizuView, JSONObject json) throws JSONException{
+        this.mWashizuView = washizuView;
         Log.d(TAG, "Starting recreation");
         players = new Player[4];
         JSONArray jsonPlayers = json.getJSONArray(KEY_PLAYERS);
@@ -151,10 +154,6 @@ public class Game {
         dealHands();
     }
 
-    interface GameCallback {
-        void callback();
-    }
-
     private void takeNextTurn(){
         players[mCurrentPlayerIndex].setIsMyTurn(true);
         Log.d(TAG, "Starting turn for player " + mCurrentPlayerIndex);
@@ -232,6 +231,7 @@ public class Game {
                         onCallMade(i, MeldType.RON);
                     } else {
                         mWaitingForDecisionOnCall = true;
+                        mWashizuView.makeButtonClickable(MeldType.RON);
                         Log.d(TAG, "Waiting for touch on ron");
                     }
                 }
@@ -250,6 +250,7 @@ public class Game {
                             onCallMade(i, MeldType.KAN);
                         } else {
                             mWaitingForDecisionOnCall = true;
+                            mWashizuView.makeButtonClickable(MeldType.KAN);
                             Log.d(TAG, "Waiting for touch on kan");
                         }
                     }
@@ -260,6 +261,7 @@ public class Game {
                         onCallMade(i, MeldType.PON);
                     } else {
                         mWaitingForDecisionOnCall = true;
+                        mWashizuView.makeButtonClickable(MeldType.PON);
                         Log.d(TAG, "Waiting for touch on pon");
                     }
                 }
@@ -278,6 +280,7 @@ public class Game {
                     }
                     else {
                         mWaitingForDecisionOnCall = true;
+                        mWashizuView.makeButtonClickable(MeldType.CHII);
                         Log.d(TAG, "Waiting for touch on chii");
                     }
 
@@ -374,35 +377,6 @@ public class Game {
     public boolean onTouch(MotionEvent event){
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             Log.d(TAG, "Touch down at " + event.getX() + ", " + event.getY());
-
-            // if we're waiting for the user to decide whether to call
-            if (mWaitingForDecisionOnCall){
-                Log.d(TAG, "touched while waiting for call");
-                //TODO: make this better
-                //for now just do it because no actual buttons yet
-                if (players[0] instanceof HumanPlayer){
-                    if (getLastDiscardedTile() != null){
-                        //TODO: allow picking which to make
-                        if (players[0].canRon(getLastDiscardedTile())){
-                            Log.d(TAG, "human player can ron");
-                            onCallMade(0, MeldType.RON);
-                        }
-                        else if (players[0].canPon(getLastDiscardedTile())){
-                            if (players[0].canKanOnCall(getLastDiscardedTile())){
-                                onCallMade(0, MeldType.KAN);
-                            }
-                            else {
-                                onCallMade(0, MeldType.PON);
-                            }
-                        }
-                        else if ((players[0].canChii(getLastDiscardedTile()))){
-                            onCallMade(0, MeldType.CHII);
-                        }
-                    }
-
-                }
-            }
-
             // if it's the player's turn, let him pick a tile to discard
             if (players[mCurrentPlayerIndex] instanceof HumanPlayer
                     && players[mCurrentPlayerIndex].getIsMyTurn()) {
@@ -414,6 +388,16 @@ public class Game {
             }
         }
         return true;
+    }
+
+    public void onButtonPressed(MeldType buttonType){
+        // this shouldn't happen but just in case
+        if (!mWaitingForDecisionOnCall || getLastDiscardedTile() == null){
+            return;
+        }
+        // if we're waiting for the user to decide whether to call
+        Log.d(TAG, "touched while waiting for call");
+        onCallMade(0, buttonType);
     }
 
     protected void onDraw(Canvas canvas){

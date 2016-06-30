@@ -69,7 +69,7 @@ public abstract class Player {
         this.mGame = game;
     }
 
-    public abstract void takeTurn(Game.GameCallback callback);
+    public abstract void takeTurn(GameCallback callback);
 
     public void drawTile(){
         Tile tile = mGame.drawTile();
