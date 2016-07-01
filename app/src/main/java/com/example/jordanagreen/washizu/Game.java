@@ -89,6 +89,10 @@ public class Game {
         mWaitingForDecisionOnCall = json.getBoolean(KEY_WAITING_FOR_DECISION_CALL);
         mRoundWind = Enum.valueOf(Wind.class, json.getString(KEY_ROUND_WIND));
         Log.d(TAG, "Finishing recreation");
+        //update the display stuff that would normally be set at the start of the round
+        updateRoundNumberText(mRoundNumber);
+        setPlayerWinds(mCurrentDealerIndex);
+        updatePlayerWindText(mCurrentDealerIndex);
         //not entirely sure this will work, but looks like it does for now
         if (!mWaitingForDecisionOnCall){
             takeNextTurn();
@@ -139,11 +143,8 @@ public class Game {
         for (Player player: players){
             player.setGame(this);
         }
-
         Random rand = new Random();
-        mCurrentDealerIndex = rand.nextInt(4);
-        setPlayerWinds(mCurrentDealerIndex);
-        startRound(ROUND_EAST_1, mCurrentDealerIndex);
+        startRound(ROUND_EAST_1, rand.nextInt(4));
     }
 
     private void startRound(int roundNumber, int dealerIndex) {
@@ -153,18 +154,33 @@ public class Game {
         mRoundNumber = roundNumber;
         mCurrentPlayerIndex = dealerIndex;
         updateRoundNumberText(roundNumber);
+        setPlayerWinds(dealerIndex);
+        updatePlayerWindText(dealerIndex);
         shufflePool();
         dealHands();
         takeNextTurn();
     }
 
-    private void setPlayerWinds(int eastPlayerIndex){
-        players[eastPlayerIndex].setWind(Wind.EAST);
-        players[(eastPlayerIndex+1)%4].setWind(Wind.SOUTH);
-        players[(eastPlayerIndex+2)%4].setWind(Wind.WEST);
-        players[(eastPlayerIndex +3)%4].setWind(Wind.NORTH);
+    private void updateRoundNumberText(int roundNumber){
+        // view might be null during testing
+        if (mWashizuView != null){
+            mWashizuView.updateRoundNumberText(roundNumber);
+        }
     }
 
+    private void setPlayerWinds(int dealerIndex){
+        players[dealerIndex].setWind(Wind.EAST);
+        players[(dealerIndex+1)%4].setWind(Wind.SOUTH);
+        players[(dealerIndex+2)%4].setWind(Wind.WEST);
+        players[(dealerIndex +3)%4].setWind(Wind.NORTH);
+    }
+
+    //TODO: either move wind letters to be near the players' hands or just show the dealer sign
+    private void updatePlayerWindText(int eastPlayerIndex){
+        if (mWashizuView != null){
+            mWashizuView.updatePlayerWindText(eastPlayerIndex);
+        }
+    }
 
     private void endRound(){
         //TODO: stuff like calculating scores
@@ -174,7 +190,7 @@ public class Game {
         for (Player player: players){
             player.reset();
         }
-        
+
         if (mRoundNumber < NUM_ROUNDS){
             // rotate the seat winds
             mCurrentDealerIndex = (mCurrentDealerIndex + 1) % players.length;
@@ -406,13 +422,6 @@ public class Game {
         }
         else {
             return pool.pop();
-        }
-    }
-
-    private void updateRoundNumberText(int roundNumber){
-        // view might be null during testing
-        if (mWashizuView != null){
-            mWashizuView.updateRoundNumberText(roundNumber);
         }
     }
 

@@ -256,4 +256,17 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         t.setText(s);
     }
 
+    public void updatePlayerWindText(int dealerIndex){
+        TextView down = (TextView)((GameActivity) getContext()).findViewById(R.id.wind_down);
+        TextView right = (TextView)((GameActivity) getContext()).findViewById(R.id.wind_right);
+        TextView up = (TextView)((GameActivity) getContext()).findViewById(R.id.wind_up);
+        TextView left = (TextView)((GameActivity) getContext()).findViewById(R.id.wind_left);
+        TextView[] seats = new TextView[]{down, right, up, left};
+        Wind[] winds = Wind.values();
+        for (int i = 0; i < winds.length; i++){
+            int seat = (dealerIndex + i) % seats.length;
+            seats[seat].setText(winds[i].getAbbreviation());
+        }
+    }
+
 }

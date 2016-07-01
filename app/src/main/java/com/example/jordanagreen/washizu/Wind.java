@@ -8,15 +8,21 @@ import static com.example.jordanagreen.washizu.Constants.XIA;
  * Created by Jordan on 2/1/2016.
  */
 public enum Wind {
-    EAST(TON), SOUTH(NAN), WEST(XIA), NORTH(PEI);
+    EAST(TON, "E"), SOUTH(NAN, "S"), WEST(XIA, "W"), NORTH(PEI, "N");
 
     private int tileID;
+    private String abbreviation;
 
-    Wind(int id){
+    Wind(int id, String abbreviation){
         this.tileID = id;
+        this.abbreviation = abbreviation;
     }
 
     int getTileID(){
         return tileID;
+    }
+
+    String getAbbreviation(){
+        return abbreviation;
     }
 }
