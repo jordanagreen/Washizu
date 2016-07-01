@@ -10,7 +10,7 @@ Right now there isn't much to play, since the AI just discards randomly and call
   * ~~Check for all the different yaku~~ Got most of them done, will do the rest later
 2. Finish implementing ~~open/~~closed kan
 3. Implement ~~ron/~~tsumo
-~~4. Add buttons to decide whether to call or not~~
+4. ~~Add buttons to decide whether to call or not~~
 5. Make some test games for each yaku to make sure they win right
 6. Modify a pre-existing AI to work with my logic
 7. Improve the UI
