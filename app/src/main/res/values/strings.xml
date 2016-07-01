@@ -10,4 +10,8 @@
     <string name="new_game">New Game</string>
     <string name="round_east">East </string>
     <string name="round_south">South </string>
+    <string name="chii">Chii</string>
+    <string name="pon">Pon</string>
+    <string name="kan">Kan</string>
+    <string name="ron">Ron</string>
 </resources>

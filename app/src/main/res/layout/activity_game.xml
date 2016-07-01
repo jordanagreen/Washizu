@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:clickable="false"
             android:onClick="onChiiButtonPressed"
-            android:text="Chii"/>
+            android:text="@string/chii"/>
         <Button
             android:id="@+id/pon_button"
             android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
             android:clickable="false"
             android:layout_toRightOf="@id/chii_button"
             android:onClick="onPonButtonPressed"
-            android:text="Pon"/>
+            android:text="@string/pon"/>
         <Button
             android:id="@+id/kan_button"
             android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
             android:layout_below="@id/chii_button"
             android:clickable="false"
             android:onClick="onKanButtonPressed"
-            android:text="Kan"/>
+            android:text="@string/kan"/>
         <Button
             android:id="@+id/ron_button"
             android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
             android:clickable="false"
             android:layout_below="@id/pon_button"
             android:onClick="onRonButtonPressed"
-            android:text="Ron"/>
+            android:text="@string/ron"/>
     </RelativeLayout>
     <TextView
         android:layout_width="wrap_content"
