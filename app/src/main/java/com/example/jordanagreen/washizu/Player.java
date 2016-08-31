@@ -298,6 +298,7 @@ public abstract class Player {
     }
 
     public void callTsumo(){
+        //TODO: actually do something here
         Log.d(TAG, "called tsumo on " + mHand.getDrawnTile());
     }
 

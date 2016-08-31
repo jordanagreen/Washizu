@@ -16,8 +16,6 @@ import java.io.InputStreamReader;
 
 public class GameActivity extends Activity {
 
-    //TODO: start with a list of json states to start from, or a new game
-
     public static final String TAG = "GameActivity";
     public static final String GAME_STATE_KEY = "game_state";
     public static final String EXTRA_FILENAME = "filename";
@@ -28,6 +26,8 @@ public class GameActivity extends Activity {
     private Button ponButton;
     private Button kanButton;
     private Button ronButton;
+    //TODO: make buttons wider so width doesn't change for tsumo button having more text
+    private Button tsumoButton;
     private Button[] mButtons;
 
     @Override
@@ -41,7 +41,8 @@ public class GameActivity extends Activity {
         ponButton = (Button) findViewById(R.id.pon_button);
         kanButton = (Button) findViewById(R.id.kan_button);
         ronButton = (Button) findViewById(R.id.ron_button);
-        mButtons = new Button[]{chiiButton, ponButton, kanButton, ronButton};
+        tsumoButton = (Button) findViewById(R.id.tsumo_button);
+        mButtons = new Button[]{chiiButton, ponButton, kanButton, ronButton, tsumoButton};
         makeAllButtonsUnclickable();
 
         if (savedInstanceState != null){
@@ -181,6 +182,11 @@ public class GameActivity extends Activity {
         mWashizuView.onButtonPressed(MeldType.RON);
     }
 
+    public void onTsumoButtonPressed(View v){
+        makeAllButtonsUnclickable();
+        mWashizuView.onButtonPressed(MeldType.TSUMO);
+    }
+
     public void makeAllButtonsUnclickable(){
         for (Button button: mButtons){
             button.setAlpha(.3f);
@@ -202,6 +208,13 @@ public class GameActivity extends Activity {
                 break;
             case RON:
                 button = ronButton;
+                button.setVisibility(View.VISIBLE);
+                tsumoButton.setVisibility(View.GONE);
+                break;
+            case TSUMO:
+                button = tsumoButton;
+                button.setVisibility(View.VISIBLE);
+                ronButton.setVisibility(View.GONE);
                 break;
             default:
                 throw new IllegalArgumentException();

@@ -44,6 +44,16 @@
             android:layout_below="@id/pon_button"
             android:onClick="onRonButtonPressed"
             android:text="@string/ron"/>
+        <Button
+            android:id="@+id/tsumo_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/kan_button"
+            android:clickable="false"
+            android:layout_below="@id/pon_button"
+            android:onClick="onTsumoButtonPressed"
+            android:text="@string/tsumo"
+            android:visibility="gone"/>
     </RelativeLayout>
     <TextView
         android:layout_width="wrap_content"

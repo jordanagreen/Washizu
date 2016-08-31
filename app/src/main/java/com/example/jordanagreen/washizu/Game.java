@@ -212,12 +212,18 @@ public class Game {
             //check for tsumo
             if (players[mCurrentPlayerIndex].canTsumo()){
                 Log.d(TAG, "player " + players[mCurrentPlayerIndex] + " can tsumo");
-                if (players[mCurrentPlayerIndex] instanceof AiPlayer){
-                    if (((AiPlayer) players[mCurrentPlayerIndex]).shouldTsumo()){
+                if (players[mCurrentPlayerIndex] instanceof AiPlayer) {
+                    if (((AiPlayer) players[mCurrentPlayerIndex]).shouldTsumo()) {
                         onCallMade(mCurrentPlayerIndex, MeldType.TSUMO);
                     }
-                    //otherwise wait for player input
-                    //TODO: does this work? If so, take out some ifs to simplify it
+                    else {
+                        continueTakingTurn();
+                    }
+                }
+                //otherwise wait for player input
+                else {
+                    mWashizuView.makeButtonClickable(MeldType.TSUMO);
+                    mWaitingForDecisionOnCall = true;
                     continueTakingTurn();
                 }
             }
@@ -489,7 +495,9 @@ public class Game {
 
     public void onButtonPressed(MeldType buttonType){
         // this shouldn't happen but just in case
-        if (!mWaitingForDecisionOnCall || getLastDiscardedTile() == null){
+        // update: actually this breaks tsumo when there's no discards yet
+//        if (!mWaitingForDecisionOnCall || getLastDiscardedTile() == null){
+        if (!mWaitingForDecisionOnCall){
             return;
         }
         // if we're waiting for the user to decide whether to call
