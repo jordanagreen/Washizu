@@ -34,12 +34,12 @@ public class Game {
     public static final String KEY_CURRENT_DEALER_INDEX = "current_dealer_index";
     public static final String KEY_CALL_MADE = "call_made";
     public static final String KEY_WAITING_FOR_DECISION_CALL = "waiting_for_decision_on_call";
-    public static final String KEY_POOL = "pool";
+    public static final String KEY_DRAW_POOL = "draw_pool";
     public static final String KEY_ROUND_WIND = "round_wind";
 
     private Player[] players;
     private int mRoundNumber;
-    private ArrayDeque<Tile> pool;
+    private ArrayDeque<Tile> mDrawPool;
     private int mCurrentPlayerIndex;
     private int mCurrentDealerIndex;
     private boolean mCallMade;
@@ -51,7 +51,7 @@ public class Game {
     public Game(WashizuView washizuView){
         Log.d(TAG, "default game constructor called");
         players = new Player[4];
-        pool = new ArrayDeque<>();
+        mDrawPool = new ArrayDeque<>();
         mCallMade = false;
         mKanMade = false;
         mWaitingForDecisionOnCall = false;
@@ -77,10 +77,12 @@ public class Game {
             }
             players[i].setGame(this);
         }
-        pool = new ArrayDeque<>();
-        JSONArray jsonPool = json.getJSONArray(KEY_POOL);
-        for (int i = 0; i < jsonPool.length(); i++){
-            pool.push(new Tile(jsonPool.getJSONObject(i)));
+        mDrawPool = new ArrayDeque<>();
+        JSONArray jsonPool = json.getJSONArray(KEY_DRAW_POOL);
+        for (int i = jsonPool.length() - 1; i >= 0; i--){
+            Tile tile = new Tile(jsonPool.getJSONObject(i));
+            mDrawPool.push(tile);
+            Log.d(TAG, "added " + tile + " to draw pool");
         }
         mRoundNumber = json.getInt(KEY_ROUND_NUMBER);
         mCurrentPlayerIndex = json.getInt(KEY_CURRENT_PLAYER_INDEX);
@@ -109,7 +111,7 @@ public class Game {
         JSONArray jsonPool = new JSONArray();
         //get the last tile that was drawn and put it back in the pool, then just restart the turn
         //need to copy the pool or we might try drawing from it after it's already empty
-        ArrayDeque<Tile> poolCopy = new ArrayDeque<>(pool);
+        ArrayDeque<Tile> poolCopy = new ArrayDeque<>(mDrawPool);
         while (!poolCopy.isEmpty()){
             jsonPool.put(poolCopy.pop().toJson());
         }
@@ -125,7 +127,7 @@ public class Game {
         json.put(KEY_CURRENT_DEALER_INDEX, mCurrentDealerIndex);
         json.put(KEY_CALL_MADE, mCallMade);
         json.put(KEY_WAITING_FOR_DECISION_CALL, mWaitingForDecisionOnCall);
-        json.put(KEY_POOL, jsonPool);
+        json.put(KEY_DRAW_POOL, jsonPool);
         json.put(KEY_ROUND_WIND, mRoundWind.toString());
         return json;
     }
@@ -202,15 +204,37 @@ public class Game {
 
     private void takeNextTurn(){
         players[mCurrentPlayerIndex].setIsMyTurn(true);
-        Log.d(TAG, "Starting turn for player " + mCurrentPlayerIndex);
+        Log.d(TAG, "Starting turn for player " + players[mCurrentPlayerIndex]);
         //if they're getting their turn from calling a tile, they don't get to draw, unless it's kan
         if (!mCallMade || mKanMade){
-            Log.d(TAG, "player " + mCurrentPlayerIndex + " drawing a tile");
+            Log.d(TAG, "player " + players[mCurrentPlayerIndex] + " drawing a tile");
             players[mCurrentPlayerIndex].drawTile();
+            //check for tsumo
+            if (players[mCurrentPlayerIndex].canTsumo()){
+                Log.d(TAG, "player " + players[mCurrentPlayerIndex] + " can tsumo");
+                if (players[mCurrentPlayerIndex] instanceof AiPlayer){
+                    if (((AiPlayer) players[mCurrentPlayerIndex]).shouldTsumo()){
+                        onCallMade(mCurrentPlayerIndex, MeldType.TSUMO);
+                    }
+                    //otherwise wait for player input
+                    //TODO: does this work? If so, take out some ifs to simplify it
+                    continueTakingTurn();
+                }
+            }
+            else {
+                continueTakingTurn();
+            }
         }
         else {
             Log.d(TAG, "tile called, no draw");
+            continueTakingTurn();
         }
+
+    }
+
+    // still part of starting the turn, but in another method to make changing the control flow
+    // possible when there's a tsumo
+    private void continueTakingTurn(){
         mCallMade = false;
         mKanMade = false;
         //if the player is an AI, go to the next step (calls) without waiting for input
@@ -236,7 +260,8 @@ public class Game {
 
     private void onTurnFinished(int nextPlayerIndex){
         players[mCurrentPlayerIndex].setIsMyTurn(false);
-        Log.d(TAG, "player " + mCurrentPlayerIndex + " finished, next is " + nextPlayerIndex);
+        Log.d(TAG, "player " + players[mCurrentPlayerIndex] + " finished, next is " +
+                players[nextPlayerIndex]);
         mCurrentPlayerIndex = nextPlayerIndex;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -347,8 +372,19 @@ public class Game {
     }
 
     private void onCallMade(int playerIndex, MeldType callType){
+        // PlayerIndex is the one making the call from mCurrentPlayerIndex.
+        // If it's tsumo, they'll both be mCurrentPlayerIndex so it doesn't really matter
+
+        //do tsumo first since that doesn't rely on the tile discarded
+        if (callType == MeldType.TSUMO){
+            Log.d(TAG, "Player " + playerIndex + " calling tsumo");
+            players[playerIndex].callTsumo();
+            endRound();
+            return;
+        }
         //call the tile, remove it from the discard, and that player gets the next turn
         Log.d(TAG, "Player " + playerIndex + " making a call from player " + mCurrentPlayerIndex);
+
         Tile discardedTile = getLastDiscardedTile();
         mCallMade = true;
         mWaitingForDecisionOnCall = false;
@@ -401,8 +437,8 @@ public class Game {
             }
         }
         Collections.shuffle(list);
-        pool.clear();
-        pool.addAll(list);
+        mDrawPool.clear();
+        mDrawPool.addAll(list);
     }
 
     private void dealHands(){
@@ -416,12 +452,12 @@ public class Game {
     }
 
     public Tile drawTile(){
-        Log.d(TAG, "pool has " + pool.size() + " tiles, drawing");
-        if (pool.isEmpty()){
+        Log.d(TAG, "mDrawPool has " + mDrawPool.size() + " tiles, drawing");
+        if (mDrawPool.isEmpty()){
             throw new IllegalStateException("Pool is empty, can't draw");
         }
         else {
-            return pool.pop();
+            return mDrawPool.pop();
         }
     }
 

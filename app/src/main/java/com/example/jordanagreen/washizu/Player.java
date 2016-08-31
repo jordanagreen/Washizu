@@ -258,6 +258,7 @@ public abstract class Player {
             return false;
         }
         Scorer scorer = new Scorer();
+        //false for ron
         Score score = scorer.scoreHand(mHand, mGame.getRoundWind(), tile, false);
         //invalid hand
         if (score == null){
@@ -279,11 +280,36 @@ public abstract class Player {
         Log.d(TAG, "Ron: " + score);
     }
 
+    public boolean canTsumo(){
+        Scorer scorer = new Scorer();
+        //true for tsumo
+        Score score = scorer.scoreHand(mHand, mGame.getRoundWind(), mHand.getDrawnTile(), true);
+        //invalid hand
+        if (score == null){
+            return false;
+        }
+        for (int yaku: score.getHan()){
+            if (yaku > 0){
+                Log.d(TAG, "Can tsumo on " + mHand.getDrawnTile());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void callTsumo(){
+        Log.d(TAG, "called tsumo on " + mHand.getDrawnTile());
+    }
+
     public void reset(){
         mHand.empty();
         mDiscards.empty();
         mInRiichi = false;
         mIsMyTurn = false;
+    }
+
+    public String toString(){
+        return mDirection.toString();
     }
 
 }

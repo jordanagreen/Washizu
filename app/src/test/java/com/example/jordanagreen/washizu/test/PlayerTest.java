@@ -127,7 +127,27 @@ public class PlayerTest {
 
     @Test
     public void testCanRon_FuritenOnOtherWait(){
+        //TODO: calculate other waits and check them for furiten
+    }
 
+    @Test
+    public void testCanTsumo_Valid(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, MAN_6, PIN_2,
+                PIN_3, SOU_6, SOU_7, SOU_8, SOU_9, SOU_9);
+        setHand(tiles);
+        mPlayer.getHand().setDrawnTile(new Tile(PIN_4));
+        assertTrue(mPlayer.canTsumo());
+        mPlayer.getHand().setDrawnTile(new Tile(PIN_1));
+        assertTrue(mPlayer.canTsumo());
+    }
+
+    @Test
+    public void testCanTsumo_Invalid(){
+        List<Integer> tiles = Arrays.asList(MAN_1, MAN_2, MAN_3, MAN_4, MAN_5, MAN_6, PIN_2,
+                PIN_3, SOU_6, SOU_7, SOU_8, SOU_9, SOU_9);
+        setHand(tiles);
+        mPlayer.getHand().setDrawnTile(new Tile(MAN_2));
+        assertFalse(mPlayer.canTsumo());
     }
 
 

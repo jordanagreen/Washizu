@@ -60,6 +60,10 @@ public class AiPlayer extends Player {
         return true;
     }
 
+    public boolean shouldTsumo(){
+        return true;
+    }
+
     @Override
     protected Tile[] getTilesForChii(Tile tile){
         //TODO: get some better logic for this, for now it's just picking an option randomly
