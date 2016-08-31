@@ -34,6 +34,7 @@ public class Game {
     public static final String KEY_CURRENT_DEALER_INDEX = "current_dealer_index";
     public static final String KEY_CALL_MADE = "call_made";
     public static final String KEY_WAITING_FOR_DECISION_CALL = "waiting_for_decision_on_call";
+    public static final String KEY_WAITING_FOR_DECISION_TSUMO = "waiting_for_decision_on_tsumo";
     public static final String KEY_DRAW_POOL = "draw_pool";
     public static final String KEY_ROUND_WIND = "round_wind";
 
@@ -45,6 +46,8 @@ public class Game {
     private boolean mCallMade;
     private boolean mKanMade; //needs to be separate so you can draw after kan
     private boolean mWaitingForDecisionOnCall;
+    // separate since if you don't take tsumo it's your turn, not the next person's
+    private boolean mWaitingForDecisionOnTsumo;
     private Wind mRoundWind;
     private WashizuView mWashizuView;
 
@@ -55,6 +58,7 @@ public class Game {
         mCallMade = false;
         mKanMade = false;
         mWaitingForDecisionOnCall = false;
+        mWaitingForDecisionOnTsumo = false;
         mRoundWind = Wind.EAST;
         mRoundNumber = 1;
         this.mWashizuView = washizuView;
@@ -89,6 +93,7 @@ public class Game {
         mCurrentDealerIndex = json.getInt(KEY_CURRENT_DEALER_INDEX);
         mCallMade = json.getBoolean(KEY_CALL_MADE);
         mWaitingForDecisionOnCall = json.getBoolean(KEY_WAITING_FOR_DECISION_CALL);
+        mWaitingForDecisionOnTsumo = json.getBoolean(KEY_WAITING_FOR_DECISION_TSUMO);
         mRoundWind = Enum.valueOf(Wind.class, json.getString(KEY_ROUND_WIND));
         Log.d(TAG, "Finishing recreation");
         //update the display stuff that would normally be set at the start of the round
@@ -96,7 +101,7 @@ public class Game {
         setPlayerWinds(mCurrentDealerIndex);
         updatePlayerWindText(mCurrentDealerIndex);
         //not entirely sure this will work, but looks like it does for now
-        if (!mWaitingForDecisionOnCall){
+        if (!(mWaitingForDecisionOnCall || mWaitingForDecisionOnTsumo)){
             takeNextTurn();
         }
     }
@@ -127,6 +132,7 @@ public class Game {
         json.put(KEY_CURRENT_DEALER_INDEX, mCurrentDealerIndex);
         json.put(KEY_CALL_MADE, mCallMade);
         json.put(KEY_WAITING_FOR_DECISION_CALL, mWaitingForDecisionOnCall);
+        json.put(KEY_WAITING_FOR_DECISION_TSUMO, mWaitingForDecisionOnTsumo);
         json.put(KEY_DRAW_POOL, jsonPool);
         json.put(KEY_ROUND_WIND, mRoundWind.toString());
         return json;
@@ -223,7 +229,7 @@ public class Game {
                 //otherwise wait for player input
                 else {
                     mWashizuView.makeButtonClickable(MeldType.TSUMO);
-                    mWaitingForDecisionOnCall = true;
+                    mWaitingForDecisionOnTsumo = true;
                     continueTakingTurn();
                 }
             }
@@ -471,7 +477,9 @@ public class Game {
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             Log.d(TAG, "Touch down at " + event.getX() + ", " + event.getY());
 
-            // if waiting for decision on a call, touching out of the buttons should not call
+            // if waiting for decision on a call, touching out of the buttons should not call.
+            // choosing to not take tsumo should not trigger this, or it would finish the player's
+            // turn before they actually discard a tile
             if (mWaitingForDecisionOnCall){
                 Log.d(TAG, "touch while waiting for decision on call");
                 mWaitingForDecisionOnCall = false;
@@ -480,9 +488,15 @@ public class Game {
                 onTurnFinished((mCurrentPlayerIndex + 1) % players.length);
             }
 
+
             // if it's the player's turn, let him pick a tile to discard
             else if (players[mCurrentPlayerIndex] instanceof HumanPlayer
                     && players[mCurrentPlayerIndex].getIsMyTurn()) {
+                // player chose not to take tsumo
+                if (mWaitingForDecisionOnTsumo){
+                    mWaitingForDecisionOnTsumo = false;
+                    mWashizuView.makeAllButtonsUnclickable();
+                }
                 //once we've actually discarded a tile, start the next turn
                 if (((HumanPlayer)(players[mCurrentPlayerIndex])).onTouch(event)){
                     Tile discardedTile = players[mCurrentPlayerIndex].getLastDiscardedTile();
@@ -497,7 +511,7 @@ public class Game {
         // this shouldn't happen but just in case
         // update: actually this breaks tsumo when there's no discards yet
 //        if (!mWaitingForDecisionOnCall || getLastDiscardedTile() == null){
-        if (!mWaitingForDecisionOnCall){
+        if (!(mWaitingForDecisionOnCall || mWaitingForDecisionOnTsumo)){
             return;
         }
         // if we're waiting for the user to decide whether to call
