@@ -1,7 +1,5 @@
 package com.example.jordanagreen.washizu;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,15 +63,15 @@ public class Scorer {
         //TODO: chii toitsu can go with honroutou, tanyao, honitsu, chinitsu
 
         //TODO: this and chii toitsu together are daichiisei, if allowed it's a double yakuman
-        if (isTsuuIiSou(hand)){
+        if (isTsuuIiSou(hand, winningTile)){
             score.addYaku(Yaku.TSUUIISOU);
             return score;
         }
 
-        if (isHonRouTou(hand)){
+        if (isHonRouTou(hand, winningTile)){
             score.addYaku(Yaku.HONROUTOU);
         }
-        if (isTanYao(hand)){
+        if (isTanYao(hand, winningTile)){
             score.addYaku(Yaku.TAN_YAO);
         }
 
@@ -110,7 +108,7 @@ public class Scorer {
             score.addYaku(Yaku.SHOUSUUSHI);
             return score;
         }
-        if (isChinRouTou(hand)){
+        if (isChinRouTou(hand, winningTile)){
             score.addYaku(Yaku.CHINROUTOU);
             return score;
         }
@@ -147,7 +145,7 @@ public class Scorer {
         if (isToiToi(splitHand)){
             score.addYaku(Yaku.TOITOI, true);
         }
-        if (!isHonRouTou(hand)){
+        if (!isHonRouTou(hand, winningTile)){
             if (isChanta(splitHand)){
                 score.addYaku(Yaku.CHANTA, hand.getIsOpen());
             }
@@ -314,32 +312,32 @@ public class Scorer {
     }
 
     //all honors
-    private boolean isTsuuIiSou(Hand hand){
-        for (Tile tile: hand.getFullHand()){
+    private boolean isTsuuIiSou(Hand hand, Tile winningTile){
+        for (Tile tile: getFullHand(hand, winningTile)){
             if (tile.getSuit() != Suit.HONOR) return false;
         }
         return true;
     }
 
     //all terminals
-    private boolean isChinRouTou(Hand hand){
-        for (Tile tile: hand.getFullHand()){
+    private boolean isChinRouTou(Hand hand, Tile winningTile){
+        for (Tile tile: getFullHand(hand, winningTile)){
             if (!tile.isTerminal()) return false;
         }
         return true;
     }
 
     //all terminals or honors
-    private boolean isHonRouTou(Hand hand){
-        for (Tile tile: hand.getFullHand()){
+    private boolean isHonRouTou(Hand hand, Tile winningTile){
+        for (Tile tile: getFullHand(hand, winningTile)){
             if (!tile.isTerminal() && tile.getSuit() != Suit.HONOR) return false;
         }
         return true;
     }
 
     //no terminals or honors
-    private boolean isTanYao(Hand hand){
-        for (Tile tile: hand.getFullHand()){
+    private boolean isTanYao(Hand hand, Tile winningTile){
+        for (Tile tile: getFullHand(hand, winningTile)){
             if (tile.isTerminal() || tile.getSuit() == Suit.HONOR) return false;
         }
         return true;
@@ -523,6 +521,16 @@ public class Scorer {
             }
         }
         return false;
+    }
+
+    //return a list of all tiles in the hand + melds + drawn/called tile
+    private List<Tile> getFullHand(Hand hand, Tile winningTile){
+        List<Tile> tiles = new ArrayList<>(hand.getTiles());
+        for (Meld meld: hand.getMelds()){
+            tiles.addAll(meld.getTiles());
+        }
+        tiles.add(winningTile);
+        return tiles;
     }
 
     //for keeping track of which suits we've found in san shoku
