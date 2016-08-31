@@ -64,6 +64,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     public static final String TAG = "WashizuView";
 
     private Game mGame;
+    private boolean mShouldDrawGame = true;
 
     public WashizuView(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -201,8 +202,11 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        Log.v(TAG, "draw canvas");
         canvas.drawColor(Color.WHITE);
-        mGame.onDraw(canvas);
+        if (mShouldDrawGame){
+            mGame.onDraw(canvas);
+        }
         postInvalidate();
     }
 
@@ -267,6 +271,39 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
             int seat = (dealerIndex + i) % seats.length;
             seats[seat].setText(winds[i].getAbbreviation());
         }
+    }
+
+//    public void showScores(){
+////        ViewSwitcher viewSwitcher = (ViewSwitcher) getRootView().findViewById(R.id.game_score_view_switcher);
+//        ScoreView scoreView = (ScoreView) findViewById(R.id.score_view);
+//        FrameLayout gameFrame = (FrameLayout) findViewById(R.id.game_frame);
+//        Log.d(TAG, "Showing scores");
+//        scoreView.setVisibility(VISIBLE);
+//        gameFrame.setVisibility(INVISIBLE);
+////        if (viewSwitcher.getCurrentView() != scoreView){
+////            viewSwitcher.showNext();
+////        }
+//    }
+
+//    public void showGame(){
+//        Log.d(TAG, "Showing game");
+//        ScoreView scoreView = (ScoreView) findViewById(R.id.score_view);
+//        FrameLayout gameFrame = (FrameLayout) findViewById(R.id.game_frame);
+//        scoreView.setVisibility(INVISIBLE);
+//        gameFrame.setVisibility(VISIBLE);
+////        ViewSwitcher viewSwitcher = (ViewSwitcher) getRootView().findViewById(R.id.game_score_view_switcher);
+////        if (viewSwitcher.getCurrentView() != this){
+////            viewSwitcher.showPrevious();
+////            mGame.startNextRound();
+////        }
+//    }
+
+    void startNextRound(){
+        mGame.startNextRound();
+    }
+
+    void setShouldDrawGame(boolean shouldDraw){
+        mShouldDrawGame = shouldDraw;
     }
 
 }

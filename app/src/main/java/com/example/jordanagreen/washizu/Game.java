@@ -193,12 +193,16 @@ public class Game {
     private void endRound(){
         //TODO: stuff like calculating scores
         Log.d(TAG, "Ending round " + mRoundNumber);
+        //clear the canvas
+        ((GameActivity) mWashizuView.getContext()).showScores();
+        //wait for the player to click through the scores screen before starting the next round
+    }
 
+    public void startNextRound(){
         //empty everyone's hands, discards, etc
         for (Player player: players){
             player.reset();
         }
-
         if (mRoundNumber < NUM_ROUNDS){
             // rotate the seat winds
             mCurrentDealerIndex = (mCurrentDealerIndex + 1) % players.length;

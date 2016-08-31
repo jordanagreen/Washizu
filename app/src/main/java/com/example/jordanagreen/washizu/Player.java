@@ -273,6 +273,7 @@ public abstract class Player {
     }
 
     public void callRon(Tile tile, Player player){
+        //TODO: when scoring, use the player the tile was called from
         Log.d(TAG, "Called ron on " + tile);
         Log.d(TAG, mHand.toString());
         Scorer scorer = new Scorer();
@@ -300,6 +301,10 @@ public abstract class Player {
     public void callTsumo(){
         //TODO: actually do something here
         Log.d(TAG, "called tsumo on " + mHand.getDrawnTile());
+        Log.d(TAG, mHand.toString());
+        Scorer scorer = new Scorer();
+        Score score = scorer.scoreHand(mHand, mGame.getRoundWind(), mHand.getDrawnTile(), true);
+        Log.d(TAG, "Tsumo: " + score);
     }
 
     public void reset(){

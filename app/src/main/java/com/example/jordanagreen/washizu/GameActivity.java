@@ -7,12 +7,18 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class GameActivity extends Activity {
 
@@ -222,5 +228,53 @@ public class GameActivity extends Activity {
         button.setAlpha(1f);
         button.setClickable(true);
     }
+
+    public void showScores(){
+        LinearLayout scoreFrame = (LinearLayout) findViewById(R.id.score_frame);
+        RelativeLayout gameFrame = (RelativeLayout) findViewById(R.id.game_frame);
+        Log.d(TAG, "Showing scores");
+        scoreFrame.setVisibility(VISIBLE);
+        scoreFrame.bringToFront();
+        //TODO: for some reason this isn't working right, but it's good enough for now
+        // making the SurfaceView invisible stops it from clearing itself since it won't be able to
+        // draw white, not worth trying to spend more time fixing it so just have it stop drawing
+        // the game and hide the stuff on top of it
+        mWashizuView.setShouldDrawGame(false);
+        RelativeLayout buttonsFrame = (RelativeLayout) findViewById(R.id.buttons_frame);
+        FrameLayout windsFrame = (FrameLayout) findViewById(R.id.winds_frame);
+        buttonsFrame.setVisibility(View.INVISIBLE);
+        windsFrame.setVisibility(View.INVISIBLE);
+//        gameFrame.setVisibility(View.INVISIBLE);
+//        mWashizuView.setVisibility(View.INVISIBLE);
+//        Log.d(TAG, "frame " + gameFrame.getVisibility());
+//        Log.d(TAG, "button " + findViewById(R.id.kan_button).getVisibility());
+//        findViewById(R.id.kan_button).setVisibility(View.INVISIBLE);
+//        Log.d(TAG, "button " + findViewById(R.id.kan_button).getVisibility());
+
+//        gameFrame.requestLayout();
+//        gameFrame.invalidate();
+        scoreFrame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showGame();
+            }
+        });
+    }
+
+    public void showGame(){
+        Log.d(TAG, "Showing game");
+        LinearLayout scoreFrame = (LinearLayout) findViewById(R.id.score_frame);
+//        RelativeLayout gameFrame = (RelativeLayout) findViewById(R.id.game_frame);
+        scoreFrame.setVisibility(GONE);
+//        gameFrame.setVisibility(VISIBLE);
+        mWashizuView.setShouldDrawGame(true);
+        RelativeLayout buttonsFrame = (RelativeLayout) findViewById(R.id.buttons_frame);
+        FrameLayout windsFrame = (FrameLayout) findViewById(R.id.winds_frame);
+        buttonsFrame.setVisibility(View.VISIBLE);
+        windsFrame.setVisibility(View.VISIBLE);
+        scoreFrame.setOnClickListener(null); //TODO: is this needed?
+        mWashizuView.startNextRound();
+    }
+
 
 }
