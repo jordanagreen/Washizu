@@ -273,37 +273,8 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-//    public void showScores(){
-////        ViewSwitcher viewSwitcher = (ViewSwitcher) getRootView().findViewById(R.id.game_score_view_switcher);
-//        ScoreView scoreView = (ScoreView) findViewById(R.id.score_view);
-//        FrameLayout gameFrame = (FrameLayout) findViewById(R.id.game_frame);
-//        Log.d(TAG, "Showing scores");
-//        scoreView.setVisibility(VISIBLE);
-//        gameFrame.setVisibility(INVISIBLE);
-////        if (viewSwitcher.getCurrentView() != scoreView){
-////            viewSwitcher.showNext();
-////        }
-//    }
-
-//    public void showGame(){
-//        Log.d(TAG, "Showing game");
-//        ScoreView scoreView = (ScoreView) findViewById(R.id.score_view);
-//        FrameLayout gameFrame = (FrameLayout) findViewById(R.id.game_frame);
-//        scoreView.setVisibility(INVISIBLE);
-//        gameFrame.setVisibility(VISIBLE);
-////        ViewSwitcher viewSwitcher = (ViewSwitcher) getRootView().findViewById(R.id.game_score_view_switcher);
-////        if (viewSwitcher.getCurrentView() != this){
-////            viewSwitcher.showPrevious();
-////            mGame.startNextRound();
-////        }
-//    }
-
     void startNextRound(){
         mGame.startNextRound();
-    }
-
-    void setShouldDrawGame(boolean shouldDraw){
-        mShouldDrawGame = shouldDraw;
     }
 
 }

@@ -386,7 +386,8 @@
   "current_dealer_index": 1,
   "call_made": false,
   "waiting_for_decision_on_call": false,
-  "pool": [
+  "waiting_for_decision_on_tsumo": false,
+  "draw_pool": [
     {
       "id": 32,
       "is_opaque": false,

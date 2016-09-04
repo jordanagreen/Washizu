@@ -21,7 +21,7 @@ public class RoundScore {
         }
     }
 
-    public String getScoreString(){
+    public String toString(){
         if (scoreChange == 0) return scoreChange + "";
         String sign = (scoreChange > 0) ? "+" : "-";
         return String.format(COLOR_STRING, scoreColor, sign + Math.abs(scoreChange));

@@ -15,4 +15,5 @@
     <string name="kan">Kan</string>
     <string name="ron">Ron</string>
     <string name="tsumo">Tsumo</string>
+    <string name="title_activity_scores">ScoresActivity</string>
 </resources>
