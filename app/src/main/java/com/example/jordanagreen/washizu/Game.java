@@ -16,6 +16,7 @@ import java.util.Random;
 
 import static com.example.jordanagreen.washizu.Constants.DELAY_BETWEEN_TURNS_MS;
 import static com.example.jordanagreen.washizu.Constants.HAND_SIZE;
+import static com.example.jordanagreen.washizu.Constants.NUMBER_OF_PLAYERS;
 import static com.example.jordanagreen.washizu.Constants.NUM_ROUNDS;
 import static com.example.jordanagreen.washizu.Constants.ROUND_EAST_1;
 import static com.example.jordanagreen.washizu.Constants.TILE_MAX_ID;
@@ -38,7 +39,7 @@ public class Game {
     public static final String KEY_DRAW_POOL = "draw_pool";
     public static final String KEY_ROUND_WIND = "round_wind";
 
-    private Player[] players;
+    private Player[] mPlayers;
     private int mRoundNumber;
     private ArrayDeque<Tile> mDrawPool;
     private int mCurrentPlayerIndex;
@@ -53,14 +54,14 @@ public class Game {
 
     public Game(WashizuView washizuView){
         Log.d(TAG, "default game constructor called");
-        players = new Player[4];
+        mPlayers = new Player[NUMBER_OF_PLAYERS];
         mDrawPool = new ArrayDeque<>();
         mCallMade = false;
         mKanMade = false;
         mWaitingForDecisionOnCall = false;
         mWaitingForDecisionOnTsumo = false;
         mRoundWind = Wind.EAST;
-        mRoundNumber = 1;
+        mRoundNumber = ROUND_EAST_1;
         this.mWashizuView = washizuView;
     }
 
@@ -68,18 +69,18 @@ public class Game {
     public Game(WashizuView washizuView, JSONObject json) throws JSONException{
         this.mWashizuView = washizuView;
         Log.d(TAG, "Starting recreation");
-        players = new Player[4];
+        mPlayers = new Player[NUMBER_OF_PLAYERS];
         JSONArray jsonPlayers = json.getJSONArray(KEY_PLAYERS);
         for (int i = 0; i < jsonPlayers.length(); i++){
             JSONObject jsonPlayer = jsonPlayers.getJSONObject(i);
             boolean isAi = jsonPlayer.getBoolean(Player.KEY_IS_AI);
             if (isAi){
-                players[i] = new AiPlayer(jsonPlayer);
+                mPlayers[i] = new AiPlayer(jsonPlayer);
             }
             else {
-                players[i] = new HumanPlayer(jsonPlayer);
+                mPlayers[i] = new HumanPlayer(jsonPlayer);
             }
-            players[i].setGame(this);
+            mPlayers[i].setGame(this);
         }
         mDrawPool = new ArrayDeque<>();
         JSONArray jsonPool = json.getJSONArray(KEY_DRAW_POOL);
@@ -109,8 +110,8 @@ public class Game {
     public JSONObject toJson() throws JSONException{
         JSONObject json = new JSONObject();
         JSONArray jsonPlayers = new JSONArray();
-        for (int i = 0; i < players.length; i++){
-            jsonPlayers.put(players[i].toJson());
+        for (int i = 0; i < mPlayers.length; i++){
+            jsonPlayers.put(mPlayers[i].toJson());
         }
         json.put(KEY_PLAYERS, jsonPlayers);
         JSONArray jsonPool = new JSONArray();
@@ -121,7 +122,7 @@ public class Game {
             jsonPool.put(poolCopy.pop().toJson());
         }
         if (!mWaitingForDecisionOnCall) {
-            Tile lastDrawnTile = players[mCurrentPlayerIndex].getHand().getDrawnTile();
+            Tile lastDrawnTile = mPlayers[mCurrentPlayerIndex].getHand().getDrawnTile();
             //might be null for calls, etc.
             if (lastDrawnTile != null) {
                 jsonPool.put(lastDrawnTile.toJson());
@@ -144,15 +145,15 @@ public class Game {
 
     public void startGame(){
         Log.d(TAG, "startGame");
-        players[0] = new HumanPlayer(SeatDirection.DOWN);
-        players[1] = new AiPlayer(SeatDirection.RIGHT);
-        players[2] = new AiPlayer(SeatDirection.UP);
-        players[3] = new AiPlayer(SeatDirection.LEFT);
-        for (Player player: players){
+        mPlayers[0] = new HumanPlayer(SeatDirection.DOWN);
+        mPlayers[1] = new AiPlayer(SeatDirection.RIGHT);
+        mPlayers[2] = new AiPlayer(SeatDirection.UP);
+        mPlayers[3] = new AiPlayer(SeatDirection.LEFT);
+        for (Player player: mPlayers){
             player.setGame(this);
         }
         Random rand = new Random();
-        startRound(ROUND_EAST_1, rand.nextInt(4));
+        startRound(ROUND_EAST_1, rand.nextInt(mPlayers.length));
     }
 
     private void startRound(int roundNumber, int dealerIndex) {
@@ -177,10 +178,10 @@ public class Game {
     }
 
     private void setPlayerWinds(int dealerIndex){
-        players[dealerIndex].setWind(Wind.EAST);
-        players[(dealerIndex+1)%4].setWind(Wind.SOUTH);
-        players[(dealerIndex+2)%4].setWind(Wind.WEST);
-        players[(dealerIndex +3)%4].setWind(Wind.NORTH);
+        mPlayers[dealerIndex].setWind(Wind.EAST);
+        mPlayers[(dealerIndex+1)% mPlayers.length].setWind(Wind.SOUTH);
+        mPlayers[(dealerIndex+2)% mPlayers.length].setWind(Wind.WEST);
+        mPlayers[(dealerIndex +3)% mPlayers.length].setWind(Wind.NORTH);
     }
 
     //TODO: either move wind letters to be near the players' hands or just show the dealer sign
@@ -200,12 +201,12 @@ public class Game {
 
     public void startNextRound(){
         //empty everyone's hands, discards, etc
-        for (Player player: players){
+        for (Player player: mPlayers){
             player.reset();
         }
         if (mRoundNumber < NUM_ROUNDS){
             // rotate the seat winds
-            mCurrentDealerIndex = (mCurrentDealerIndex + 1) % players.length;
+            mCurrentDealerIndex = (mCurrentDealerIndex + 1) % mPlayers.length;
             setPlayerWinds(mCurrentDealerIndex);
             startRound(mRoundNumber + 1, mCurrentDealerIndex);
         }
@@ -213,17 +214,17 @@ public class Game {
     }
 
     private void takeNextTurn(){
-        players[mCurrentPlayerIndex].setIsMyTurn(true);
-        Log.d(TAG, "Starting turn for player " + players[mCurrentPlayerIndex]);
+        mPlayers[mCurrentPlayerIndex].setIsMyTurn(true);
+        Log.d(TAG, "Starting turn for player " + mPlayers[mCurrentPlayerIndex]);
         //if they're getting their turn from calling a tile, they don't get to draw, unless it's kan
         if (!mCallMade || mKanMade){
-            Log.d(TAG, "player " + players[mCurrentPlayerIndex] + " drawing a tile");
-            players[mCurrentPlayerIndex].drawTile();
+            Log.d(TAG, "player " + mPlayers[mCurrentPlayerIndex] + " drawing a tile");
+            mPlayers[mCurrentPlayerIndex].drawTile();
             //check for tsumo
-            if (players[mCurrentPlayerIndex].canTsumo()){
-                Log.d(TAG, "player " + players[mCurrentPlayerIndex] + " can tsumo");
-                if (players[mCurrentPlayerIndex] instanceof AiPlayer) {
-                    if (((AiPlayer) players[mCurrentPlayerIndex]).shouldTsumo()) {
+            if (mPlayers[mCurrentPlayerIndex].canTsumo()){
+                Log.d(TAG, "player " + mPlayers[mCurrentPlayerIndex] + " can tsumo");
+                if (mPlayers[mCurrentPlayerIndex] instanceof AiPlayer) {
+                    if (((AiPlayer) mPlayers[mCurrentPlayerIndex]).shouldTsumo()) {
                         onCallMade(mCurrentPlayerIndex, MeldType.TSUMO);
                     }
                     else {
@@ -254,18 +255,18 @@ public class Game {
         mCallMade = false;
         mKanMade = false;
         //if the player is an AI, go to the next step (calls) without waiting for input
-        if (players[mCurrentPlayerIndex] instanceof AiPlayer){
-            players[mCurrentPlayerIndex].takeTurn(new GameCallback() {
+        if (mPlayers[mCurrentPlayerIndex] instanceof AiPlayer){
+            mPlayers[mCurrentPlayerIndex].takeTurn(new GameCallback() {
                 @Override
                 public void callback() {
-                    Tile discardedTile = players[mCurrentPlayerIndex].getLastDiscardedTile();
+                    Tile discardedTile = mPlayers[mCurrentPlayerIndex].getLastDiscardedTile();
                     checkForCalls(discardedTile);
                 }
             });
         }
         //otherwise wait for input and it'll finish the turn when a discard/call has been made
         else {
-            players[mCurrentPlayerIndex].takeTurn(new GameCallback() {
+            mPlayers[mCurrentPlayerIndex].takeTurn(new GameCallback() {
                 @Override
                 public void callback() {
                     // do nothing
@@ -275,9 +276,9 @@ public class Game {
     }
 
     private void onTurnFinished(int nextPlayerIndex){
-        players[mCurrentPlayerIndex].setIsMyTurn(false);
-        Log.d(TAG, "player " + players[mCurrentPlayerIndex] + " finished, next is " +
-                players[nextPlayerIndex]);
+        mPlayers[mCurrentPlayerIndex].setIsMyTurn(false);
+        Log.d(TAG, "player " + mPlayers[mCurrentPlayerIndex] + " finished, next is " +
+                mPlayers[nextPlayerIndex]);
         mCurrentPlayerIndex = nextPlayerIndex;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -303,18 +304,18 @@ public class Game {
         //if no calls were made, just go to the player on the right
         if (!mCallMade && !mWaitingForDecisionOnCall){
             Log.d(TAG, "No calls made, going to next turn");
-            onTurnFinished((mCurrentPlayerIndex + 1) % players.length);
+            onTurnFinished((mCurrentPlayerIndex + 1) % mPlayers.length);
         }
     }
 
     private void checkForRon(Tile discardedTile){
         //check all other players for ron
-        for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++) {
-            int i = j % players.length;
-            if (players[i].canRon(discardedTile)) {
+        for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + mPlayers.length; j++) {
+            int i = j % mPlayers.length;
+            if (mPlayers[i].canRon(discardedTile)) {
                 Log.d(TAG, "Player " + i + " can ron");
-                if (players[i] instanceof AiPlayer) {
-                    if (((AiPlayer) players[i]).shouldRon(discardedTile)) {
+                if (mPlayers[i] instanceof AiPlayer) {
+                    if (((AiPlayer) mPlayers[i]).shouldRon(discardedTile)) {
                         onCallMade(i, MeldType.RON);
                     }
                 }
@@ -329,12 +330,12 @@ public class Game {
 
     private void checkForPonAndKan(Tile discardedTile){
         //check all other players for pon and kan
-        for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + players.length; j++) {
-            int i = j % players.length;
-            if (players[i].canPon(discardedTile)) {
-                if (players[i].canKanOnCall(discardedTile)) {
-                    if (players[i] instanceof AiPlayer) {
-                        if (((AiPlayer) players[i]).shouldKan(discardedTile)){
+        for (int j = mCurrentPlayerIndex + 1; j < mCurrentPlayerIndex + mPlayers.length; j++) {
+            int i = j % mPlayers.length;
+            if (mPlayers[i].canPon(discardedTile)) {
+                if (mPlayers[i].canKanOnCall(discardedTile)) {
+                    if (mPlayers[i] instanceof AiPlayer) {
+                        if (((AiPlayer) mPlayers[i]).shouldKan(discardedTile)){
                             onCallMade(i, MeldType.KAN);
                         }
                     } else {
@@ -344,8 +345,8 @@ public class Game {
                     }
                 }
                 // allow picking either kan or pon
-                if (players[i] instanceof AiPlayer) {
-                    if (!mCallMade && ((AiPlayer) players[i]).shouldPon(discardedTile)){
+                if (mPlayers[i] instanceof AiPlayer) {
+                    if (!mCallMade && ((AiPlayer) mPlayers[i]).shouldPon(discardedTile)){
                         onCallMade(i, MeldType.PON);
                     }
                 }
@@ -361,11 +362,11 @@ public class Game {
     private void checkForChii(Tile discardedTile){
         //check next player for chii
         if (!mCallMade) {
-            Player nextPlayer = players[(mCurrentPlayerIndex + 1) % players.length];
+            Player nextPlayer = mPlayers[(mCurrentPlayerIndex + 1) % mPlayers.length];
             if (nextPlayer.canChii(discardedTile)) {
                 if (nextPlayer instanceof AiPlayer){
                     if (((AiPlayer) nextPlayer).shouldChii(discardedTile)){
-                        onCallMade((mCurrentPlayerIndex + 1) % players.length, MeldType.CHII);
+                        onCallMade((mCurrentPlayerIndex + 1) % mPlayers.length, MeldType.CHII);
                     }
                 }
                 else {
@@ -379,7 +380,7 @@ public class Game {
 
     private Tile getLastDiscardedTile(){
         try{
-            return players[mCurrentPlayerIndex].getLastDiscardedTile();
+            return mPlayers[mCurrentPlayerIndex].getLastDiscardedTile();
         }
         catch (ArrayIndexOutOfBoundsException e){
             return null;
@@ -394,7 +395,7 @@ public class Game {
         //do tsumo first since that doesn't rely on the tile discarded
         if (callType == MeldType.TSUMO){
             Log.d(TAG, "Player " + playerIndex + " calling tsumo");
-            players[playerIndex].callTsumo();
+            mPlayers[playerIndex].callTsumo();
             endRound();
             return;
         }
@@ -408,7 +409,7 @@ public class Game {
             case RON:
                 Log.d(TAG, "Player " + playerIndex + " calling ron on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
-                players[playerIndex].callRon(discardedTile, players[mCurrentPlayerIndex]);
+                mPlayers[playerIndex].callRon(discardedTile, mPlayers[mCurrentPlayerIndex]);
                 //TODO: go to the next round
                 endRound();
                 // don't break and go to the next turn since the round is over
@@ -417,18 +418,18 @@ public class Game {
                 Log.d(TAG, "Player " + playerIndex + " calling pon on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
                 //TODO: this shouldn't default to 90
-                players[playerIndex].callPon(discardedTile,
+                mPlayers[playerIndex].callPon(discardedTile,
                         SeatDirection.values()[mCurrentPlayerIndex]);
                 break;
             case CHII:
-                Log.d(TAG, "Player " + (mCurrentPlayerIndex + 1) % players.length +
+                Log.d(TAG, "Player " + (mCurrentPlayerIndex + 1) % mPlayers.length +
                         " calling chii on " + discardedTile + " from " + mCurrentPlayerIndex);
-                players[playerIndex].callChii(discardedTile);
+                mPlayers[playerIndex].callChii(discardedTile);
                 break;
             case KAN:
                 Log.d(TAG, "Player " + playerIndex + " calling kan on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
-                players[playerIndex].callKan(discardedTile,
+                mPlayers[playerIndex].callKan(discardedTile,
                         SeatDirection.values()[mCurrentPlayerIndex].addOffset(90));
                 mKanMade = true;
                 //TODO: when dora are added, flip another one here
@@ -438,7 +439,7 @@ public class Game {
             default:
                 throw new IllegalArgumentException("Illegal call type");
         }
-        players[mCurrentPlayerIndex].removeLastDiscardedTile();
+        mPlayers[mCurrentPlayerIndex].removeLastDiscardedTile();
         Log.d(TAG, "call finished");
         onTurnFinished(playerIndex);
     }
@@ -458,7 +459,7 @@ public class Game {
     }
 
     private void dealHands(){
-        for (Player player: players){
+        for (Player player: mPlayers){
             for (int i = 0; i < HAND_SIZE; i++){
                 player.getHand().addTile(drawTile());
             }
@@ -489,21 +490,21 @@ public class Game {
                 mWaitingForDecisionOnCall = false;
                 mWashizuView.makeAllButtonsUnclickable();
                 Log.d(TAG, "Player didn't call, going to next turn");
-                onTurnFinished((mCurrentPlayerIndex + 1) % players.length);
+                onTurnFinished((mCurrentPlayerIndex + 1) % mPlayers.length);
             }
 
 
             // if it's the player's turn, let him pick a tile to discard
-            else if (players[mCurrentPlayerIndex] instanceof HumanPlayer
-                    && players[mCurrentPlayerIndex].getIsMyTurn()) {
+            else if (mPlayers[mCurrentPlayerIndex] instanceof HumanPlayer
+                    && mPlayers[mCurrentPlayerIndex].getIsMyTurn()) {
                 // player chose not to take tsumo
                 if (mWaitingForDecisionOnTsumo){
                     mWaitingForDecisionOnTsumo = false;
                     mWashizuView.makeAllButtonsUnclickable();
                 }
                 //once we've actually discarded a tile, start the next turn
-                if (((HumanPlayer)(players[mCurrentPlayerIndex])).onTouch(event)){
-                    Tile discardedTile = players[mCurrentPlayerIndex].getLastDiscardedTile();
+                if (((HumanPlayer)(mPlayers[mCurrentPlayerIndex])).onTouch(event)){
+                    Tile discardedTile = mPlayers[mCurrentPlayerIndex].getLastDiscardedTile();
                     checkForCalls(discardedTile);
                 }
             }
@@ -524,7 +525,7 @@ public class Game {
     }
 
     protected void onDraw(Canvas canvas){
-        for (Player player: players){
+        for (Player player: mPlayers){
             if (player != null) {
                 player.draw(canvas);
             }

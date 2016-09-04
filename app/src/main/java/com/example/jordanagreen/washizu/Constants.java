@@ -7,6 +7,8 @@ import android.content.res.Resources;
  */
 public class Constants {
 
+    public static final int NUMBER_OF_PLAYERS = 4;
+
     public static final int HAND_SIZE = 13;
     public static final int STARTING_SCORE = 2500;
 
