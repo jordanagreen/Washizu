@@ -4,6 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static com.example.jordanagreen.washizu.Constants.NUMBER_OF_PLAYERS;
+
 public class ScoresActivity extends Activity {
 
     private ScoreView mScoreView;
@@ -22,5 +27,23 @@ public class ScoresActivity extends Activity {
         });
     }
 
+    public void setScoreText(List<List<RoundScore>> roundScores){
+        StringBuilder sb = new StringBuilder();
+        for (List<RoundScore> round: roundScores){
+            if (round.size() != NUMBER_OF_PLAYERS){
+                throw new IllegalArgumentException(String.format("Round has %d players, not %d: %s",
+                        roundScores.size(), NUMBER_OF_PLAYERS, Arrays.toString(round.toArray())));
+            }
+            for (RoundScore score: round){
+                sb.append(score).append('\t');
+            }
+            sb.append('\n');
+        }
+        mScoreView.setText(sb.toString());
+    }
+
+    public String getScoreText(){
+        return mScoreView.getText().toString();
+    }
 
 }
