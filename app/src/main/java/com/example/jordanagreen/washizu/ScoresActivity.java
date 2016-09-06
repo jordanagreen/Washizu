@@ -3,6 +3,7 @@ package com.example.jordanagreen.washizu;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,13 +12,13 @@ import static com.example.jordanagreen.washizu.Constants.NUMBER_OF_PLAYERS;
 
 public class ScoresActivity extends Activity {
 
-    private ScoreView mScoreView;
+    private TextView mScoreView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scores);
-        mScoreView = (ScoreView) findViewById(R.id.score_view);
+        mScoreView = (TextView) findViewById(R.id.score_view);
         mScoreView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
