@@ -8,12 +8,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import static com.example.jordanagreen.washizu.Constants.ROUNDS_PER_WIND;
 
 public class GameActivity extends Activity {
 
@@ -224,38 +227,6 @@ public class GameActivity extends Activity {
         button.setClickable(true);
     }
 
-//    public void showScoresOld(){
-//        LinearLayout scoreFrame = (LinearLayout) findViewById(R.id.score_frame);
-//        RelativeLayout gameFrame = (RelativeLayout) findViewById(R.id.game_frame);
-//        Log.d(TAG, "Showing scores");
-//        scoreFrame.setVisibility(VISIBLE);
-//        scoreFrame.bringToFront();
-//        //TODO: for some reason this isn't working right, but it's good enough for now
-//        // making the SurfaceView invisible stops it from clearing itself since it won't be able to
-//        // draw white, not worth trying to spend more time fixing it so just have it stop drawing
-//        // the game and hide the stuff on top of it
-//        mWashizuView.setShouldDrawGame(false);
-//        RelativeLayout buttonsFrame = (RelativeLayout) findViewById(R.id.buttons_frame);
-//        FrameLayout windsFrame = (FrameLayout) findViewById(R.id.winds_frame);
-//        buttonsFrame.setVisibility(View.INVISIBLE);
-//        windsFrame.setVisibility(View.INVISIBLE);
-////        gameFrame.setVisibility(View.INVISIBLE);
-////        mWashizuView.setVisibility(View.INVISIBLE);
-////        Log.d(TAG, "frame " + gameFrame.getVisibility());
-////        Log.d(TAG, "button " + findViewById(R.id.kan_button).getVisibility());
-////        findViewById(R.id.kan_button).setVisibility(View.INVISIBLE);
-////        Log.d(TAG, "button " + findViewById(R.id.kan_button).getVisibility());
-//
-////        gameFrame.requestLayout();
-////        gameFrame.invalidate();
-//        scoreFrame.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showGame();
-//            }
-//        });
-//    }
-
     public void showScores(){
         Intent intent = new Intent(this, ScoresActivity.class);
         startActivityForResult(intent, 1);
@@ -267,4 +238,27 @@ public class GameActivity extends Activity {
         mWashizuView.startNextRound();
 //        super.onActivityResult(requestCode, resultCode, data);
     }
+
+    public void updateRoundNumberText(int roundNumber){
+        TextView t = (TextView) findViewById(R.id.round_text);
+        String s = (roundNumber <= ROUNDS_PER_WIND ?
+                getResources().getString(R.string.round_east) :
+                getResources().getString(R.string.round_south)) +
+                " " + ((roundNumber % ROUNDS_PER_WIND) + 1);
+        t.setText(s);
+    }
+
+    public void updatePlayerWindText(int dealerIndex){
+        TextView down = (TextView) findViewById(R.id.wind_down);
+        TextView right = (TextView) findViewById(R.id.wind_right);
+        TextView up = (TextView) findViewById(R.id.wind_up);
+        TextView left = (TextView) findViewById(R.id.wind_left);
+        TextView[] seats = new TextView[]{down, right, up, left};
+        Wind[] winds = Wind.values();
+        for (int i = 0; i < winds.length; i++){
+            int seat = (dealerIndex + i) % seats.length;
+            seats[seat].setText(winds[i].getAbbreviation());
+        }
+    }
+
 }

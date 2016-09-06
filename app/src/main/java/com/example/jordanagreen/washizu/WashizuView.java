@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +38,6 @@ import static com.example.jordanagreen.washizu.Constants.PIN_6;
 import static com.example.jordanagreen.washizu.Constants.PIN_7;
 import static com.example.jordanagreen.washizu.Constants.PIN_8;
 import static com.example.jordanagreen.washizu.Constants.PIN_9;
-import static com.example.jordanagreen.washizu.Constants.ROUNDS_PER_WIND;
 import static com.example.jordanagreen.washizu.Constants.SOU_1;
 import static com.example.jordanagreen.washizu.Constants.SOU_2;
 import static com.example.jordanagreen.washizu.Constants.SOU_3;
@@ -64,7 +62,6 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
     public static final String TAG = "WashizuView";
 
     private Game mGame;
-    private boolean mShouldDrawGame = true;
 
     public WashizuView(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -204,9 +201,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
         super.onDraw(canvas);
         Log.v(TAG, "draw canvas");
         canvas.drawColor(Color.WHITE);
-        if (mShouldDrawGame){
-            mGame.onDraw(canvas);
-        }
+        mGame.onDraw(canvas);
         postInvalidate();
     }
 
@@ -225,7 +220,7 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 //        Log.d(TAG, jsonString);
         try {
             JSONObject json = new JSONObject(jsonString);
-            mGame = new Game(this, json);
+            mGame = new Game((GameActivity) getContext(), json);
         }
         catch (JSONException e){
             Log.e(TAG, "error", e);
@@ -234,43 +229,13 @@ public class WashizuView extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
+    //TODO: see if these can also be moved to GameActivity
+
     public void startNewGame(){
         Log.d(TAG, "starting new game");
-        mGame = new Game(this);
+        mGame = new Game((GameActivity) getContext());
         mGame.startGame();
 
-    }
-
-    public void makeButtonClickable(MeldType buttonType){
-        GameActivity gameActivity = (GameActivity) getContext();
-        gameActivity.makeButtonClickable(buttonType);
-    }
-
-    public void makeAllButtonsUnclickable(){
-        GameActivity gameActivity = (GameActivity) getContext();
-        gameActivity.makeAllButtonsUnclickable();
-    }
-
-    public void updateRoundNumberText(int roundNumber){
-        TextView t = (TextView)((GameActivity) getContext()).findViewById(R.id.round_text);
-        String s = (roundNumber <= ROUNDS_PER_WIND ?
-                getResources().getString(R.string.round_east) :
-                getResources().getString(R.string.round_south)) +
-                " " + ((roundNumber % ROUNDS_PER_WIND) + 1);
-        t.setText(s);
-    }
-
-    public void updatePlayerWindText(int dealerIndex){
-        TextView down = (TextView)((GameActivity) getContext()).findViewById(R.id.wind_down);
-        TextView right = (TextView)((GameActivity) getContext()).findViewById(R.id.wind_right);
-        TextView up = (TextView)((GameActivity) getContext()).findViewById(R.id.wind_up);
-        TextView left = (TextView)((GameActivity) getContext()).findViewById(R.id.wind_left);
-        TextView[] seats = new TextView[]{down, right, up, left};
-        Wind[] winds = Wind.values();
-        for (int i = 0; i < winds.length; i++){
-            int seat = (dealerIndex + i) % seats.length;
-            seats[seat].setText(winds[i].getAbbreviation());
-        }
     }
 
     void startNextRound(){

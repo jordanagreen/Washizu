@@ -50,9 +50,9 @@ public class Game {
     // separate since if you don't take tsumo it's your turn, not the next person's
     private boolean mWaitingForDecisionOnTsumo;
     private Wind mRoundWind;
-    private WashizuView mWashizuView;
+    private GameActivity mGameActivity;
 
-    public Game(WashizuView washizuView){
+    public Game(GameActivity gameActivity){
         Log.d(TAG, "default game constructor called");
         mPlayers = new Player[NUMBER_OF_PLAYERS];
         mDrawPool = new ArrayDeque<>();
@@ -62,12 +62,12 @@ public class Game {
         mWaitingForDecisionOnTsumo = false;
         mRoundWind = Wind.EAST;
         mRoundNumber = ROUND_EAST_1;
-        this.mWashizuView = washizuView;
+        mGameActivity = gameActivity;
     }
 
     //TODO: find out when this doesn't work right, seems to be good enough for now
-    public Game(WashizuView washizuView, JSONObject json) throws JSONException{
-        this.mWashizuView = washizuView;
+    public Game(GameActivity gameActivity, JSONObject json) throws JSONException{
+        mGameActivity = gameActivity;
         Log.d(TAG, "Starting recreation");
         mPlayers = new Player[NUMBER_OF_PLAYERS];
         JSONArray jsonPlayers = json.getJSONArray(KEY_PLAYERS);
@@ -171,9 +171,9 @@ public class Game {
     }
 
     private void updateRoundNumberText(int roundNumber){
-        // view might be null during testing
-        if (mWashizuView != null){
-            mWashizuView.updateRoundNumberText(roundNumber);
+        // activity might be null during testing
+        if (mGameActivity != null){
+            mGameActivity.updateRoundNumberText(roundNumber);
         }
     }
 
@@ -186,8 +186,8 @@ public class Game {
 
     //TODO: either move wind letters to be near the players' hands or just show the dealer sign
     private void updatePlayerWindText(int eastPlayerIndex){
-        if (mWashizuView != null){
-            mWashizuView.updatePlayerWindText(eastPlayerIndex);
+        if (mGameActivity != null){
+            mGameActivity.updatePlayerWindText(eastPlayerIndex);
         }
     }
 
@@ -195,7 +195,7 @@ public class Game {
         //TODO: stuff like calculating scores
         Log.d(TAG, "Ending round " + mRoundNumber);
         //clear the canvas
-        ((GameActivity) mWashizuView.getContext()).showScores();
+        mGameActivity.showScores();
         //wait for the player to click through the scores screen before starting the next round
     }
 
@@ -233,7 +233,7 @@ public class Game {
                 }
                 //otherwise wait for player input
                 else {
-                    mWashizuView.makeButtonClickable(MeldType.TSUMO);
+                    mGameActivity.makeButtonClickable(MeldType.TSUMO);
                     mWaitingForDecisionOnTsumo = true;
                     continueTakingTurn();
                 }
@@ -321,7 +321,7 @@ public class Game {
                 }
                 else {
                     mWaitingForDecisionOnCall = true;
-                    mWashizuView.makeButtonClickable(MeldType.RON);
+                    mGameActivity.makeButtonClickable(MeldType.RON);
                     Log.d(TAG, "Waiting for touch on ron");
                 }
             }
@@ -340,7 +340,7 @@ public class Game {
                         }
                     } else {
                         mWaitingForDecisionOnCall = true;
-                        mWashizuView.makeButtonClickable(MeldType.KAN);
+                        mGameActivity.makeButtonClickable(MeldType.KAN);
                         Log.d(TAG, "Waiting for touch on kan");
                     }
                 }
@@ -352,7 +352,7 @@ public class Game {
                 }
                 else {
                     mWaitingForDecisionOnCall = true;
-                    mWashizuView.makeButtonClickable(MeldType.PON);
+                    mGameActivity.makeButtonClickable(MeldType.PON);
                     Log.d(TAG, "Waiting for touch on pon");
                 }
             }
@@ -371,7 +371,7 @@ public class Game {
                 }
                 else {
                     mWaitingForDecisionOnCall = true;
-                    mWashizuView.makeButtonClickable(MeldType.CHII);
+                    mGameActivity.makeButtonClickable(MeldType.CHII);
                     Log.d(TAG, "Waiting for touch on chii");
                 }
             }
@@ -410,7 +410,6 @@ public class Game {
                 Log.d(TAG, "Player " + playerIndex + " calling ron on " + discardedTile + " from "
                         + mCurrentPlayerIndex);
                 mPlayers[playerIndex].callRon(discardedTile, mPlayers[mCurrentPlayerIndex]);
-                //TODO: go to the next round
                 endRound();
                 // don't break and go to the next turn since the round is over
                 return;
@@ -488,7 +487,7 @@ public class Game {
             if (mWaitingForDecisionOnCall){
                 Log.d(TAG, "touch while waiting for decision on call");
                 mWaitingForDecisionOnCall = false;
-                mWashizuView.makeAllButtonsUnclickable();
+                mGameActivity.makeAllButtonsUnclickable();
                 Log.d(TAG, "Player didn't call, going to next turn");
                 onTurnFinished((mCurrentPlayerIndex + 1) % mPlayers.length);
             }
@@ -500,7 +499,7 @@ public class Game {
                 // player chose not to take tsumo
                 if (mWaitingForDecisionOnTsumo){
                     mWaitingForDecisionOnTsumo = false;
-                    mWashizuView.makeAllButtonsUnclickable();
+                    mGameActivity.makeAllButtonsUnclickable();
                 }
                 //once we've actually discarded a tile, start the next turn
                 if (((HumanPlayer)(mPlayers[mCurrentPlayerIndex])).onTouch(event)){
